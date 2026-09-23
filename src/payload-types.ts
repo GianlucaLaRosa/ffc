@@ -68,6 +68,16 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
+    conferences: Conference;
+    days: Day;
+    'agenda-items': AgendaItem;
+    abstracts: Abstract;
+    'abstract-statuses': AbstractStatus;
+    'abstract-contents': AbstractContent;
+    people: Person;
+    institutions: Institution;
+    countries: Country;
+    'italian-regions': ItalianRegion;
     media: Media;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -77,6 +87,16 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    conferences: ConferencesSelect<false> | ConferencesSelect<true>;
+    days: DaysSelect<false> | DaysSelect<true>;
+    'agenda-items': AgendaItemsSelect<false> | AgendaItemsSelect<true>;
+    abstracts: AbstractsSelect<false> | AbstractsSelect<true>;
+    'abstract-statuses': AbstractStatusesSelect<false> | AbstractStatusesSelect<true>;
+    'abstract-contents': AbstractContentsSelect<false> | AbstractContentsSelect<true>;
+    people: PeopleSelect<false> | PeopleSelect<true>;
+    institutions: InstitutionsSelect<false> | InstitutionsSelect<true>;
+    countries: CountriesSelect<false> | CountriesSelect<true>;
+    'italian-regions': ItalianRegionsSelect<false> | ItalianRegionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -84,11 +104,15 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -122,7 +146,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -130,6 +154,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -144,11 +169,97 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conferences".
+ */
+export interface Conference {
+  id: number;
+  editionName: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  editionYear: number;
+  primaryColor?: string | null;
+  accentColor?: string | null;
+  logo?: (number | null) | Media;
+  startDate: string;
+  endDate: string;
+  days: (number | Day)[];
+  generalDescription?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  street?: string | null;
+  city?: string | null;
+  country?: string | null;
+  locationCoords?: {
+    latitude?: number | null;
+    longitude?: number | null;
+  };
+  location?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
-  alt: string;
+  id: number;
+  alt?: string | null;
+  caption?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  abstract?: (number | null) | Abstract;
+  taggedPeople?: (number | Person)[] | null;
+  cropFocus?: ('center' | 'top' | 'bottom' | 'left' | 'right') | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -160,13 +271,270 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    full?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "abstracts".
+ */
+export interface Abstract {
+  id: number;
+  code?: string | null;
+  status?: (number | null) | AbstractStatus;
+  title: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Select content sections in order (e.g. Background, Methods, Results, Conclusions).
+   */
+  content?: (number | AbstractContent)[] | null;
+  authors?: (number | Person)[] | null;
+  photos?: (number | Media)[] | null;
+  speakers?: (number | Person)[] | null;
+  /**
+   * Automatically synchronized from Speakers list. Check "Is Main Speaker" for plenary/main speakers.
+   */
+  mainSpeakers?:
+    | {
+        speaker: number | Person;
+        isMain?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "abstract-statuses".
+ */
+export interface AbstractStatus {
+  id: number;
+  name: string;
+  slug?: string | null;
+  color?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "abstract-contents".
+ */
+export interface AbstractContent {
+  id: number;
+  title?: string | null;
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people".
+ */
+export interface Person {
+  id: number;
+  firstName: string;
+  lastName: string;
+  institution?: (number | null) | Institution;
+  photo?: (number | null) | Media;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "institutions".
+ */
+export interface Institution {
+  id: number;
+  name: string;
+  country: number | Country;
+  region?: (number | null) | ItalianRegion;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries".
+ */
+export interface Country {
+  id: number;
+  name: string;
+  code?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "italian-regions".
+ */
+export interface ItalianRegion {
+  id: number;
+  name: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "days".
+ */
+export interface Day {
+  id: number;
+  title: string;
+  date: string;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agenda-items".
+ */
+export interface AgendaItem {
+  id: number;
+  title: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  day: number | Day;
+  isKeynote?: boolean | null;
+  startTime?: string | null;
+  endTime?: string | null;
+  duration?: string | null;
+  /**
+   * Icon displayed beside session title.
+   */
+  icon?:
+    | (
+        | 'mic'
+        | 'users'
+        | 'presentation'
+        | 'flask-conical'
+        | 'coffee'
+        | 'utensils'
+        | 'award'
+        | 'book-open'
+        | 'stethoscope'
+        | 'dna'
+        | 'activity'
+        | 'video'
+        | 'message-square'
+        | 'music'
+        | 'check-circle'
+        | 'calendar'
+        | 'clock'
+        | 'map-pin'
+        | 'info'
+      )
+    | null;
+  /**
+   * Clicking this agenda item in the frontend will open the full-screen view for this abstract.
+   */
+  abstract?: (number | null) | Abstract;
+  /**
+   * Nested talks or sub-events under this session.
+   */
+  children?: (number | AgendaItem)[] | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -183,20 +551,60 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'conferences';
+        value: number | Conference;
+      } | null)
+    | ({
+        relationTo: 'days';
+        value: number | Day;
+      } | null)
+    | ({
+        relationTo: 'agenda-items';
+        value: number | AgendaItem;
+      } | null)
+    | ({
+        relationTo: 'abstracts';
+        value: number | Abstract;
+      } | null)
+    | ({
+        relationTo: 'abstract-statuses';
+        value: number | AbstractStatus;
+      } | null)
+    | ({
+        relationTo: 'abstract-contents';
+        value: number | AbstractContent;
+      } | null)
+    | ({
+        relationTo: 'people';
+        value: number | Person;
+      } | null)
+    | ({
+        relationTo: 'institutions';
+        value: number | Institution;
+      } | null)
+    | ({
+        relationTo: 'countries';
+        value: number | Country;
+      } | null)
+    | ({
+        relationTo: 'italian-regions';
+        value: number | ItalianRegion;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -206,10 +614,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -229,7 +637,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -247,6 +655,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -259,10 +668,156 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conferences_select".
+ */
+export interface ConferencesSelect<T extends boolean = true> {
+  editionName?: T;
+  editionYear?: T;
+  primaryColor?: T;
+  accentColor?: T;
+  logo?: T;
+  startDate?: T;
+  endDate?: T;
+  days?: T;
+  generalDescription?: T;
+  street?: T;
+  city?: T;
+  country?: T;
+  locationCoords?:
+    | T
+    | {
+        latitude?: T;
+        longitude?: T;
+      };
+  location?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "days_select".
+ */
+export interface DaysSelect<T extends boolean = true> {
+  title?: T;
+  date?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agenda-items_select".
+ */
+export interface AgendaItemsSelect<T extends boolean = true> {
+  title?: T;
+  day?: T;
+  isKeynote?: T;
+  startTime?: T;
+  endTime?: T;
+  duration?: T;
+  icon?: T;
+  abstract?: T;
+  children?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "abstracts_select".
+ */
+export interface AbstractsSelect<T extends boolean = true> {
+  code?: T;
+  status?: T;
+  title?: T;
+  content?: T;
+  authors?: T;
+  photos?: T;
+  speakers?: T;
+  mainSpeakers?:
+    | T
+    | {
+        speaker?: T;
+        isMain?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "abstract-statuses_select".
+ */
+export interface AbstractStatusesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  color?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "abstract-contents_select".
+ */
+export interface AbstractContentsSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people_select".
+ */
+export interface PeopleSelect<T extends boolean = true> {
+  firstName?: T;
+  lastName?: T;
+  institution?: T;
+  photo?: T;
+  bio?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "institutions_select".
+ */
+export interface InstitutionsSelect<T extends boolean = true> {
+  name?: T;
+  country?: T;
+  region?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries_select".
+ */
+export interface CountriesSelect<T extends boolean = true> {
+  name?: T;
+  code?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "italian-regions_select".
+ */
+export interface ItalianRegionsSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  caption?: T;
+  abstract?: T;
+  taggedPeople?: T;
+  cropFocus?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -274,6 +829,40 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        full?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -314,6 +903,29 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Select the conference edition to be featured and displayed on the public website.
+   */
+  activeConference: number | Conference;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  activeConference?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

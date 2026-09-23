@@ -1,59 +1,152 @@
-import { headers as getHeaders } from 'next/headers.js'
-import Image from 'next/image'
-import { getPayload } from 'payload'
 import React from 'react'
-import { fileURLToPath } from 'url'
+import { getPayload } from 'payload'
+import configPromise from '@/payload.config'
+import { Header } from '@/components/Header'
+import { HeroSection } from '@/components/HeroSection'
+import { ProgrammeSection } from '@/components/ProgrammeSection'
+import { VenueSection } from '@/components/VenueSection'
+import { AppendixSection } from '@/components/AppendixSection'
 
-import config from '@/payload.config'
-import './styles.css'
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
-  const headers = await getHeaders()
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
+  const payload = await getPayload({ config: configPromise })
 
-  const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`
+  // 1. Fetch active conference from Global site-settings
+  const siteSettings = await payload.findGlobal({
+    slug: 'site-settings',
+    depth: 3,
+  })
 
-  return (
-    <div className="home">
-      <div className="content">
-        <picture>
-          <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/3.x/packages/ui/src/assets/payload-favicon.svg" />
-          <Image
-            alt="Payload Logo"
-            height={65}
-            src="https://raw.githubusercontent.com/payloadcms/payload/3.x/packages/ui/src/assets/payload-favicon.svg"
-            width={65}
-          />
-        </picture>
-        {!user && <h1>Welcome to your new project.</h1>}
-        {user && <h1>Welcome back, {user.email}</h1>}
-        <div className="links">
+  const activeConf = siteSettings?.activeConference
+  const activeConferenceId =
+    typeof activeConf === 'object' && activeConf !== null ? activeConf.id : activeConf
+
+  if (!activeConferenceId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 text-center">
+        <div className="max-w-md p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center mx-auto mb-4">
+            FCC
+          </div>
+          <h1 className="text-xl font-bold text-slate-900 mb-2">No Active Conference Selected</h1>
+          <p className="text-sm text-slate-600 mb-6">
+            Please log in to the Payload CMS backoffice and select the active conference edition in Site Settings.
+          </p>
           <a
-            className="admin"
-            href={payloadConfig.routes.admin}
-            rel="noopener noreferrer"
-            target="_blank"
+            href="/admin"
+            className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-emerald-800 text-white font-semibold text-sm hover:bg-emerald-900 transition-colors"
           >
-            Go to admin panel
-          </a>
-          <a
-            className="docs"
-            href="https://payloadcms.com/docs"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Documentation
+            Go to Backoffice Admin
           </a>
         </div>
       </div>
-      <div className="footer">
-        <p>Update this page by editing</p>
-        <a className="codeLink" href={fileURL}>
-          <code>app/(frontend)/page.tsx</code>
-        </a>
-      </div>
+    )
+  }
+
+  // 2. Fetch full Conference details
+  const conference = await payload.findByID({
+    collection: 'conferences',
+    id: activeConferenceId,
+    depth: 4,
+  })
+
+  // 3. Extract Days
+  const rawDays = Array.isArray(conference.days) ? conference.days : []
+  const days = rawDays
+    .map((d: any) => (typeof d === 'object' && d !== null ? d : null))
+    .filter(Boolean)
+    .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+
+  const dayIds = days.map((d: any) => d.id)
+
+  // 4. Fetch Agenda Items for these days
+  const agendaItemsRes = await payload.find({
+    collection: 'agenda-items',
+    where: {
+      day: {
+        in: dayIds,
+      },
+    },
+    depth: 4,
+    limit: 200,
+  })
+  const agendaItems = agendaItemsRes.docs
+
+  // 5. Fetch all Abstracts for Appendix 1
+  const abstractsRes = await payload.find({
+    collection: 'abstracts',
+    depth: 4,
+    limit: 100,
+  })
+
+  // 6. Fetch all Institutions for Appendix 2
+  const institutionsRes = await payload.find({
+    collection: 'institutions',
+    depth: 2,
+    limit: 100,
+  })
+
+  // 7. Fetch all People for Appendix 3
+  const peopleRes = await payload.find({
+    collection: 'people',
+    depth: 3,
+    limit: 100,
+  })
+
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50/50">
+      {/* Dynamic Header */}
+      <Header
+        editionName={conference.editionName}
+        editionYear={conference.editionYear}
+        logo={conference.logo}
+        primaryColor={conference.primaryColor}
+      />
+
+      {/* Hero Overview */}
+      <HeroSection conference={conference} />
+
+      {/* Main Single Page Content */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        {/* 1. Programme Section */}
+        <ProgrammeSection days={days} agendaItems={agendaItems} />
+
+        {/* 2. Venue Section */}
+        <VenueSection conference={conference} />
+
+        {/* 3. Appendix Section */}
+        <AppendixSection
+          abstracts={abstractsRes.docs}
+          institutions={institutionsRes.docs}
+          people={peopleRes.docs}
+        />
+      </main>
+
+      {/* Institutional Footer */}
+      <footer className="border-t border-slate-200 bg-white py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-slate-800">FCC Annual Conference Platform</span>
+            <span>•</span>
+            <span>All official conference content is in English</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <a href="#programme" className="hover:text-emerald-800 transition-colors">
+              Programme
+            </a>
+            <a href="#venue" className="hover:text-emerald-800 transition-colors">
+              Venue
+            </a>
+            <a href="#appendix" className="hover:text-emerald-800 transition-colors">
+              Appendix
+            </a>
+            <a href="/admin" className="font-semibold text-emerald-700 hover:underline">
+              CMS Backoffice
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
