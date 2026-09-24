@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import { getPayload } from 'payload'
 import configPromise from '../payload.config'
 import { COUNTRIES } from './data/countries'
@@ -693,7 +695,33 @@ async function runSeed() {
     console.log('✅ Existing agenda items updated with linked abstracts.')
   }
 
-  // 11. Seed Conference
+  // 11. Seed Conference & Logo
+  let logoDoc: any = null
+  const publicLogoPath = path.resolve(process.cwd(), 'public', 'logo.png')
+  if (fs.existsSync(publicLogoPath)) {
+    const existingMedia = await payload.find({
+      collection: 'media',
+      where: {
+        filename: { equals: 'ffc-ricerca-logo.png' },
+      },
+    })
+    if (existingMedia.totalDocs > 0) {
+      logoDoc = existingMedia.docs[0]
+    } else {
+      const fileBuffer = fs.readFileSync(publicLogoPath)
+      logoDoc = await payload.create({
+        collection: 'media',
+        data: { alt: 'FFC Ricerca Logo' },
+        file: {
+          data: fileBuffer,
+          mimetype: 'image/png',
+          name: 'ffc-ricerca-logo.png',
+          size: fileBuffer.length,
+        },
+      })
+    }
+  }
+
   const existingConferences = await payload.find({
     collection: 'conferences',
     limit: 1,
@@ -713,6 +741,7 @@ async function runSeed() {
           ],
         ]),
         editionYear: 2026,
+        logo: logoDoc ? logoDoc.id : undefined,
         primaryColor: '#0d5c3a',
         accentColor: '#2ecc71',
         startDate: '2026-10-22T08:30:00.000Z',
@@ -738,6 +767,15 @@ async function runSeed() {
     console.log('✅ Conference created.')
   } else {
     confDoc = existingConferences.docs[0]
+    if (logoDoc && !confDoc.logo) {
+      await payload.update({
+        collection: 'conferences',
+        id: confDoc.id,
+        data: {
+          logo: logoDoc.id,
+        },
+      })
+    }
   }
 
   // 12. Update Global Site Settings

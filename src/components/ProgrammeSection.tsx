@@ -288,14 +288,14 @@ function AgendaItemCard({
               aria-label={`Toggle ${item.children.length} sub-sessions`}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
-              <span>{isExpanded ? 'Hide Sub-sessions' : `Show Sub-sessions (${item.children.length})`}</span>
+              <span>{isExpanded ? `Hide Sub-sessions (${item.children.length})` : `Show Sub-sessions (${item.children.length})`}</span>
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-200 ${
                   isExpanded ? 'rotate-180' : ''
                 }`}
               />
             </button>
-            <span className="text-xs text-slate-500 italic">Parallel tracks / Sub-talks</span>
+            {/* <span className="text-xs text-slate-500 italic">Parallel tracks / Sub-talks</span> */}
           </div>
         )}
       </div>

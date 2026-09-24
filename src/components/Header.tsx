@@ -46,13 +46,16 @@ export function Header({ editionName, editionYear, logo }: HeaderProps) {
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={logo.url}
-                alt="Conference logo"
-                className="h-10 w-auto object-contain rounded"
+                alt="FFC Ricerca Logo"
+                className="h-10 sm:h-11 w-auto object-contain rounded"
               />
             ) : (
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-800 to-emerald-600 text-white font-black flex items-center justify-center shadow-xs text-sm tracking-wider">
-                FCC
-              </div>
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src="/logo.png"
+                alt="FFC Ricerca Logo"
+                className="h-10 sm:h-11 w-auto object-contain rounded"
+              />
             )}
             <div className="leading-tight">
               <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 block">

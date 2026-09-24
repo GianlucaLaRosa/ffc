@@ -26,9 +26,12 @@ export default async function HomePage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 text-center">
         <div className="max-w-md p-8 rounded-2xl bg-white border border-slate-200 shadow-sm">
-          <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center mx-auto mb-4">
-            FCC
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo.png"
+            alt="FFC Ricerca Logo"
+            className="w-12 h-12 object-contain mx-auto mb-4"
+          />
           <h1 className="text-xl font-bold text-slate-900 mb-2">No Active Conference Selected</h1>
           <p className="text-sm text-slate-600 mb-6">
             Please log in to the Payload CMS backoffice and select the active conference edition in Site Settings.
