@@ -73,7 +73,6 @@ export interface Config {
     'agenda-items': AgendaItem;
     abstracts: Abstract;
     'abstract-statuses': AbstractStatus;
-    'abstract-contents': AbstractContent;
     people: Person;
     institutions: Institution;
     countries: Country;
@@ -92,7 +91,6 @@ export interface Config {
     'agenda-items': AgendaItemsSelect<false> | AgendaItemsSelect<true>;
     abstracts: AbstractsSelect<false> | AbstractsSelect<true>;
     'abstract-statuses': AbstractStatusesSelect<false> | AbstractStatusesSelect<true>;
-    'abstract-contents': AbstractContentsSelect<false> | AbstractContentsSelect<true>;
     people: PeopleSelect<false> | PeopleSelect<true>;
     institutions: InstitutionsSelect<false> | InstitutionsSelect<true>;
     countries: CountriesSelect<false> | CountriesSelect<true>;
@@ -322,9 +320,29 @@ export interface Abstract {
     [k: string]: unknown;
   };
   /**
-   * Select content sections in order (e.g. Background, Methods, Results, Conclusions).
+   * Add, order, and edit content sections directly for this abstract (e.g. Background, Methods, Results, Conclusions).
    */
-  content?: (number | AbstractContent)[] | null;
+  content?:
+    | {
+        title?: string | null;
+        description: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        id?: string | null;
+      }[]
+    | null;
   authors?: (number | Person)[] | null;
   photos?: (number | Media)[] | null;
   speakers?: (number | Person)[] | null;
@@ -351,31 +369,6 @@ export interface AbstractStatus {
   name: string;
   slug?: string | null;
   color?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "abstract-contents".
- */
-export interface AbstractContent {
-  id: number;
-  title?: string | null;
-  description: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
   updatedAt: string;
   createdAt: string;
 }
@@ -579,10 +572,6 @@ export interface PayloadLockedDocument {
         value: number | AbstractStatus;
       } | null)
     | ({
-        relationTo: 'abstract-contents';
-        value: number | AbstractContent;
-      } | null)
-    | ({
         relationTo: 'people';
         value: number | Person;
       } | null)
@@ -731,7 +720,13 @@ export interface AbstractsSelect<T extends boolean = true> {
   code?: T;
   status?: T;
   title?: T;
-  content?: T;
+  content?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
   authors?: T;
   photos?: T;
   speakers?: T;
@@ -754,16 +749,6 @@ export interface AbstractStatusesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   color?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "abstract-contents_select".
- */
-export interface AbstractContentsSelect<T extends boolean = true> {
-  title?: T;
-  description?: T;
   updatedAt?: T;
   createdAt?: T;
 }

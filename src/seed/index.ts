@@ -227,120 +227,246 @@ async function runSeed() {
   }
   console.log(`✅ People ready (${peopleDocs.length}).`)
 
-  // 7. Seed Abstract Contents
-  const contentsData = [
+  // 7. Abstract Content Sections & Abstracts Seeding
+  const abstractsToSeed = [
     {
-      title: 'Background & Therapeutic Rationale',
-      description: createLexicalDoc([
-        'Cystic fibrosis (CF) is caused by mutations in the CFTR gene leading to impaired epithelial ion transport.',
-        'While small-molecule modulators have revolutionized care for patients with F508del mutations, unmet medical needs persist for rare non-responsive genotypes.',
+      code: 'CF-2026-PL01',
+      title: createLexicalDoc([
+        [
+          { text: 'Next-Generation ' },
+          { text: 'CFTR Modulators', bold: true },
+          { text: ' and Personalized Rescue in ' },
+          { text: 'Rare Genotypes', italic: true },
+        ],
       ]),
+      status: statusMap.get('ongoing')?.id,
+      authors: [peopleDocs[0].id, peopleDocs[1].id, peopleDocs[3].id],
+      speakers: [peopleDocs[0].id, peopleDocs[1].id],
+      mainSpeakers: [
+        { speaker: peopleDocs[0].id, isMain: true },
+        { speaker: peopleDocs[1].id, isMain: false },
+      ],
+      content: [
+        {
+          title: 'Background & Therapeutic Rationale',
+          description: createLexicalDoc([
+            'Cystic fibrosis (CF) is caused by mutations in the CFTR gene leading to impaired epithelial ion transport.',
+            'While small-molecule modulators have revolutionized care for patients with F508del mutations, unmet medical needs persist for rare non-responsive genotypes.',
+          ]),
+        },
+        {
+          title: 'Methods & Experimental Design',
+          description: createLexicalDoc([
+            'Primary human nasal and bronchial epithelial cultures were obtained from consented patients and cultured at the air-liquid interface (ALI).',
+            'Transepithelial electrical resistance (TEER) and equivalent short-circuit current (Ieq) were monitored before and after sequential addition of novel candidate molecules.',
+          ]),
+        },
+        {
+          title: 'Results & Clinical Biomarkers',
+          description: createLexicalDoc([
+            'Candidate compound FCC-2026 restored CFTR-mediated chloride transport to 48% of wild-type levels in cell lines bearing class I and II stop mutations.',
+            'No cellular toxicity was observed at effective concentrations up to 50 μM in primary organoids over 14 days of sustained exposure.',
+          ]),
+        },
+        {
+          title: 'Conclusions & Next Steps',
+          description: createLexicalDoc([
+            'Dual-action combinatorial regimens show synergistic restoration of airway surface liquid depth and mucociliary clearance in vitro.',
+            'Phase 1 clinical evaluation protocol is under review by regulatory authorities for initiation in Q1 2027.',
+          ]),
+        },
+      ],
     },
     {
-      title: 'Methods & Experimental Design',
-      description: createLexicalDoc([
-        'Primary human nasal and bronchial epithelial cultures were obtained from consented patients and cultured at the air-liquid interface (ALI).',
-        'Transepithelial electrical resistance (TEER) and equivalent short-circuit current (Ieq) were monitored before and after sequential addition of novel candidate molecules.',
+      code: 'CF-2026-OR04',
+      title: createLexicalDoc([
+        [
+          { text: 'Nanocarrier Delivery Overcomes ' },
+          { text: 'P. aeruginosa', italic: true },
+          { text: ' Biofilm Barriers in Airway Mucus', bold: true },
+        ],
       ]),
+      status: statusMap.get('concluded')?.id,
+      authors: [peopleDocs[2].id, peopleDocs[4].id],
+      speakers: [peopleDocs[2].id],
+      mainSpeakers: [{ speaker: peopleDocs[2].id, isMain: true }],
+      content: [
+        {
+          title: 'Biofilm Dynamics & Antibiotic Synergy',
+          description: createLexicalDoc([
+            'Investigation of polymicrobial biofilm architectures established by Pseudomonas aeruginosa and Staphylococcus aureus in hypoxic artificial mucus.',
+            'Novel delivery nanoparticles demonstrated 5-fold penetration increase through exopolysaccharide matrix.',
+          ]),
+        },
+        {
+          title: 'Conclusions & Clinical Translation',
+          description: createLexicalDoc([
+            'Targeted nanocarriers effectively disruption mucus-embedded bacterial colonies at one-fourth the standard tobramycin dosage.',
+            'In vivo validation demonstrates reduced lung inflammation and improved bacterial clearance kinetics in preclinical models.',
+          ]),
+        },
+      ],
     },
     {
-      title: 'Results & Clinical Biomarkers',
-      description: createLexicalDoc([
-        'Candidate compound FCC-2026 restored CFTR-mediated chloride transport to 48% of wild-type levels in cell lines bearing class I and II stop mutations.',
-        'No cellular toxicity was observed at effective concentrations up to 50 μM in primary organoids over 14 days of sustained exposure.',
+      code: 'CF-2026-CT02',
+      title: createLexicalDoc([
+        [
+          { text: 'Clinical Trials Update: Phase 2 Evaluation of ' },
+          { text: 'Stop-Codon Readthrough', bold: true },
+          { text: ' Agents in ' },
+          { text: 'Nonsense CFTR Mutations', italic: true },
+        ],
       ]),
+      status: statusMap.get('ongoing')?.id,
+      authors: [peopleDocs[3].id, peopleDocs[0].id, peopleDocs[4].id],
+      speakers: [peopleDocs[3].id],
+      mainSpeakers: [{ speaker: peopleDocs[3].id, isMain: true }],
+      content: [
+        {
+          title: 'Background & Trial Rationale',
+          description: createLexicalDoc([
+            'Premature termination codons (PTCs) account for approximately 11% of CF alleles worldwide and are refractory to current CFTR potentiators and correctors.',
+            'Novel translational readthrough-inducing molecules promote ribosomal bypassing of stop codons, enabling full-length functional protein synthesis.',
+          ]),
+        },
+        {
+          title: 'Study Design & Cohort Characteristics',
+          description: createLexicalDoc([
+            'Multicenter double-blind crossover study involving 48 adult CF patients harboring at least one nonsense allele (W1282X, G542X, or R553X).',
+            'Primary outcome measures included safety, sweat chloride concentration change, and spirometric markers (FEV1%) over a 16-week period.',
+          ]),
+        },
+        {
+          title: 'Interim Results & Sweat Chloride Kinetics',
+          description: createLexicalDoc([
+            'A statistically significant mean reduction in sweat chloride of -17.2 mmol/L (p < 0.005) was documented in patients receiving active therapy.',
+            'Improvements correlated with detectable CFTR apical immunostaining in nasal brushings obtained at week 8.',
+          ]),
+        },
+        {
+          title: 'Conclusions & Outlook',
+          description: createLexicalDoc([
+            'Translational readthrough therapy represents a viable pathway toward universal therapeutic access for patients with refractory premature stop codons.',
+            'Pivotal Phase 3 international trial protocols are being finalized for submission.',
+          ]),
+        },
+      ],
     },
     {
-      title: 'Conclusions & Next Steps',
-      description: createLexicalDoc([
-        'Dual-action combinatorial regimens show synergistic restoration of airway surface liquid depth and mucociliary clearance in vitro.',
-        'Phase 1 clinical evaluation protocol is under review by regulatory authorities for initiation in Q1 2027.',
+      code: 'CF-2026-PL02',
+      title: createLexicalDoc([
+        [
+          { text: 'In Vivo mRNA & ' },
+          { text: 'Genetic Delivery Vehicles', bold: true },
+          { text: ': Targeted Nanomedicine for Respiratory Epithelia', italic: true },
+        ],
       ]),
+      status: statusMap.get('new')?.id,
+      authors: [peopleDocs[4].id, peopleDocs[1].id, peopleDocs[2].id],
+      speakers: [peopleDocs[4].id, peopleDocs[1].id],
+      mainSpeakers: [
+        { speaker: peopleDocs[4].id, isMain: true },
+        { speaker: peopleDocs[1].id, isMain: false },
+      ],
+      content: [
+        {
+          title: 'Background & Physiological Barriers',
+          description: createLexicalDoc([
+            'Non-viral nucleic acid delivery to the cystic fibrosis airway must overcome both dense viscoelastic mucus barriers and tight apical epithelial junctions.',
+            'Engineered lipid nanoparticles (LNPs) offer potential for repeatable, non-immunogenic pulmonary aerosolization.',
+          ]),
+        },
+        {
+          title: 'Nanoparticle Formulation & In Vitro Transfection',
+          description: createLexicalDoc([
+            'Optimized ionizable lipid libraries were screened using high-throughput microfluidics to formulate CFTR-mRNA encapsulating nanoparticles.',
+            'Formulations showed 78% cellular uptake in well-differentiated human primary airway epithelial cultures with negligible cytotoxicity.',
+          ]),
+        },
+        {
+          title: 'Electrophysiological Rescue',
+          description: createLexicalDoc([
+            'Ussing chamber recordings confirmed restoration of cyclic-AMP stimulated transepithelial chloride transport to 52% of wild-type control levels.',
+            'Protein stability persisted through 72 hours post-single nebulization in vitro.',
+          ]),
+        },
+        {
+          title: 'Conclusions & Translation',
+          description: createLexicalDoc([
+            'Inhaled mRNA-LNP platforms provide a genotype-agnostic therapeutic route that could ultimately cure CF respiratory manifestations regardless of mutation class.',
+          ]),
+        },
+      ],
     },
     {
-      title: 'Biofilm Dynamics & Antibiotic Synergy',
-      description: createLexicalDoc([
-        'Investigation of polymicrobial biofilm architectures established by Pseudomonas aeruginosa and Staphylococcus aureus in hypoxic artificial mucus.',
-        'Novel delivery nanoparticles demonstrated 5-fold penetration increase through exopolysaccharide matrix.',
+      code: 'CF-2026-OR08',
+      title: createLexicalDoc([
+        [
+          { text: 'Digital Health Biomarkers and ' },
+          { text: 'Home Spirometry', bold: true },
+          { text: ' in Assessing Long-Term Multidisciplinary Outcomes' },
+        ],
       ]),
+      status: statusMap.get('new')?.id,
+      authors: [peopleDocs[1].id, peopleDocs[3].id, peopleDocs[0].id],
+      speakers: [peopleDocs[1].id],
+      mainSpeakers: [{ speaker: peopleDocs[1].id, isMain: true }],
+      content: [
+        {
+          title: 'Introduction & Telemedicine Landscape',
+          description: createLexicalDoc([
+            'The integration of connected spirometers, pulse oximeters, and patient-reported digital symptom diaries has transformed CF follow-up care.',
+            'Machine learning predictive modeling allows real-time forecasting of acute pulmonary exacerbations.',
+          ]),
+        },
+        {
+          title: 'Cohort & Data Modeling',
+          description: createLexicalDoc([
+            'Prospective 24-month longitudinal cohort of 135 pediatric and adult CF individuals transmitting daily digital biometric tele-readings.',
+            'Random forest models trained on diurnal FEV1 oscillations and cough patterns were evaluated against clinical diagnosis benchmarks.',
+          ]),
+        },
+        {
+          title: 'Clinical Outcomes & Exacerbation Prevention',
+          description: createLexicalDoc([
+            'The algorithm predicted pulmonary exacerbation onset an average of 4.8 days prior to emergency presentations (AUC: 0.89).',
+            'Early remote intervention resulted in a 36% reduction in intravenous antibiotic days across the study period.',
+          ]),
+        },
+        {
+          title: 'Conclusions',
+          description: createLexicalDoc([
+            'Digital home monitoring combined with proactive clinical alerts significantly preserves lung function and enhances multidisciplinary care coordination.',
+          ]),
+        },
+      ],
     },
   ]
 
-  let contentDocs: any[] = []
-  for (const c of contentsData) {
+  // 8. Upsert Abstracts (ensuring embedded content sections)
+  let abstractMap = new Map<string, any>()
+  for (const a of abstractsToSeed) {
     const existing = await payload.find({
-      collection: 'abstract-contents',
-      where: { title: { equals: c.title } },
+      collection: 'abstracts',
+      where: { code: { equals: a.code } },
       limit: 1,
     })
     if (existing.totalDocs === 0) {
       const created = await payload.create({
-        collection: 'abstract-contents',
-        data: c,
+        collection: 'abstracts',
+        data: a,
       })
-      contentDocs.push(created)
+      abstractMap.set(a.code, created)
     } else {
-      contentDocs.push(existing.docs[0])
+      const updated = await payload.update({
+        collection: 'abstracts',
+        id: existing.docs[0].id,
+        data: a,
+      })
+      abstractMap.set(a.code, updated)
     }
   }
-  console.log(`✅ Abstract contents ready (${contentDocs.length}).`)
-
-  // 8. Seed Abstracts
-  const existingAbstracts = await payload.find({
-    collection: 'abstracts',
-    limit: 2,
-  })
-
-  let abstractDocs: any[] = []
-  if (existingAbstracts.totalDocs === 0) {
-    console.log('🔬 Seeding sample scientific abstracts...')
-    const abs1 = await payload.create({
-      collection: 'abstracts',
-      data: {
-        code: 'CF-2026-PL01',
-        title: createLexicalDoc([
-          [
-            { text: 'Next-Generation ' },
-            { text: 'CFTR Modulators', bold: true },
-            { text: ' and Personalized Rescue in ' },
-            { text: 'Rare Genotypes', italic: true },
-          ],
-        ]),
-        status: statusMap.get('ongoing')?.id,
-        content: [contentDocs[0].id, contentDocs[1].id, contentDocs[2].id, contentDocs[3].id],
-        authors: [peopleDocs[0].id, peopleDocs[1].id, peopleDocs[3].id],
-        speakers: [peopleDocs[0].id, peopleDocs[1].id],
-        mainSpeakers: [
-          { speaker: peopleDocs[0].id, isMain: true },
-          { speaker: peopleDocs[1].id, isMain: false },
-        ],
-      },
-    })
-    abstractDocs.push(abs1)
-
-    const abs2 = await payload.create({
-      collection: 'abstracts',
-      data: {
-        code: 'CF-2026-OR04',
-        title: createLexicalDoc([
-          [
-            { text: 'Nanocarrier Delivery Overcomes ' },
-            { text: 'P. aeruginosa', italic: true },
-            { text: ' Biofilm Barriers in Airway Mucus', bold: true },
-          ],
-        ]),
-        status: statusMap.get('concluded')?.id,
-        content: [contentDocs[4].id, contentDocs[3].id],
-        authors: [peopleDocs[2].id, peopleDocs[4].id],
-        speakers: [peopleDocs[2].id],
-        mainSpeakers: [{ speaker: peopleDocs[2].id, isMain: true }],
-      },
-    })
-    abstractDocs.push(abs2)
-    console.log('✅ Abstracts created.')
-  } else {
-    abstractDocs = existingAbstracts.docs
-  }
+  console.log(`✅ Abstracts ready (${abstractMap.size}) with embedded content sections.`)
 
   // 9. Seed Days
   let dayDocs: any[] = []
@@ -372,7 +498,7 @@ async function runSeed() {
     dayDocs = existingDays.docs
   }
 
-  // 10. Seed Agenda Items
+  // 10. Seed Agenda Items & Link to Abstracts
   const existingAgenda = await payload.find({
     collection: 'agenda-items',
     limit: 1,
@@ -391,7 +517,7 @@ async function runSeed() {
         endTime: '2026-10-22T11:45:00.000Z',
         duration: '45 min',
         icon: 'dna',
-        abstract: abstractDocs[1]?.id,
+        abstract: abstractMap.get('CF-2026-OR04')?.id,
         description: createLexicalDoc(['Detailed presentation on mucus rheology and biofilm clearance mechanics.']),
       },
     })
@@ -405,6 +531,7 @@ async function runSeed() {
         endTime: '2026-10-22T12:30:00.000Z',
         duration: '45 min',
         icon: 'stethoscope',
+        abstract: abstractMap.get('CF-2026-CT02')?.id,
         description: createLexicalDoc(['Overview of international multicenter trial cohorts and safety endpoints.']),
       },
     })
@@ -438,7 +565,7 @@ async function runSeed() {
         duration: '1h 15m',
         isKeynote: true,
         icon: 'presentation',
-        abstract: abstractDocs[0]?.id,
+        abstract: abstractMap.get('CF-2026-PL01')?.id,
         description: createLexicalDoc(['Opening keynote reviewing milestones and future roadmap in CF curative medicine.']),
       },
     })
@@ -481,7 +608,7 @@ async function runSeed() {
         endTime: '2026-10-22T16:00:00.000Z',
         duration: '2h',
         icon: 'mic',
-        abstract: abstractDocs[1]?.id,
+        abstract: abstractMap.get('CF-2026-OR04')?.id,
         description: createLexicalDoc(['Selected short oral communications from abstract reviewers.']),
       },
     })
@@ -502,6 +629,7 @@ async function runSeed() {
         duration: '1h 15m',
         isKeynote: true,
         icon: 'presentation',
+        abstract: abstractMap.get('CF-2026-PL02')?.id,
         description: createLexicalDoc(['Frontier technologies in nucleic acid delivery systems and lipid nanoparticles.']),
       },
     })
@@ -517,6 +645,7 @@ async function runSeed() {
         endTime: '2026-10-23T12:30:00.000Z',
         duration: '1h 45m',
         icon: 'message-square',
+        abstract: abstractMap.get('CF-2026-OR08')?.id,
         description: createLexicalDoc(['Panel discussion bringing together clinicians, nurses, physiotherapists, and patient advocates.']),
       },
     })
@@ -533,7 +662,35 @@ async function runSeed() {
         description: createLexicalDoc(['Presentation of the best scientific contributions and formal conference adjournment.']),
       },
     })
-    console.log('✅ Agenda items created.')
+    console.log('✅ Agenda items created with linked abstracts.')
+  } else {
+    // Update existing agenda items to link the new abstracts
+    const allAgenda = await payload.find({
+      collection: 'agenda-items',
+      limit: 50,
+    })
+
+    const linksByStartTime: Record<string, any> = {
+      '2026-10-22T09:15:00.000Z': abstractMap.get('CF-2026-PL01')?.id,
+      '2026-10-22T11:00:00.000Z': abstractMap.get('CF-2026-OR04')?.id,
+      '2026-10-22T11:45:00.000Z': abstractMap.get('CF-2026-CT02')?.id,
+      '2026-10-22T14:00:00.000Z': abstractMap.get('CF-2026-OR04')?.id,
+      '2026-10-23T09:00:00.000Z': abstractMap.get('CF-2026-PL02')?.id,
+      '2026-10-23T10:45:00.000Z': abstractMap.get('CF-2026-OR08')?.id,
+    }
+
+    for (const item of allAgenda.docs) {
+      if (item.startTime && linksByStartTime[item.startTime]) {
+        await payload.update({
+          collection: 'agenda-items',
+          id: item.id,
+          data: {
+            abstract: linksByStartTime[item.startTime],
+          },
+        })
+      }
+    }
+    console.log('✅ Existing agenda items updated with linked abstracts.')
   }
 
   // 11. Seed Conference

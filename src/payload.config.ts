@@ -12,7 +12,6 @@ import { Days } from './collections/Days'
 import { AgendaItems } from './collections/AgendaItems'
 import { Abstracts } from './collections/Abstracts'
 import { AbstractStatuses } from './collections/AbstractStatuses'
-import { AbstractContents } from './collections/AbstractContents'
 import { People } from './collections/People'
 import { Institutions } from './collections/Institutions'
 import { Countries } from './collections/Countries'
@@ -37,7 +36,6 @@ export default buildConfig({
     AgendaItems,
     Abstracts,
     AbstractStatuses,
-    AbstractContents,
     People,
     Institutions,
     Countries,

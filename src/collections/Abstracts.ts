@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { limitedRichTextEditor } from '../fields/lexicalEditors'
+import { limitedRichTextEditor, fullRichTextEditor } from '../fields/lexicalEditors'
 
 export const Abstracts: CollectionConfig = {
   slug: 'abstracts',
@@ -74,13 +74,30 @@ export const Abstracts: CollectionConfig = {
     },
     {
       name: 'content',
-      type: 'relationship',
-      relationTo: 'abstract-contents',
-      hasMany: true,
-      label: 'Content Sections (Ordered 1-to-many)',
-      admin: {
-        description: 'Select content sections in order (e.g. Background, Methods, Results, Conclusions).',
+      type: 'array',
+      label: 'Content Sections',
+      labels: {
+        singular: 'Content Section',
+        plural: 'Content Sections',
       },
+      admin: {
+        description:
+          'Add, order, and edit content sections directly for this abstract (e.g. Background, Methods, Results, Conclusions).',
+      },
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          label: 'Section Title (e.g. Background, Methods, Results, Conclusion)',
+        },
+        {
+          name: 'description',
+          type: 'richText',
+          editor: fullRichTextEditor,
+          required: true,
+          label: 'Content (Full Rich Text with tables, media, and formatting)',
+        },
+      ],
     },
     {
       name: 'authors',

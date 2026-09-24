@@ -63,9 +63,6 @@ export function ProgrammeSection({ days, agendaItems }: ProgrammeSectionProps) {
             Conference Programme
           </h2>
         </div>
-        <p className="text-xs text-slate-500 max-w-xs sm:text-right">
-          All times displayed in local time (CET). Click any presentation with an abstract to inspect full details.
-        </p>
       </div>
 
       <div className="space-y-4">
