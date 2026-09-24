@@ -60,6 +60,7 @@ export const Abstracts: CollectionConfig = {
           label: 'Abstract Status',
           admin: {
             width: '50%',
+            sortOptions: 'order',
           },
         },
       ],

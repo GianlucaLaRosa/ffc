@@ -76,9 +76,9 @@ async function runSeed() {
 
   // 4. Seed Abstract Statuses
   const statusSlugs = [
-    { name: 'New', slug: 'new', color: '#3b82f6' },
-    { name: 'Ongoing', slug: 'ongoing', color: '#f59e0b' },
-    { name: 'Concluded', slug: 'concluded', color: '#10b981' },
+    { name: 'New', slug: 'new', color: '#3b82f6', order: 1 },
+    { name: 'Ongoing', slug: 'ongoing', color: '#f59e0b', order: 2 },
+    { name: 'Concluded', slug: 'concluded', color: '#10b981', order: 3 },
   ]
 
   let statusMap = new Map<string, any>()
@@ -96,7 +96,15 @@ async function runSeed() {
       })
       statusMap.set(s.slug, created)
     } else {
-      statusMap.set(s.slug, existing.docs[0])
+      const updated = await payload.update({
+        collection: 'abstract-statuses',
+        id: existing.docs[0].id,
+        data: {
+          order: s.order,
+          color: s.color,
+        },
+      })
+      statusMap.set(s.slug, updated)
     }
   }
   console.log('✅ Abstract statuses ready: new, ongoing, concluded.')

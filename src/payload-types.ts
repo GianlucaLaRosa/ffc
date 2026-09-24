@@ -347,6 +347,7 @@ export interface Abstract {
  */
 export interface AbstractStatus {
   id: number;
+  order?: number | null;
   name: string;
   slug?: string | null;
   color?: string | null;
@@ -749,6 +750,7 @@ export interface AbstractsSelect<T extends boolean = true> {
  * via the `definition` "abstract-statuses_select".
  */
 export interface AbstractStatusesSelect<T extends boolean = true> {
+  order?: T;
   name?: T;
   slug?: T;
   color?: T;
