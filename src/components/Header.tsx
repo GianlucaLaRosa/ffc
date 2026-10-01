@@ -83,16 +83,6 @@ export function Header({ editionName, editionYear, logo }: HeaderProps) {
                 </a>
               )
             })}
-
-            <div className="h-5 w-px bg-slate-200 mx-2" />
-
-            <a
-              href="/admin"
-              className="px-3.5 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors inline-flex items-center gap-1.5"
-            >
-              <span>Backoffice</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
           </nav>
 
           {/* Mobile menu hamburger button */}
@@ -106,9 +96,19 @@ export function Header({ editionName, editionYear, logo }: HeaderProps) {
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 )}
               </svg>
             </button>

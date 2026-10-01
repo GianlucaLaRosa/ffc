@@ -34,7 +34,8 @@ export default async function HomePage() {
           />
           <h1 className="text-xl font-bold text-slate-900 mb-2">No Active Conference Selected</h1>
           <p className="text-sm text-slate-600 mb-6">
-            Please log in to the Payload CMS backoffice and select the active conference edition in Site Settings.
+            Please log in to the Payload CMS backoffice and select the active conference edition in
+            Site Settings.
           </p>
           <a
             href="/admin"
@@ -129,11 +130,6 @@ export default async function HomePage() {
       {/* Institutional Footer */}
       <footer className="border-t border-slate-200 bg-white py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800">FCC Annual Conference Platform</span>
-            <span>•</span>
-            <span>All official conference content is in English</span>
-          </div>
           <div className="flex items-center gap-4">
             <a href="#programme" className="hover:text-emerald-800 transition-colors">
               Programme
@@ -143,9 +139,6 @@ export default async function HomePage() {
             </a>
             <a href="#appendix" className="hover:text-emerald-800 transition-colors">
               Appendix
-            </a>
-            <a href="/admin" className="font-semibold text-emerald-700 hover:underline">
-              CMS Backoffice
             </a>
           </div>
         </div>

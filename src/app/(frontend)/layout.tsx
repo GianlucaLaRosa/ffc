@@ -3,9 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './styles.css'
 
 export const metadata: Metadata = {
-  title: 'FCC Scientific Conference - Official Programme & Abstracts',
-  description:
-    'Official single-page conference application and research directory for the Annual Cystic Fibrosis Scientific Conference.',
+  title: 'FFC Scientific Conference - Official Programme & Abstracts',
+  description: 'Official conference application for the Cystic Fibrosis Scientific Conference.',
   manifest: '/manifest.json',
   icons: {
     icon: '/favicon.ico',
@@ -24,10 +23,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <meta name="application-name" content="FCC Conference" />
+        <meta name="application-name" content="FFC Conference" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="FCC Conference" />
+        <meta name="apple-mobile-web-app-title" content="FFC Conference" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>

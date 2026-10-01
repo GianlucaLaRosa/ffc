@@ -1,7 +1,7 @@
 {
-  "name": "FCC Annual Conference",
-  "short_name": "FCC Conf",
-  "description": "Annual Cystic Fibrosis Research Conference Application",
+  "name": "FFC Conference",
+  "short_name": "FFC Conf",
+  "description": "Cystic Fibrosis Research Conference App",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

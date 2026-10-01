@@ -1,7 +1,7 @@
 {
-  "name": "fcc-conference",
+  "name": "ffc-conference",
   "version": "1.0.0",
-  "description": "FCC Conference Platform - Payload CMS v3 & Next.js",
+  "description": "FFC Conference Platform - Payload CMS v3 & Next.js",
   "license": "MIT",
   "type": "module",
   "scripts": {
