@@ -7,6 +7,7 @@ import { ProgrammeSection } from '@/components/ProgrammeSection'
 import { VenueSection } from '@/components/VenueSection'
 import { AppendixSection } from '@/components/AppendixSection'
 import { Footer } from '@/components/Footer'
+import { ModalProvider } from '@/context/ModalContext'
 
 export const dynamic = 'force-dynamic'
 
@@ -99,37 +100,66 @@ export default async function HomePage() {
     limit: 100,
   })
 
+  // 8. Combine all available abstracts for fast lookup and modal deep-linking
+  const allAbstractsMap = new Map<string, any>()
+  for (const a of abstractsRes.docs) {
+    if (a?.id) allAbstractsMap.set(String(a.id), a)
+  }
+  for (const item of agendaItems) {
+    const itemAbstract = item.abstract as any
+    if (itemAbstract && typeof itemAbstract === 'object' && itemAbstract.id) {
+      allAbstractsMap.set(String(itemAbstract.id), itemAbstract)
+    }
+    if (Array.isArray(item.children)) {
+      for (const child of item.children) {
+        const childObj = child as any
+        if (
+          childObj &&
+          typeof childObj === 'object' &&
+          childObj.abstract &&
+          typeof childObj.abstract === 'object' &&
+          childObj.abstract.id
+        ) {
+          allAbstractsMap.set(String(childObj.abstract.id), childObj.abstract)
+        }
+      }
+    }
+  }
+  const allAbstracts = Array.from(allAbstractsMap.values())
+
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/50">
-      {/* Dynamic Header */}
-      <Header
-        editionName={conference.editionName}
-        editionYear={conference.editionYear}
-        logo={conference.logo}
-        primaryColor={conference.primaryColor}
-      />
-
-      {/* Hero Overview */}
-      <HeroSection conference={conference} />
-
-      {/* Main Single Page Content */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        {/* 1. Programme Section */}
-        <ProgrammeSection days={days} agendaItems={agendaItems} />
-
-        {/* 2. Venue Section */}
-        <VenueSection conference={conference} />
-
-        {/* 3. Appendix Section */}
-        <AppendixSection
-          abstracts={abstractsRes.docs}
-          institutions={institutionsRes.docs}
-          people={peopleRes.docs}
+    <ModalProvider allAbstracts={allAbstracts}>
+      <div className="min-h-screen flex flex-col bg-slate-50/50">
+        {/* Dynamic Header */}
+        <Header
+          editionName={conference.editionName}
+          editionYear={conference.editionYear}
+          logo={conference.logo}
+          primaryColor={conference.primaryColor}
         />
-      </main>
 
-      {/* Institutional Footer */}
-      <Footer editionYear={conference.editionYear} />
-    </div>
+        {/* Hero Overview */}
+        <HeroSection conference={conference} />
+
+        {/* Main Single Page Content */}
+        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+          {/* 1. Programme Section */}
+          <ProgrammeSection days={days} agendaItems={agendaItems} />
+
+          {/* 2. Venue Section */}
+          <VenueSection conference={conference} />
+
+          {/* 3. Appendix Section */}
+          <AppendixSection
+            abstracts={abstractsRes.docs}
+            institutions={institutionsRes.docs}
+            people={peopleRes.docs}
+          />
+        </main>
+
+        {/* Institutional Footer */}
+        <Footer editionYear={conference.editionYear} />
+      </div>
+    </ModalProvider>
   )
 }

@@ -41,7 +41,7 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
   const mainSpeakerIds = new Set(
     mainSpeakerItems
       .filter((m: any) => m.isMain)
-      .map((m: any) => (typeof m.speaker === 'object' ? m.speaker?.id : m.speaker))
+      .map((m: any) => (typeof m.speaker === 'object' ? m.speaker?.id : m.speaker)),
   )
 
   const speakers = Array.isArray(abstract.speakers) ? abstract.speakers : []
@@ -58,8 +58,12 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
       role="dialog"
       aria-modal="true"
       aria-labelledby="abstract-modal-title"
+      onClick={onClose}
     >
-      <div className="relative w-full max-w-4xl h-[92vh] sm:h-[88vh] bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div
+        className="relative w-full max-w-4xl h-full sm:h-[88vh] bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header Bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50/90 backdrop-blur shrink-0">
           <div className="flex items-center gap-2.5 flex-wrap">
@@ -119,7 +123,9 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
                     <div
                       key={i}
                       className={`p-3.5 rounded-lg border bg-white flex items-start gap-3 shadow-xs ${
-                        isMain ? 'border-emerald-300 ring-2 ring-emerald-500/20' : 'border-slate-200'
+                        isMain
+                          ? 'border-emerald-300 ring-2 ring-emerald-500/20'
+                          : 'border-slate-200'
                       }`}
                     >
                       <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-800 shrink-0 overflow-hidden font-bold text-sm">
@@ -168,8 +174,7 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
               <ul className="flex flex-wrap gap-2 text-sm text-slate-700">
                 {authors.map((author: any, i: number) => {
                   const inst = author.institution
-                  const instName =
-                    typeof inst === 'object' ? inst?.name : inst || ''
+                  const instName = typeof inst === 'object' ? inst?.name : inst || ''
                   return (
                     <li
                       key={i}

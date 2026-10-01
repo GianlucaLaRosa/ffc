@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { RichText } from './RichText'
 import { SessionIcon, ChevronDown, ChevronRight, Sparkles, Clock } from './IconRenderer'
-import { AbstractModal } from './AbstractModal'
+import { useModal } from '@/context/ModalContext'
 
 export interface ProgrammeSectionProps {
   days: any[]
@@ -16,9 +16,6 @@ export function ProgrammeSection({ days, agendaItems }: ProgrammeSectionProps) {
 
   // Collapsed state for agenda-items that have children: initially collapsed!
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
-
-  // Selected abstract for full-screen modal
-  const [selectedAbstract, setSelectedAbstract] = useState<any | null>(null)
 
   const toggleDay = (dayId: string) => {
     setExpandedDays((prev) => ({
@@ -33,12 +30,6 @@ export function ProgrammeSection({ days, agendaItems }: ProgrammeSectionProps) {
       ...prev,
       [itemId]: !prev[itemId],
     }))
-  }
-
-  const handleItemClick = (item: any) => {
-    if (item.abstract) {
-      setSelectedAbstract(item.abstract)
-    }
   }
 
   // Format time helper
@@ -109,9 +100,9 @@ export function ProgrammeSection({ days, agendaItems }: ProgrammeSectionProps) {
                 className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-slate-50/80 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-emerald-800 font-bold text-sm shrink-0">
+                  {/*                   <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-emerald-800 font-bold text-sm shrink-0">
                     {day.order || '#'}
-                  </div>
+                  </div> */}
                   <div>
                     <h3 className="text-lg sm:text-xl font-bold text-slate-900 leading-tight">
                       {day.title}
@@ -155,7 +146,6 @@ export function ProgrammeSection({ days, agendaItems }: ProgrammeSectionProps) {
                         item={item}
                         isExpanded={Boolean(expandedItems[item.id])}
                         onToggleChildren={(e) => toggleItemChildren(item.id, e)}
-                        onItemClick={() => handleItemClick(item)}
                         formatTime={formatTime}
                       />
                     ))
@@ -166,13 +156,6 @@ export function ProgrammeSection({ days, agendaItems }: ProgrammeSectionProps) {
           )
         })}
       </div>
-
-      {/* Full-Screen Abstract Modal */}
-      <AbstractModal
-        abstract={selectedAbstract}
-        isOpen={Boolean(selectedAbstract)}
-        onClose={() => setSelectedAbstract(null)}
-      />
     </section>
   )
 }
@@ -181,17 +164,16 @@ function AgendaItemCard({
   item,
   isExpanded,
   onToggleChildren,
-  onItemClick,
   formatTime,
   isChild = false,
 }: {
   item: any
   isExpanded: boolean
   onToggleChildren: (e: React.MouseEvent) => void
-  onItemClick: () => void
   formatTime: (d?: string) => string
   isChild?: boolean
 }) {
+  const { openAbstractModal } = useModal()
   const hasAbstract = Boolean(item.abstract)
   const hasChildren = Array.isArray(item.children) && item.children.length > 0
   const isKeynote = Boolean(item.isKeynote)
@@ -205,13 +187,13 @@ function AgendaItemCard({
 
   return (
     <div
-      onClick={hasAbstract ? onItemClick : undefined}
+      onClick={hasAbstract ? () => openAbstractModal(item.abstract) : undefined}
       className={`relative rounded-xl transition-all duration-200 border ${
         isKeynote
           ? 'bg-gradient-to-r from-emerald-50/90 via-white to-emerald-50/40 border-emerald-300 shadow-sm ring-1 ring-emerald-400/20'
           : isChild
-          ? 'bg-white border-slate-200/90'
-          : 'bg-white border-slate-200/90 shadow-xs'
+            ? 'bg-white border-slate-200/90'
+            : 'bg-white border-slate-200/90 shadow-xs'
       } ${hasAbstract ? 'cursor-pointer hover:border-emerald-500 hover:shadow-md' : ''}`}
     >
       <div className="p-4 sm:p-5">
@@ -288,7 +270,11 @@ function AgendaItemCard({
               aria-label={`Toggle ${item.children.length} sub-sessions`}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
-              <span>{isExpanded ? `Hide Sub-sessions (${item.children.length})` : `Show Sub-sessions (${item.children.length})`}</span>
+              <span>
+                {isExpanded
+                  ? `Hide Sub-sessions (${item.children.length})`
+                  : `Show Sub-sessions (${item.children.length})`}
+              </span>
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-200 ${
                   isExpanded ? 'rotate-180' : ''
@@ -312,11 +298,6 @@ function AgendaItemCard({
               item={child}
               isExpanded={false}
               onToggleChildren={() => {}}
-              onItemClick={() => {
-                if (child.abstract) {
-                  onItemClick()
-                }
-              }}
               formatTime={formatTime}
               isChild={true}
             />

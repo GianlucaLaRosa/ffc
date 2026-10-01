@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { RichText } from './RichText'
 import { Building2, User, BookOpen, ExternalLink } from 'lucide-react'
-import { AbstractModal } from './AbstractModal'
+import { useModal } from '@/context/ModalContext'
 
 export interface AppendixSectionProps {
   abstracts: any[]
@@ -12,8 +12,8 @@ export interface AppendixSectionProps {
 }
 
 export function AppendixSection({ abstracts, institutions, people }: AppendixSectionProps) {
+  const { openAbstractModal } = useModal()
   const [activeTab, setActiveTab] = useState<'abstracts' | 'institutions' | 'people'>('abstracts')
-  const [selectedAbstract, setSelectedAbstract] = useState<any | null>(null)
 
   return (
     <section id="appendix" className="scroll-mt-20 py-12 sm:py-16 border-t border-slate-200">
@@ -86,7 +86,7 @@ export function AppendixSection({ abstracts, institutions, people }: AppendixSec
               {abstracts.map((abs) => (
                 <div
                   key={abs.id}
-                  onClick={() => setSelectedAbstract(abs)}
+                  onClick={() => openAbstractModal(abs)}
                   className="p-5 rounded-xl border border-slate-200/90 bg-white hover:border-emerald-500 hover:shadow-md cursor-pointer transition-all duration-150 flex flex-col justify-between"
                 >
                   <div>
@@ -198,13 +198,6 @@ export function AppendixSection({ abstracts, institutions, people }: AppendixSec
           </div>
         )}
       </div>
-
-      {/* Abstract Modal */}
-      <AbstractModal
-        abstract={selectedAbstract}
-        isOpen={Boolean(selectedAbstract)}
-        onClose={() => setSelectedAbstract(null)}
-      />
     </section>
   )
 }
