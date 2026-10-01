@@ -1,4 +1,7 @@
-# Payload Blank Template
+# FFC Comference
+
+username: admin@fcc-conference.org
+password: Password123!
 
 This template comes configured with the bare minimum to get started on anything you need.
 
