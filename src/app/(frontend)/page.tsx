@@ -6,6 +6,7 @@ import { HeroSection } from '@/components/HeroSection'
 import { ProgrammeSection } from '@/components/ProgrammeSection'
 import { VenueSection } from '@/components/VenueSection'
 import { AppendixSection } from '@/components/AppendixSection'
+import { Footer } from '@/components/Footer'
 
 export const dynamic = 'force-dynamic'
 
@@ -128,21 +129,7 @@ export default async function HomePage() {
       </main>
 
       {/* Institutional Footer */}
-      <footer className="border-t border-slate-200 bg-white py-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <div className="flex items-center gap-4">
-            <a href="#programme" className="hover:text-emerald-800 transition-colors">
-              Programme
-            </a>
-            <a href="#venue" className="hover:text-emerald-800 transition-colors">
-              Venue
-            </a>
-            <a href="#appendix" className="hover:text-emerald-800 transition-colors">
-              Appendix
-            </a>
-          </div>
-        </div>
-      </footer>
+      <Footer editionYear={conference.editionYear} />
     </div>
   )
 }
