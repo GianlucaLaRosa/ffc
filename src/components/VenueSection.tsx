@@ -18,13 +18,16 @@ export function VenueSection({ conference }: VenueSectionProps) {
   const mapUrl = hasCoords
     ? `https://www.google.com/maps/search/?api=1&query=${locationCoords.latitude},${locationCoords.longitude}`
     : hasAddress
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-        [street, city, country].filter(Boolean).join(', ')
-      )}`
-    : null
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+          [street, city, country].filter(Boolean).join(', '),
+        )}`
+      : null
 
   return (
-    <section id="venue" className="scroll-mt-20 py-12 sm:py-16 border-t border-slate-200">
+    <section
+      id="venue"
+      className="scroll-mt-10 md:scroll-mt-20 py-12 sm:py-16 border-t border-slate-200"
+    >
       <div className="mb-8 pb-4 border-b border-slate-200">
         <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
           Location & Logistics
@@ -50,9 +53,7 @@ export function VenueSection({ conference }: VenueSectionProps) {
           <div className="text-sm text-slate-700 space-y-1 pl-1 border-l-2 border-emerald-500">
             {street && <p className="font-medium text-slate-900">{street}</p>}
             {(city || country) && (
-              <p className="text-slate-600">
-                {[city, country].filter(Boolean).join(', ')}
-              </p>
+              <p className="text-slate-600">{[city, country].filter(Boolean).join(', ')}</p>
             )}
           </div>
 

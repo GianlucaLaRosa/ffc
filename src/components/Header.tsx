@@ -118,7 +118,7 @@ export function Header({ editionName, editionYear, logo }: HeaderProps) {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white/98 px-4 pt-3 pb-5 space-y-2 animate-in slide-in-from-top-2">
+        <div className="md:hidden absolute top-full left-0 right-0 border-b border-slate-200 bg-white px-4 pt-3 pb-5 space-y-2 shadow-lg backdrop-blur-md animate-in slide-in-from-top-2">
           {navLinks.map((link) => {
             const Icon = link.icon
             return (

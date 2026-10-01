@@ -113,7 +113,8 @@ export const AgendaItems: CollectionConfig = {
       relationTo: 'abstracts',
       label: 'Linked Scientific Abstract',
       admin: {
-        description: 'Clicking this agenda item in the frontend will open the full-screen view for this abstract.',
+        description:
+          'Clicking this agenda item in the frontend will open the full-screen view for this abstract.',
       },
     },
     {
@@ -121,7 +122,7 @@ export const AgendaItems: CollectionConfig = {
       type: 'relationship',
       relationTo: 'agenda-items',
       hasMany: true,
-      label: 'Sub-sessions / Parallel Tracks (Children)',
+      label: 'Session Items / Parallel Tracks (Children)',
       admin: {
         description: 'Nested talks or sub-events under this session.',
       },

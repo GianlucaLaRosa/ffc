@@ -44,7 +44,7 @@ export function ProgrammeSection({ days, agendaItems }: ProgrammeSectionProps) {
   }
 
   return (
-    <section id="programme" className="scroll-mt-20 py-12 sm:py-16">
+    <section id="programme" className="scroll-mt-10 md:scroll-mt-20 py-12 sm:py-16">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-slate-200 gap-4">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
@@ -260,20 +260,20 @@ function AgendaItemCard({
           </div>
         )}
 
-        {/* Children toggle button if this item has sub-sessions */}
+        {/* Children toggle button if this item has Session items */}
         {hasChildren && (
           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
             <button
               type="button"
               onClick={onToggleChildren}
               aria-expanded={isExpanded}
-              aria-label={`Toggle ${item.children.length} sub-sessions`}
+              aria-label={`Toggle ${item.children.length} Session Items`}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <span>
                 {isExpanded
-                  ? `Hide Sub-sessions (${item.children.length})`
-                  : `Show Sub-sessions (${item.children.length})`}
+                  ? `Hide Session Items (${item.children.length})`
+                  : `Show Session Items (${item.children.length})`}
               </span>
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-200 ${
@@ -286,11 +286,11 @@ function AgendaItemCard({
         )}
       </div>
 
-      {/* Sub-sessions / Children cards (collapsed by default) */}
+      {/* Session items / Children cards (collapsed by default) */}
       {hasChildren && isExpanded && (
         <div className="px-4 sm:px-6 pb-4 pt-2 bg-slate-50/80 border-t border-slate-200/70 rounded-b-xl space-y-2.5">
           <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 pt-1">
-            Sub-sessions & Parallel Communications
+            Session items
           </div>
           {item.children.map((child: any) => (
             <AgendaItemCard

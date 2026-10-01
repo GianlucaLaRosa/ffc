@@ -16,7 +16,10 @@ export function AppendixSection({ abstracts, institutions, people }: AppendixSec
   const [activeTab, setActiveTab] = useState<'abstracts' | 'institutions' | 'people'>('abstracts')
 
   return (
-    <section id="appendix" className="scroll-mt-20 py-12 sm:py-16 border-t border-slate-200">
+    <section
+      id="appendix"
+      className="scroll-mt-10 md:scroll-mt-20 py-12 sm:py-16 border-t border-slate-200"
+    >
       <div className="mb-8 pb-4 border-b border-slate-200">
         <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
           Supplementary Documentation
@@ -27,7 +30,10 @@ export function AppendixSection({ abstracts, institutions, people }: AppendixSec
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 gap-2 overflow-x-auto pb-1 mb-8" role="tablist">
+      <div
+        className="flex border-b border-slate-200 gap-2 overflow-x-auto pb-1 mb-8"
+        role="tablist"
+      >
         <button
           type="button"
           role="tab"
@@ -110,7 +116,9 @@ export function AppendixSection({ abstracts, institutions, people }: AppendixSec
 
                   <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>
-                      {Array.isArray(abs.authors) ? `${abs.authors.length} Authors` : 'Authors linked'}
+                      {Array.isArray(abs.authors)
+                        ? `${abs.authors.length} Authors`
+                        : 'Authors linked'}
                     </span>
                     <span className="text-emerald-700 font-semibold inline-flex items-center gap-1">
                       Read Full Details <ExternalLink className="w-3 h-3" />
