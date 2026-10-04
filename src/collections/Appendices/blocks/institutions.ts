@@ -1,5 +1,6 @@
 import type { Block, FilterOptions } from 'payload'
 
+import { appendixTabIconField } from '../fields/tabIcon'
 import { basicLexical } from '@/fields/basicLexical'
 import {
   collectExcludedInstitutionIds,
@@ -40,6 +41,7 @@ export const InstitutionsAppendixBlock: Block = {
       required: true,
       label: 'Title',
     },
+    appendixTabIconField(),
     {
       name: 'description',
       type: 'richText',

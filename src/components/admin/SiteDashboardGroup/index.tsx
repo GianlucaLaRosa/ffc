@@ -1,7 +1,9 @@
 import type { ServerProps, Where } from 'payload'
-import { Card } from '@payloadcms/ui'
+import { Banner, Card } from '@payloadcms/ui'
 import { formatAdminURL } from 'payload/shared'
 import React from 'react'
+
+import './index.scss'
 
 const baseClass = 'collections'
 
@@ -81,6 +83,24 @@ export default async function SiteDashboardGroup({ payload }: ServerProps) {
   return (
     <div className={baseClass}>
       <div className={`${baseClass}__wrap`}>
+        <div className="editor-guide-dashboard" id="dashboard-editor-guide">
+          <Banner
+            alignIcon="right"
+            className="editor-guide-dashboard__banner"
+            icon={
+              <span aria-hidden className="editor-guide-dashboard__chevron">
+                →
+              </span>
+            }
+            to="/docs"
+            type="success"
+          >
+            <strong className="editor-guide-dashboard__title">Editor guide</strong>
+            <span className="editor-guide-dashboard__text">
+              Italian handbook for this admin: create an edition, fill the programme, and publish.
+            </span>
+          </Banner>
+        </div>
         <div className={`${baseClass}__group`}>
           <h2 className={`${baseClass}__label`}>Site</h2>
           <ul className={`${baseClass}__card-list`}>

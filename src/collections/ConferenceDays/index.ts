@@ -3,6 +3,10 @@ import { ValidationError } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import {
+  revalidateEditionByConference,
+  revalidateEditionByConferenceDelete,
+} from '@/utilities/revalidatePublicCache'
 
 const toRelationId = (value: unknown): number | string | null => {
   if (value == null) return null
@@ -190,6 +194,8 @@ export const ConferenceDays: CollectionConfig<'conference-days'> = {
   ],
   hooks: {
     beforeValidate: [ensureUniqueDatePerConference],
+    afterChange: [revalidateEditionByConference],
+    afterDelete: [revalidateEditionByConferenceDelete],
   },
   versions: {
     drafts: {

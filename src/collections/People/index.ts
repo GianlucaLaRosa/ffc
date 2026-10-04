@@ -6,6 +6,10 @@ import { flexibleLexical } from '../../fields/flexibleLexical'
 import { mediaFolderUploadAdmin } from '@/fields/mediaFolderUpload'
 import { PEOPLE_PHOTOS_FOLDER_NAME } from '@/utilities/mediaFolder'
 import { assignPhotoToFolder } from './hooks/assignPhotoToFolder'
+import {
+  revalidatePublicDirectories,
+  revalidatePublicDirectoriesDelete,
+} from '@/utilities/revalidatePublicCache'
 
 const populateFullName: CollectionBeforeValidateHook = ({ data }) => {
   if (!data) return data
@@ -98,6 +102,7 @@ export const People: CollectionConfig<'people'> = {
   ],
   hooks: {
     beforeValidate: [populateFullName],
-    afterChange: [assignPhotoToFolder],
+    afterChange: [assignPhotoToFolder, revalidatePublicDirectories],
+    afterDelete: [revalidatePublicDirectoriesDelete],
   },
 }

@@ -1,0 +1,60 @@
+---
+title: Giorni e programma
+description: Come aggiungere i giorni della conferenza e le sessioni del programma.
+---
+
+import { Callout, Steps } from 'nextra/components'
+
+# Giorni e programma
+
+Il programma **non** è un foglio unico. Prima create i **giorni**, poi dentro ogni giorno le **sessioni**.
+
+<Steps>
+
+### Aprire la linguetta Days
+
+Nella conferenza, linguetta **Days**. Qui vedete l’elenco dei giorni di **questa** edizione.
+
+### Create New per ogni giornata
+
+Per ogni data:
+
+1. **Date** — il calendario (un solo giorno per data, per edizione)
+2. **Start time** / **End time** — orario di inizio e fine della giornata (a scatti di 15 minuti)
+
+L’orario di fine può essere **prima** di quello di inizio se la giornata “sconfina” dopo mezzanotte.
+
+Salvate e, quando è pronto, pubblicate il giorno.
+
+### Aggiungere le sessioni
+
+Nel giorno, l’elenco **Agenda items** mostra solo le sessioni **principali** (senza “genitore”).
+
+**Create New**:
+
+1. **Title** — titolo formattato della sessione
+2. Il **giorno** è già collegato se partite da qui
+3. **Start time** e **End time** — devono stare **dentro** l’orario del giorno. Appaiono dopo aver scelto il giorno
+4. **Keynote** — spunta se volete evidenziarla graficamente
+5. **Icon** — facoltativa, cercabile per nome
+6. **Description** — note facoltative
+
+Trascinate le righe per l’ordine di visualizzazione.
+
+### Sessioni dentro altre sessioni
+
+Aprite una sessione principale. L’elenco **Child items** sono i talk o i sotto-blocchi.
+
+Il giorno si eredita dal genitore. Restano validi gli orari della giornata.
+
+</Steps>
+
+<Callout type="info">
+  Lo stesso **abstract** può essere collegato a più sessioni. Gli abstract si gestiscono anche dalla linguetta **Abstracts** della conferenza. Vedere [Abstract](/docs/abstract).
+</Callout>
+
+## Errori tipici
+
+- Due giorni con la **stessa data** sulla stessa edizione: il sistema lo rifiuta.
+- Orario della sessione **fuori** dalla fascia del giorno: compare un errore, allargate il giorno o correggete l’orario.
+- Cercare le sessioni nel menu laterale: sono nascoste di proposito. Si entra da **Conferences → edizione → Days → giorno**.

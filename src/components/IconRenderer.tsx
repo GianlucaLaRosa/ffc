@@ -22,17 +22,21 @@ import {
   Music,
   CheckCircle,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   X,
   ExternalLink,
   Building2,
   User,
   Sparkles,
+  FileText,
+  icons,
+  type LucideIcon,
 } from 'lucide-react'
 import { RenderSerializedIcon, type SerializedIcon } from '@/fields/icon/renderSerializedIcon'
 import type { AgendaIconValue } from '@/utilities/conferenceUi'
 
-const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+const ICON_ALIASES: Record<string, LucideIcon> = {
   mic: Mic,
   users: Users,
   coffee: Coffee,
@@ -55,6 +59,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   sparkles: Sparkles,
   building: Building2,
   user: User,
+  'file-text': FileText,
 }
 
 function isSerializedIcon(value: unknown): value is SerializedIcon {
@@ -65,6 +70,21 @@ function isSerializedIcon(value: unknown): value is SerializedIcon {
       'nodes' in value &&
       Array.isArray((value as SerializedIcon).nodes),
   )
+}
+
+function toPascalCase(name: string): string {
+  return name
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join('')
+}
+
+function lucideFromName(name: string): LucideIcon {
+  const alias = ICON_ALIASES[name.toLowerCase()]
+  if (alias) return alias
+  const fromSet = (icons as Record<string, LucideIcon | undefined>)[toPascalCase(name)]
+  return fromSet ?? Clock
 }
 
 export function SessionIcon({
@@ -91,18 +111,19 @@ export function SessionIcon({
     }
     const lucideName = name.name
     if (lucideName) {
-      const IconComponent = ICON_MAP[lucideName.toLowerCase()] || Clock
+      const IconComponent = lucideFromName(lucideName)
       return <IconComponent className={className} aria-hidden="true" />
     }
     return <Clock className={className} aria-hidden="true" />
   }
 
-  const IconComponent = ICON_MAP[name.toLowerCase()] || Clock
+  const IconComponent = lucideFromName(name)
   return <IconComponent className={className} aria-hidden="true" />
 }
 
 export {
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   X,
   ExternalLink,

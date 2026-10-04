@@ -16,10 +16,12 @@ import { Institutions } from './collections/Institutions'
 import { ItalianRegions } from './collections/ItalianRegions'
 import { Media } from './collections/Media'
 import { People } from './collections/People'
+import { ProgrammePushSubscriptions } from './collections/ProgrammePushSubscriptions'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { ActiveConference } from './ActiveConference/config'
 import { ConferenceArchive } from './ConferenceArchive/config'
+import { ProgrammeAlerts } from './ProgrammeAlerts/config'
 import { iconPlugin } from './fields/icon'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -94,6 +96,7 @@ export default buildConfig({
     Institutions,
     ItalianRegions,
     People,
+    ProgrammePushSubscriptions,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   plugins: [
@@ -111,7 +114,7 @@ export default buildConfig({
         ]
       : []),
   ],
-  globals: [Footer, ActiveConference, ConferenceArchive],
+  globals: [Footer, ActiveConference, ConferenceArchive, ProgrammeAlerts],
   secret: process.env.PAYLOAD_SECRET || 'fallback-secret-at-least-32-characters-long',
   sharp,
   typescript: {

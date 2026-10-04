@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import type { Conference, Media } from '@/payload-types'
+import { conferenceFaviconIcons } from '@/utilities/conferenceFavicon'
 import { mediaUrl } from '@/utilities/conferenceUi'
 import { getServerSideURL } from '@/utilities/getURL'
 
@@ -21,6 +22,7 @@ export function conferenceMetadata({
     title,
     description,
     alternates: { canonical },
+    icons: conferenceFaviconIcons(conference.logo),
     openGraph: {
       title,
       description,

@@ -12,6 +12,10 @@ import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { basicLexical } from '../../fields/basicLexical'
 import { iconField } from '../../fields/icon'
 import { durationMinutes, isTimeWithinWindow, minutesUtc } from './timeUtils'
+import {
+  revalidateEditionByDay,
+  revalidateEditionByDayDelete,
+} from '@/utilities/revalidatePublicCache'
 
 type LexicalJSON = Parameters<typeof convertLexicalToPlaintext>[0]['data']
 
@@ -351,6 +355,8 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
   ],
   hooks: {
     beforeValidate: [inheritDayFromParent, populateTitleFromName, ensureTimesWithinDay],
+    afterChange: [revalidateEditionByDay],
+    afterDelete: [revalidateEditionByDayDelete],
   },
   versions: {
     drafts: {

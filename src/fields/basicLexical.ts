@@ -2,7 +2,6 @@ import type { TextFieldSingleValidation } from 'payload'
 import {
   BlockquoteFeature,
   BoldFeature,
-  ChecklistFeature,
   FixedToolbarFeature,
   HeadingFeature,
   HorizontalRuleFeature,
@@ -23,7 +22,7 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 /**
- * Minimal rich text: formatting, h3–h6, lists/checklist, blockquote,
+ * Minimal rich text: formatting, h3–h6, ordered/unordered lists, blockquote,
  * inline code, horizontal rule, indent, and links.
  * Toolbars required so inline formatting is visible in admin.
  */
@@ -40,7 +39,6 @@ export const basicLexical = lexicalEditor({
     InlineCodeFeature(),
     UnorderedListFeature(),
     OrderedListFeature(),
-    ChecklistFeature(),
     IndentFeature(),
     BlockquoteFeature(),
     HorizontalRuleFeature(),

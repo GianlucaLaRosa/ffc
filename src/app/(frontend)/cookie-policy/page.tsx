@@ -3,6 +3,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, ShieldCheck, CheckCircle2, Info, Lock, EyeOff } from 'lucide-react'
 import { Footer } from '@/components/Footer'
+import { PolicyChrome } from '@/components/PolicyChrome'
+import { ThemeToggle } from '@/components/ThemeToggle'
+import { InstallPwaButton } from '@/components/InstallPwaButton'
 
 export const metadata: Metadata = {
   title: 'Cookie Policy | FFC Scientific Conference',
@@ -10,25 +13,31 @@ export const metadata: Metadata = {
     'Information regarding cookies and tracking technologies on the official FFC Scientific Conference website.',
 }
 
-export default function CookiePolicyPage() {
+export const revalidate = 60
+
+export default async function CookiePolicyPage() {
   const lastUpdated = 'October 2026'
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/60">
+    <PolicyChrome>
       {/* Top navigation bar */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
+      <header className="sticky top-0 z-30 bg-surface/95 backdrop-blur-md border-b border-line/80">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link
             href="/"
             prefetch={false}
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-emerald-800 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-medium text-fg-muted hover:text-brand-soft-fg transition-colors"
           >
-            <ArrowLeft className="w-4 h-4 text-emerald-700" />
+            <ArrowLeft className="w-4 h-4 text-brand" />
             <span>Back to Conference Home</span>
           </Link>
-          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-3 py-1 rounded-full">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Zero Tracking Platform</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-xs font-semibold text-brand-soft-fg bg-brand-soft border border-brand-border/80 px-3 py-1 rounded-full">
+              <ShieldCheck className="w-3.5 h-3.5 text-brand" />
+              <span>Zero Tracking Platform</span>
+            </div>
+            <InstallPwaButton />
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -36,32 +45,32 @@ export default function CookiePolicyPage() {
       {/* Main content container */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Document Header Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 sm:p-10 mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold mb-4">
+        <div className="bg-surface rounded-2xl border border-line shadow-xs p-6 sm:p-10 mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-subtle text-fg-muted text-xs font-semibold mb-4">
             <span>Official Policy &amp; Compliance Statement</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-fg tracking-tight mb-3">
             Cookie Policy
           </h1>
-          <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-4">
+          <p className="text-fg-muted text-base sm:text-lg leading-relaxed mb-4">
             Official statement on the non-use of cookies and tracking technologies for the{' '}
             <strong>FFC Scientific Conference</strong> website, managed by{' '}
             <strong>Fondazione Ricerca Fibrosi Cistica - ETS</strong>.
           </p>
-          <p className="text-xs text-slate-400 font-mono">Last updated: {lastUpdated}</p>
+          <p className="text-xs text-fg-subtle font-mono">Last updated: {lastUpdated}</p>
         </div>
 
         {/* Executive Summary Highlight Card */}
-        <div className="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-6 sm:p-8 mb-8">
+        <div className="bg-brand-soft/80 border border-brand-border rounded-2xl p-6 sm:p-8 mb-8">
           <div className="flex items-start gap-4">
-            <div className="p-2.5 rounded-xl bg-emerald-600 text-white shrink-0 mt-0.5">
+            <div className="p-2.5 rounded-xl bg-brand text-brand-fg shrink-0 mt-0.5">
               <CheckCircle2 className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-emerald-950 mb-1">
+              <h2 className="text-lg font-bold text-brand-soft-fg mb-1">
                 Summary: This website does not use cookies
               </h2>
-              <p className="text-sm text-emerald-900 leading-relaxed mb-4">
+              <p className="text-sm text-brand-soft-fg leading-relaxed mb-4">
                 We believe in privacy-by-design. This website is built as an open, accessible scientific
                 portal for researchers, clinicians, and participants. We do{' '}
                 <strong>not</strong> store cookies on your device, we do <strong>not</strong> profile
@@ -69,16 +78,16 @@ export default function CookiePolicyPage() {
                 tracking networks.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                <div className="bg-white/80 backdrop-blur-xs p-3 rounded-lg border border-emerald-200/60 font-medium text-emerald-950 flex items-center gap-2">
-                  <EyeOff className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="bg-surface/80 backdrop-blur-xs p-3 rounded-lg border border-brand-border/60 font-medium text-brand-soft-fg flex items-center gap-2">
+                  <EyeOff className="w-4 h-4 text-brand shrink-0" />
                   <span>No Profiling Cookies</span>
                 </div>
-                <div className="bg-white/80 backdrop-blur-xs p-3 rounded-lg border border-emerald-200/60 font-medium text-emerald-950 flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="bg-surface/80 backdrop-blur-xs p-3 rounded-lg border border-brand-border/60 font-medium text-brand-soft-fg flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-brand shrink-0" />
                   <span>No Third-Party Trackers</span>
                 </div>
-                <div className="bg-white/80 backdrop-blur-xs p-3 rounded-lg border border-emerald-200/60 font-medium text-emerald-950 flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="bg-surface/80 backdrop-blur-xs p-3 rounded-lg border border-brand-border/60 font-medium text-brand-soft-fg flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-brand shrink-0" />
                   <span>No Banner Required</span>
                 </div>
               </div>
@@ -87,11 +96,11 @@ export default function CookiePolicyPage() {
         </div>
 
         {/* Detailed Sections */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 sm:p-10 space-y-8 text-slate-700 leading-relaxed">
+        <div className="bg-surface rounded-2xl border border-line shadow-xs p-6 sm:p-10 space-y-8 text-fg-muted leading-relaxed">
           {/* Section 1 */}
           <section>
-            <h3 className="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <span className="text-emerald-700 font-mono text-base">01.</span>
+            <h3 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
+              <span className="text-brand font-mono text-base">01.</span>
               What Are Cookies?
             </h3>
             <p className="text-sm sm:text-base mb-3">
@@ -102,30 +111,30 @@ export default function CookiePolicyPage() {
           </section>
 
           {/* Section 2 */}
-          <section className="border-t border-slate-100 pt-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <span className="text-emerald-700 font-mono text-base">02.</span>
+          <section className="border-t border-line pt-8">
+            <h3 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
+              <span className="text-brand font-mono text-base">02.</span>
               Our Zero-Cookie Architecture
             </h3>
             <p className="text-sm sm:text-base mb-4">
               On this public website (the conference presentation, programme schedule, scientific
               abstracts, and venue directions), <strong>no cookies of any kind are placed on your terminal</strong>:
             </p>
-            <ul className="space-y-2.5 text-sm sm:text-base list-disc list-inside text-slate-600 pl-1">
+            <ul className="space-y-2.5 text-sm sm:text-base list-disc list-inside text-fg-muted pl-1">
               <li>
-                <strong className="text-slate-800">No Profiling Cookies:</strong> We do not track or build
+                <strong className="text-fg">No Profiling Cookies:</strong> We do not track or build
                 behavioral profiles of users visiting this site.
               </li>
               <li>
-                <strong className="text-slate-800">No Marketing or Advertising Cookies:</strong> We do not display
+                <strong className="text-fg">No Marketing or Advertising Cookies:</strong> We do not display
                 commercial ads and do not share data with ad-tech brokers or marketing platforms.
               </li>
               <li>
-                <strong className="text-slate-800">No Third-Party Analytics Cookies:</strong> We do not deploy
+                <strong className="text-fg">No Third-Party Analytics Cookies:</strong> We do not deploy
                 invasive third-party analytics cookies (such as Google Analytics with cross-site tracking).
               </li>
               <li>
-                <strong className="text-slate-800">No Social Network Widgets or Beacons:</strong> We do not embed
+                <strong className="text-fg">No Social Network Widgets or Beacons:</strong> We do not embed
                 active social media scripts (such as Meta Pixel or LinkedIn Insight Tag) that transmit user
                 telemetry to third parties.
               </li>
@@ -133,14 +142,14 @@ export default function CookiePolicyPage() {
           </section>
 
           {/* Section 3 */}
-          <section className="border-t border-slate-100 pt-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <span className="text-emerald-700 font-mono text-base">03.</span>
+          <section className="border-t border-line pt-8">
+            <h3 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
+              <span className="text-brand font-mono text-base">03.</span>
               Why Is There No Cookie Banner?
             </h3>
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-5 text-sm text-slate-700">
+            <div className="bg-subtle border border-line rounded-xl p-4 sm:p-5 text-sm text-fg-muted">
               <div className="flex gap-3">
-                <Info className="w-5 h-5 text-slate-500 shrink-0 mt-0.5" />
+                <Info className="w-5 h-5 text-fg-subtle shrink-0 mt-0.5" />
                 <div>
                   <p className="mb-2">
                     Under the <strong>EU ePrivacy Directive (Directive 2002/58/EC)</strong>, the{' '}
@@ -162,9 +171,9 @@ export default function CookiePolicyPage() {
           </section>
 
           {/* Section 4 */}
-          <section className="border-t border-slate-100 pt-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <span className="text-emerald-700 font-mono text-base">04.</span>
+          <section className="border-t border-line pt-8">
+            <h3 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
+              <span className="text-brand font-mono text-base">04.</span>
               Technical Server Logs
             </h3>
             <p className="text-sm sm:text-base mb-3">
@@ -172,25 +181,25 @@ export default function CookiePolicyPage() {
               technical connection logs (such as your IP address, browser type and version, operating system,
               requested URL, and timestamp of the request).
             </p>
-            <p className="text-sm text-slate-600 leading-relaxed">
+            <p className="text-sm text-fg-muted leading-relaxed">
               These technical logs are strictly processed for network security purposes (such as detecting and
               mitigating cyber-attacks or DDoS attempts) and guaranteeing the operational stability of the
               server. They are not used to identify visitors, are not matched with third-party databases, and
               are automatically purged in accordance with standard data retention schedules. For more details,
               please refer to our{' '}
-              <Link href="/privacy" className="text-emerald-700 font-semibold underline hover:text-emerald-900">
+              <Link href="/privacy" className="text-brand font-semibold underline hover:text-brand-hover">
                 Privacy Policy
               </Link>.
             </p>
           </section>
 
           {/* Section 5 */}
-          <section className="border-t border-slate-100 pt-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <span className="text-emerald-700 font-mono text-base">05.</span>
+          <section className="border-t border-line pt-8">
+            <h3 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
+              <span className="text-brand font-mono text-base">05.</span>
               Staff authentication
             </h3>
-            <p className="text-sm sm:text-base text-slate-600">
+            <p className="text-sm sm:text-base text-fg-muted">
               Authenticated conference staff receive a strictly technical session cookie needed to stay
               signed in to the editorial area. Regular public visitors browsing the conference website do
               not receive this token.
@@ -198,27 +207,27 @@ export default function CookiePolicyPage() {
           </section>
 
           {/* Section 6 */}
-          <section className="border-t border-slate-100 pt-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <span className="text-emerald-700 font-mono text-base">06.</span>
+          <section className="border-t border-line pt-8">
+            <h3 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
+              <span className="text-brand font-mono text-base">06.</span>
               Data Controller &amp; Inquiries
             </h3>
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-sm space-y-2">
-              <p className="font-semibold text-slate-900">
+            <div className="bg-subtle border border-line rounded-xl p-5 text-sm space-y-2">
+              <p className="font-semibold text-fg">
                 Fondazione Ricerca Fibrosi Cistica - ETS (FFC Ricerca)
               </p>
-              <p className="text-slate-600">
+              <p className="text-fg-muted">
                 Piazza Bra 1 - Palazzo della Gran Guardia / Scientific Secretariat
               </p>
-              <p className="text-slate-600">Verona (VR), Italy</p>
-              <p className="text-slate-600 pt-2">
+              <p className="text-fg-muted">Verona (VR), Italy</p>
+              <p className="text-fg-muted pt-2">
                 For questions regarding this policy or the processing of personal data, please contact the
                 scientific secretariat or visit the official foundation portal at{' '}
                 <a
                   href="https://www.fibrosicisticaricerca.it"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-emerald-700 font-semibold hover:underline"
+                  className="text-brand font-semibold hover:underline"
                 >
                   www.fibrosicisticaricerca.it
                 </a>.
@@ -229,6 +238,6 @@ export default function CookiePolicyPage() {
       </main>
 
       <Footer />
-    </div>
+    </PolicyChrome>
   )
 }

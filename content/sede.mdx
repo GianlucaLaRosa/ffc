@@ -1,0 +1,35 @@
+---
+title: Sede e mappa
+description: Come compilare città, indirizzo e coordinate per la mappa.
+---
+
+import { Callout } from 'nextra/components'
+
+# Sede e mappa
+
+Lingua **Venue** della conferenza.
+
+## Campi obbligatori
+
+- **City** — città
+- **Country** — nazione (in inglese va bene, es. `Italy`)
+- **Address** — indirizzo per chi deve arrivare
+
+## Coordinate (consigliate)
+
+**Longitude** e **Latitude** servono alla mappa. Non è un indirizzo: sono due numeri.
+
+- Longitudine = X (per Trieste, intorno a `13.80`)
+- Latitudine = Y (per Trieste, intorno a `45.65`)
+
+Li trovate su Google Maps: clic destro sul punto → i numeri appaiono nel menu. Il **primo** numero che Google mostra è di solito la latitudine, il **secondo** la longitudine: nel pannello l’ordine è invertito (prima longitude, poi latitude).
+
+<Callout type="warning">
+  Se scambiate i due numeri, la puntina finisce in un altro continente. Controllate l’anteprima sulla pagina pubblica dopo la pubblicazione.
+</Callout>
+
+## Note sul luogo
+
+**Location notes** è un testo libero (ingresso, sala, accessibilità). È facoltativo.
+
+Non copiate qui le stesse frasi del tab **Public listing**: quello serve a Google e alle anteprime dei link, non alla mappa.

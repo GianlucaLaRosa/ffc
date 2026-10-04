@@ -3,6 +3,10 @@ import type { CollectionBeforeValidateHook, CollectionConfig } from 'payload'
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { basicLexical } from '../../fields/basicLexical'
+import {
+  revalidatePublicDirectories,
+  revalidatePublicDirectoriesDelete,
+} from '@/utilities/revalidatePublicCache'
 
 const ITALY_NAME = 'Italy'
 
@@ -96,5 +100,7 @@ export const Institutions: CollectionConfig<'institutions'> = {
   ],
   hooks: {
     beforeValidate: [clearRegionUnlessItaly],
+    afterChange: [revalidatePublicDirectories],
+    afterDelete: [revalidatePublicDirectoriesDelete],
   },
 }

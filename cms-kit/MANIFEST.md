@@ -15,7 +15,6 @@ Paths are relative to the **target** repo root after copy. Source files live in 
 | `src/ActiveConference/**` | **copy** | Global + admin NavLink. |
 | `src/ConferenceArchive/**` | **copy** | Global + ArchiveManager UI. |
 | `src/Footer/config.ts` | **merge** | See PLAYBOOK: may collide with website-template Footer. |
-| `src/Footer/RowLabel.tsx` | **copy** | Admin only. |
 | `src/Footer/hooks/revalidateFooter.ts` | **adapt** | Cache tags belong to the target frontend. |
 | `src/blocks/MediaBlock/config.ts` | **copy** | Admin Lexical block. Do **not** overwrite a frontend `Component.tsx`. |
 | `src/plugins/index.ts` | **merge** | FCR file is SEO for conferences. Spread into existing `plugins`. |

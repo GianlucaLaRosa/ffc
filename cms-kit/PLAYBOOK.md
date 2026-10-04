@@ -34,7 +34,7 @@ The target likely ships the Payload website template (`pages`, `posts`, `users`,
 | --- | --- |
 | `users` | **Keep the target Users** if it has roles/extra fields. Ensure `auth: true` and that `admin.user` still points at it. Add `name` if missing. Set `admin.group: 'Content'` if you want FCR sidebar grouping. |
 | `media` | **Merge** FCR into the target Media: `folders: true`, existing upload sizes can stay. FCR `onInit` creates three folders (logos, people photos, abstract pictures). |
-| `footer` | If the target UI already renders a Footer global, **do not replace** the schema until the frontend is adapted. Either keep target Footer and skip FCR Footer, or replace schema and update the UI. FCR Footer fields: `structure`, `delegation`, `navItems` (links to `conferences`). |
+| `footer` | If the target UI already renders a Footer global, **do not replace** the schema until the frontend is adapted. Either keep target Footer and skip FCR Footer, or replace schema and update the UI. FCR Footer fields: `structure`, `delegation`. |
 | `pages` / `posts` / … | Keep if the existing UI uses them. Hide in admin (`admin.hidden`) if editors should only see the FCR conference hub. |
 | `payload.config` plugins | Spread FCR `seoPlugin` **and** keep existing plugins (form builder, redirects, nested docs, etc.). |
 

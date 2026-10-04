@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { appendixTabIconField } from '../fields/tabIcon'
 import { basicLexical } from '@/fields/basicLexical'
 
 export const ResearchProjectsAppendixBlock: Block = {
@@ -16,6 +17,7 @@ export const ResearchProjectsAppendixBlock: Block = {
       required: true,
       label: 'Title',
     },
+    appendixTabIconField(),
     {
       name: 'description',
       type: 'richText',

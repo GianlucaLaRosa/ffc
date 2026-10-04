@@ -1,0 +1,245 @@
+'use client'
+
+import React, { useEffect, useId, useRef, useState } from 'react'
+import { Bell, Bookmark, BookmarkCheck, Clock, X } from 'lucide-react'
+import { useSavedAgenda } from '@/context/SavedAgendaContext'
+import { formatConferenceTime } from '@/utilities/conferenceTime'
+import { isHappeningNow, isStartingSoon } from '@/utilities/savedAgenda'
+
+export function SavedAgendaMenu() {
+  const {
+    items,
+    now,
+    currentSaved,
+    upcomingSaved,
+    isReady,
+    notificationState,
+    notificationsAvailable,
+    iPhoneInstallHint,
+    leadMinutes,
+    removeItem,
+    focusItem,
+    enableNotifications,
+  } = useSavedAgenda()
+  const [open, setOpen] = useState(false)
+  const panelId = useId()
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
+        setOpen(false)
+      }
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+
+    document.addEventListener('mousedown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
+
+  const hasAlert = Boolean(currentSaved || upcomingSaved)
+
+  return (
+    <div ref={rootRef} className="relative">
+      <button
+        type="button"
+        aria-label="My programme"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((prev) => !prev)}
+        className={`relative inline-flex size-9 items-center justify-center rounded-lg text-fg-muted hover:bg-subtle hover:text-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+          hasAlert ? 'text-brand-soft-fg' : ''
+        }`}
+      >
+        {isReady && items.length > 0 ? (
+          <BookmarkCheck className="size-4" aria-hidden />
+        ) : (
+          <Bookmark className="size-4" aria-hidden />
+        )}
+        {isReady && items.length > 0 ? (
+          <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-brand text-brand-fg text-[10px] font-bold leading-4 text-center">
+            {items.length}
+          </span>
+        ) : null}
+        {hasAlert ? (
+          <span className="absolute -bottom-0.5 -right-0.5 size-2 rounded-full bg-accent ring-2 ring-surface" />
+        ) : null}
+      </button>
+
+      {open ? (
+        <div
+          id={panelId}
+          role="dialog"
+          aria-label="My programme"
+          className="absolute right-0 top-full mt-2 w-[min(22rem,calc(100vw-2rem))] max-h-[min(28rem,70vh)] overflow-hidden rounded-2xl border border-line bg-surface shadow-lg z-50 max-md:fixed max-md:left-4 max-md:right-4 max-md:w-auto max-md:top-[4.25rem]"
+        >
+          <div className="px-4 py-3 border-b border-line flex items-center justify-between gap-2">
+            <div>
+              <p className="text-sm font-bold text-fg">My programme</p>
+              <p className="text-xs text-fg-subtle">Saved sessions, in time order</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close my programme"
+              className="inline-flex size-8 items-center justify-center rounded-lg text-fg-muted hover:bg-subtle"
+            >
+              <X className="size-4" aria-hidden />
+            </button>
+          </div>
+
+          <div className="overflow-y-auto max-h-[min(22rem,60vh)] p-2">
+            {notificationsAvailable ? (
+              <div className="px-2 pb-2 mb-2 border-b border-line">
+                {iPhoneInstallHint ? (
+                  <p className="text-xs text-fg-subtle px-1 py-2">
+                    On iPhone, add this site to the Home Screen to receive lock-screen alerts.
+                  </p>
+                ) : null}
+                {notificationState === 'granted' ? (
+                  <p className="text-xs font-medium text-brand-soft-fg px-1 py-2">
+                    System alerts are on for saved sessions.
+                  </p>
+                ) : notificationState === 'denied' ? (
+                  <p className="text-xs text-fg-subtle px-1 py-2">
+                    Notifications are blocked in the browser settings.
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void enableNotifications()}
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-brand-soft px-3 py-2 text-xs font-semibold text-brand-soft-fg hover:bg-brand-soft/80"
+                  >
+                    <Bell className="size-3.5" aria-hidden />
+                    Enable session alerts
+                  </button>
+                )}
+              </div>
+            ) : null}
+            {!isReady || items.length === 0 ? (
+              <p className="text-sm text-fg-muted px-3 py-6 text-center">
+                Bookmark a session in the programme to add it here. Sessions with talks save each
+                talk.
+              </p>
+            ) : (
+              <ul className="space-y-1.5">
+                {items.map((item) => {
+                  const live = isHappeningNow(item, now)
+                  const soon = !live && isStartingSoon(item, now, leadMinutes)
+                  const timeLabel = formatSavedTime(item.startTime, item.endTime)
+
+                  return (
+                    <li key={item.id}>
+                      <div
+                        className={`rounded-xl border px-3 py-2.5 ${
+                          live
+                            ? 'border-brand bg-brand-soft/80 ring-1 ring-brand/30'
+                            : soon
+                              ? 'border-accent-border bg-accent-soft/70'
+                              : 'border-line bg-subtle/50'
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              focusItem(item.id)
+                              setOpen(false)
+                            }}
+                            className="flex-1 min-w-0 text-left"
+                          >
+                            <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                              {timeLabel ? (
+                                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-fg-muted">
+                                  <Clock className="size-3" aria-hidden />
+                                  {timeLabel}
+                                </span>
+                              ) : null}
+                              {live ? (
+                                <span className="text-[10px] font-bold uppercase tracking-wide text-brand-soft-fg">
+                                  Live
+                                </span>
+                              ) : null}
+                              {soon ? (
+                                <span className="text-[10px] font-bold uppercase tracking-wide text-accent-soft-fg">
+                                  Starts soon
+                                </span>
+                              ) : null}
+                            </div>
+                            <p className="text-sm font-semibold text-fg leading-snug">{item.title}</p>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeItem(item.id)}
+                            aria-label={`Remove ${item.title} from my programme`}
+                            className="shrink-0 inline-flex size-8 items-center justify-center rounded-lg text-fg-subtle hover:bg-surface hover:text-fg"
+                          >
+                            <X className="size-3.5" aria-hidden />
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+export function UpcomingSessionBanner() {
+  const { upcomingSaved, upcomingMinutes, focusItem } = useSavedAgenda()
+  const [dismissedId, setDismissedId] = useState<string | null>(null)
+
+  const item = upcomingSaved && upcomingSaved.id !== dismissedId ? upcomingSaved : null
+  if (!item) return null
+
+  const minutes = Math.max(1, Math.ceil(upcomingMinutes ?? 5))
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="sticky top-16 sm:top-20 z-30 border-b border-accent-border bg-accent-soft"
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center gap-3">
+        <p className="flex-1 text-sm text-accent-soft-fg">
+          Starts in {minutes} min:{' '}
+          <button
+            type="button"
+            onClick={() => focusItem(item.id)}
+            className="font-bold underline-offset-2 hover:underline"
+          >
+            {item.title}
+          </button>
+        </p>
+        <button
+          type="button"
+          onClick={() => setDismissedId(item.id)}
+          aria-label="Dismiss upcoming session alert"
+          className="shrink-0 inline-flex size-8 items-center justify-center rounded-lg text-accent-soft-fg hover:bg-accent/15"
+        >
+          <X className="size-4" aria-hidden />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function formatSavedTime(startTime?: string | null, endTime?: string | null): string {
+  const start = formatConferenceTime(startTime)
+  const end = formatConferenceTime(endTime)
+  if (start && end) return `${start} – ${end}`
+  return start
+}

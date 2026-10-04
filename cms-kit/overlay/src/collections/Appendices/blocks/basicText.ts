@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
-import { basicLexical } from '@/fields/basicLexical'
+import { appendixTabIconField } from '../fields/tabIcon'
+import { layoutBlocksField } from '@/fields/introLayout'
 
 export const BasicTextAppendixBlock: Block = {
   slug: 'basicText',
@@ -15,12 +16,11 @@ export const BasicTextAppendixBlock: Block = {
       type: 'text',
       required: true,
       label: 'Title',
+      admin: {
+        description: 'Tab label on the public appendix.',
+      },
     },
-    {
-      name: 'description',
-      type: 'richText',
-      editor: basicLexical,
-      label: 'Description',
-    },
+    appendixTabIconField(),
+    layoutBlocksField({ name: 'layout', label: 'Layout' }),
   ],
 }

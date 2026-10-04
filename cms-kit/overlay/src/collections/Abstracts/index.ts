@@ -14,6 +14,10 @@ import { mediaFolderUploadAdmin } from '@/fields/mediaFolderUpload'
 import { assignPictureToFolder } from './hooks/assignPictureToFolder'
 import { seedDefaultContent } from './hooks/seedDefaultContent'
 import { syncAppendices } from './hooks/syncAppendices'
+import {
+  revalidateEditionByConference,
+  revalidateEditionByConferenceDelete,
+} from '@/utilities/revalidatePublicCache'
 
 type LexicalJSON = Parameters<typeof convertLexicalToPlaintext>[0]['data']
 
@@ -438,7 +442,7 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
                 plural: 'Pictures',
               },
               admin: {
-                description: `Ordered images for this abstract. Stored in the Media folder "${ABSTRACT_PICTURES_FOLDER_NAME}".`,
+                description: `Ordered photos for this abstract (images only). On the public site they appear first in the overlay carousel, followed by speaker photos (team members excluded). Stored in the Media folder "${ABSTRACT_PICTURES_FOLDER_NAME}".`,
               },
               fields: [
                 {
@@ -447,13 +451,16 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
                   relationTo: 'media',
                   required: true,
                   label: 'Image',
+                  filterOptions: {
+                    mimeType: { contains: 'image/' },
+                  },
                   admin: mediaFolderUploadAdmin(ABSTRACT_PICTURES_FOLDER_NAME),
                 },
                 {
                   name: 'description',
                   type: 'text',
                   required: true,
-                  label: 'Description',
+                  label: 'Caption',
                 },
               ],
             },
@@ -514,7 +521,8 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
       seedDefaultContent,
       syncAppendices,
     ],
-    afterChange: [assignPictureToFolder],
+    afterChange: [assignPictureToFolder, revalidateEditionByConference],
+    afterDelete: [revalidateEditionByConferenceDelete],
   },
   versions: {
     drafts: {

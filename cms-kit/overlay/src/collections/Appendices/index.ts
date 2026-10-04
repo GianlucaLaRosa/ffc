@@ -7,6 +7,10 @@ import { BasicTextAppendixBlock } from './blocks/basicText'
 import { ReviewersAppendixBlock } from './blocks/reviewers'
 import { ResearchProjectsAppendixBlock } from './blocks/researchProjects'
 import { pruneExcludedInstitutions } from './hooks/pruneExcludedInstitutions'
+import {
+  revalidateEditionByConference,
+  revalidateEditionByConferenceDelete,
+} from '@/utilities/revalidatePublicCache'
 
 const validateUniqueConference: RelationshipFieldValidation = async (value, { req, id }) => {
   if (value == null) return true
@@ -68,7 +72,7 @@ export const Appendices: CollectionConfig<'appendices'> = {
       ],
       admin: {
         description:
-          'Each block has a required title and an optional description. Drag to reorder.',
+          'Each block has a required title (tab label). Basic text uses the same Content columns, accordion, and layout blocks as the conference intro. Drag to reorder tabs.',
       },
     },
     {
@@ -89,6 +93,8 @@ export const Appendices: CollectionConfig<'appendices'> = {
   ],
   hooks: {
     beforeValidate: [pruneExcludedInstitutions],
+    afterChange: [revalidateEditionByConference],
+    afterDelete: [revalidateEditionByConferenceDelete],
   },
   versions: {
     drafts: {

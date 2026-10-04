@@ -79,6 +79,7 @@ export interface Config {
     institutions: Institution;
     'italian-regions': ItalianRegion;
     people: Person;
+    'programme-push-subscriptions': ProgrammePushSubscription;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-folders': FolderInterface;
@@ -120,6 +121,7 @@ export interface Config {
     institutions: InstitutionsSelect<false> | InstitutionsSelect<true>;
     'italian-regions': ItalianRegionsSelect<false> | ItalianRegionsSelect<true>;
     people: PeopleSelect<false> | PeopleSelect<true>;
+    'programme-push-subscriptions': ProgrammePushSubscriptionsSelect<false> | ProgrammePushSubscriptionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
@@ -135,11 +137,13 @@ export interface Config {
     footer: Footer;
     'active-conference': ActiveConference;
     'conference-archive': ConferenceArchive;
+    'programme-alerts': ProgrammeAlert;
   };
   globalsSelect: {
     footer: FooterSelect<false> | FooterSelect<true>;
     'active-conference': ActiveConferenceSelect<false> | ActiveConferenceSelect<true>;
     'conference-archive': ConferenceArchiveSelect<false> | ConferenceArchiveSelect<true>;
+    'programme-alerts': ProgrammeAlertsSelect<false> | ProgrammeAlertsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -364,7 +368,7 @@ export interface Abstract {
       }[]
     | null;
   /**
-   * Ordered images for this abstract. Stored in the Media folder "Abstract pictures".
+   * Ordered photos for this abstract (images only). On the public site they appear first in the overlay carousel, followed by speaker photos (team members excluded). Stored in the Media folder "Abstract pictures".
    */
   picture?:
     | {
@@ -542,29 +546,30 @@ export interface Conference {
    */
   year: number;
   /**
-   * Stored in the Media folder "Conference logos".
+   * Used in the header and as the browser tab icon. Stored in the Media folder "Conference logos".
    */
   logo?: (number | null) | Media;
+  /**
+   * Used for buttons, links, and section accents. Adapted automatically for light and dark mode.
+   */
   primaryColor: string;
+  /**
+   * Used for keynotes, badges, and secondary highlights. Adapted automatically for light and dark mode.
+   */
   secondaryColor: string;
   /**
-   * Opening content for the conference page: mix headings, text, images, tables, and horizontal rules freely.
+   * Add Content (one or more text columns with a width, like Pages in the Payload website template), accordions, callouts, buttons, quotes, and separators. Non-Content blocks also have a width. Widths add up on a 12-column row from the large breakpoint up (Full = 12, Two thirds = 8, Half = 6, One third = 4) and wrap. On smaller screens everything is full width and stacks in order.
    */
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  intro?:
+    | (
+        | IntroContentBlock
+        | IntroAccordionBlock
+        | IntroCalloutBlock
+        | IntroCtaBlock
+        | IntroQuoteBlock
+        | IntroSeparatorBlock
+      )[]
+    | null;
   /**
    * Sorted by date (earliest first). One day per calendar date.
    */
@@ -681,6 +686,145 @@ export interface Conference {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroContentBlock".
+ */
+export interface IntroContentBlock {
+  /**
+   * Widths add up on a 12-column row from the large breakpoint up (Full = 12, Two thirds = 8, Half = 6, One third = 4) and wrap. On smaller screens every column is full width.
+   */
+  columns?:
+    | {
+        size: 'full' | 'twoThirds' | 'half' | 'oneThird';
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'content';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroAccordionBlock".
+ */
+export interface IntroAccordionBlock {
+  size: 'full' | 'twoThirds' | 'half' | 'oneThird';
+  items?:
+    | {
+        title: string;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        defaultOpen?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'accordion';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroCalloutBlock".
+ */
+export interface IntroCalloutBlock {
+  size: 'full' | 'twoThirds' | 'half' | 'oneThird';
+  /**
+   * Use Deadline for dates and cut-offs, Important for must-read notices.
+   */
+  tone: 'note' | 'important' | 'deadline';
+  title?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'callout';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroCtaBlock".
+ */
+export interface IntroCtaBlock {
+  size: 'full' | 'twoThirds' | 'half' | 'oneThird';
+  label: string;
+  destination: 'programme' | 'venue' | 'appendix' | 'custom';
+  /**
+   * External site, or a page path such as /archive/…
+   */
+  url?: string | null;
+  newTab?: boolean | null;
+  appearance: 'solid' | 'outline';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cta';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroQuoteBlock".
+ */
+export interface IntroQuoteBlock {
+  size: 'full' | 'twoThirds' | 'half' | 'oneThird';
+  quote: string;
+  /**
+   * Optional speaker, role, or source.
+   */
+  attribution?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'quote';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroSeparatorBlock".
+ */
+export interface IntroSeparatorBlock {
+  size: 'full' | 'twoThirds' | 'half' | 'oneThird';
+  style: 'line' | 'space';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'separator';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -810,7 +954,7 @@ export interface AgendaItem {
 export interface Appendix {
   id: number;
   /**
-   * Each block has a required title and an optional description. Drag to reorder.
+   * Each block has a required title (tab label). Basic text uses the same Content columns, accordion, and layout blocks as the conference intro. Drag to reorder tabs.
    */
   blocks: (
     BasicTextAppendixBlock | ReviewersAppendixBlock | ResearchProjectsAppendixBlock | InstitutionsAppendixBlock
@@ -828,22 +972,30 @@ export interface Appendix {
  * via the `definition` "BasicTextAppendixBlock".
  */
 export interface BasicTextAppendixBlock {
+  /**
+   * Tab label on the public appendix.
+   */
   title: string;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  /**
+   * Shown next to the tab title. If empty, a default icon for this block type is used.
+   */
+  icon: {
+    provider: string;
+    name?: string | null;
+  };
+  /**
+   * Add Content (one or more text columns with a width, like Pages in the Payload website template), accordions, callouts, buttons, quotes, and separators. Non-Content blocks also have a width. Widths add up on a 12-column row from the large breakpoint up (Full = 12, Two thirds = 8, Half = 6, One third = 4) and wrap. On smaller screens everything is full width and stacks in order.
+   */
+  layout?:
+    | (
+        | IntroContentBlock
+        | IntroAccordionBlock
+        | IntroCalloutBlock
+        | IntroCtaBlock
+        | IntroQuoteBlock
+        | IntroSeparatorBlock
+      )[]
+    | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'basicText';
@@ -854,6 +1006,13 @@ export interface BasicTextAppendixBlock {
  */
 export interface ReviewersAppendixBlock {
   title: string;
+  /**
+   * Shown next to the tab title. If empty, a default icon for this block type is used.
+   */
+  icon: {
+    provider: string;
+    name?: string | null;
+  };
   description?: {
     root: {
       type: string;
@@ -879,6 +1038,13 @@ export interface ReviewersAppendixBlock {
  */
 export interface ResearchProjectsAppendixBlock {
   title: string;
+  /**
+   * Shown next to the tab title. If empty, a default icon for this block type is used.
+   */
+  icon: {
+    provider: string;
+    name?: string | null;
+  };
   description?: {
     root: {
       type: string;
@@ -904,6 +1070,13 @@ export interface ResearchProjectsAppendixBlock {
  */
 export interface InstitutionsAppendixBlock {
   title: string;
+  /**
+   * Shown next to the tab title. If empty, a default icon for this block type is used.
+   */
+  icon: {
+    provider: string;
+    name?: string | null;
+  };
   description?: {
     root: {
       type: string;
@@ -979,6 +1152,49 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * Browser push endpoints for My programme session alerts. Not edited in admin.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programme-push-subscriptions".
+ */
+export interface ProgrammePushSubscription {
+  id: number;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  conference: number;
+  canonicalPath?: string | null;
+  items:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  notifiedSoon?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  notifiedLive?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1143,6 +1359,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'people';
         value: number | Person;
+      } | null)
+    | ({
+        relationTo: 'programme-push-subscriptions';
+        value: number | ProgrammePushSubscription;
       } | null)
     | ({
         relationTo: 'payload-folders';
@@ -1375,7 +1595,101 @@ export interface AppendicesSelect<T extends boolean = true> {
  */
 export interface BasicTextAppendixBlockSelect<T extends boolean = true> {
   title?: T;
-  description?: T;
+  icon?:
+    | T
+    | {
+        provider?: T;
+        name?: T;
+      };
+  layout?:
+    | T
+    | {
+        content?: T | IntroContentBlockSelect<T>;
+        accordion?: T | IntroAccordionBlockSelect<T>;
+        callout?: T | IntroCalloutBlockSelect<T>;
+        cta?: T | IntroCtaBlockSelect<T>;
+        quote?: T | IntroQuoteBlockSelect<T>;
+        separator?: T | IntroSeparatorBlockSelect<T>;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroContentBlock_select".
+ */
+export interface IntroContentBlockSelect<T extends boolean = true> {
+  columns?:
+    | T
+    | {
+        size?: T;
+        content?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroAccordionBlock_select".
+ */
+export interface IntroAccordionBlockSelect<T extends boolean = true> {
+  size?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+        defaultOpen?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroCalloutBlock_select".
+ */
+export interface IntroCalloutBlockSelect<T extends boolean = true> {
+  size?: T;
+  tone?: T;
+  title?: T;
+  body?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroCtaBlock_select".
+ */
+export interface IntroCtaBlockSelect<T extends boolean = true> {
+  size?: T;
+  label?: T;
+  destination?: T;
+  url?: T;
+  newTab?: T;
+  appearance?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroQuoteBlock_select".
+ */
+export interface IntroQuoteBlockSelect<T extends boolean = true> {
+  size?: T;
+  quote?: T;
+  attribution?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IntroSeparatorBlock_select".
+ */
+export interface IntroSeparatorBlockSelect<T extends boolean = true> {
+  size?: T;
+  style?: T;
   id?: T;
   blockName?: T;
 }
@@ -1385,6 +1699,12 @@ export interface BasicTextAppendixBlockSelect<T extends boolean = true> {
  */
 export interface ReviewersAppendixBlockSelect<T extends boolean = true> {
   title?: T;
+  icon?:
+    | T
+    | {
+        provider?: T;
+        name?: T;
+      };
   description?: T;
   id?: T;
   blockName?: T;
@@ -1395,6 +1715,12 @@ export interface ReviewersAppendixBlockSelect<T extends boolean = true> {
  */
 export interface ResearchProjectsAppendixBlockSelect<T extends boolean = true> {
   title?: T;
+  icon?:
+    | T
+    | {
+        provider?: T;
+        name?: T;
+      };
   description?: T;
   id?: T;
   blockName?: T;
@@ -1405,6 +1731,12 @@ export interface ResearchProjectsAppendixBlockSelect<T extends boolean = true> {
  */
 export interface InstitutionsAppendixBlockSelect<T extends boolean = true> {
   title?: T;
+  icon?:
+    | T
+    | {
+        provider?: T;
+        name?: T;
+      };
   description?: T;
   institutions?: T;
   id?: T;
@@ -1463,7 +1795,16 @@ export interface ConferencesSelect<T extends boolean = true> {
   logo?: T;
   primaryColor?: T;
   secondaryColor?: T;
-  description?: T;
+  intro?:
+    | T
+    | {
+        content?: T | IntroContentBlockSelect<T>;
+        accordion?: T | IntroAccordionBlockSelect<T>;
+        callout?: T | IntroCalloutBlockSelect<T>;
+        cta?: T | IntroCtaBlockSelect<T>;
+        quote?: T | IntroQuoteBlockSelect<T>;
+        separator?: T | IntroSeparatorBlockSelect<T>;
+      };
   days?: T;
   abstracts?: T;
   appendices?: T;
@@ -1546,6 +1887,22 @@ export interface PeopleSelect<T extends boolean = true> {
   bio?: T;
   fullName?: T;
   note?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programme-push-subscriptions_select".
+ */
+export interface ProgrammePushSubscriptionsSelect<T extends boolean = true> {
+  endpoint?: T;
+  p256dh?: T;
+  auth?: T;
+  conference?: T;
+  canonicalPath?: T;
+  items?: T;
+  notifiedSoon?: T;
+  notifiedLive?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1666,21 +2023,6 @@ export interface Footer {
      */
     url?: string | null;
   };
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?: {
-            relationTo: 'conferences';
-            value: number | Conference;
-          } | null;
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1703,6 +2045,33 @@ export interface ActiveConference {
  */
 export interface ConferenceArchive {
   id: number;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Session reminders for My programme. Push keys stay in environment variables; this screen is for editors.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programme-alerts".
+ */
+export interface ProgrammeAlert {
+  id: number;
+  /**
+   * When off, the public site hides “Enable session alerts” and the minute cron sends nothing.
+   */
+  enabled?: boolean | null;
+  /**
+   * Technical contact for Web Push providers (VAPID). Not shown to attendees. Required while alerts are on.
+   */
+  contactEmail?: string | null;
+  /**
+   * Warn this many minutes before a saved session.
+   */
+  leadMinutes?: number | null;
+  /**
+   * Short name on lock-screen notifications.
+   */
+  notificationTitle?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1735,20 +2104,6 @@ export interface FooterSelect<T extends boolean = true> {
         label?: T;
         url?: T;
       };
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1768,6 +2123,19 @@ export interface ActiveConferenceSelect<T extends boolean = true> {
  * via the `definition` "conference-archive_select".
  */
 export interface ConferenceArchiveSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programme-alerts_select".
+ */
+export interface ProgrammeAlertsSelect<T extends boolean = true> {
+  enabled?: T;
+  contactEmail?: T;
+  leadMinutes?: T;
+  notificationTitle?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

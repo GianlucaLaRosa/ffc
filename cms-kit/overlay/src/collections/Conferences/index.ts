@@ -6,7 +6,8 @@ import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { basicLexical } from '../../fields/basicLexical'
 import { colorField } from '../../fields/color'
-import { flexibleLexical } from '../../fields/flexibleLexical'
+import { introLayoutField } from '../../fields/introLayout'
+import { generateConferenceIntroPreviewPath } from '../../utilities/generatePreviewPath'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { assignLogoToFolder } from './hooks/assignLogoToFolder'
 import { togglePublicArchiveEndpoint } from './endpoints/togglePublicArchive'
@@ -71,6 +72,16 @@ export const Conferences: CollectionConfig<'conferences'> = {
     defaultColumns: ['title', 'year', 'publicArchive', 'city', 'updatedAt'],
     description:
       'Conference editions. Open an edition to manage days, abstracts, and appendix.',
+    livePreview: {
+      url: ({ data }) =>
+        generateConferenceIntroPreviewPath({
+          slug: typeof data?.slug === 'string' ? data.slug : null,
+        }),
+    },
+    preview: (data) =>
+      generateConferenceIntroPreviewPath({
+        slug: typeof data?.slug === 'string' ? data.slug : null,
+      }),
   },
   endpoints: [togglePublicArchiveEndpoint],
   fields: [
@@ -116,7 +127,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
                   relationTo: 'media',
                   admin: mediaFolderUploadAdmin(CONFERENCE_LOGOS_FOLDER_NAME, {
                     width: '70%',
-                    description: `Stored in the Media folder "${CONFERENCE_LOGOS_FOLDER_NAME}".`,
+                    description: `Used in the header and as the browser tab icon. Stored in the Media folder "${CONFERENCE_LOGOS_FOLDER_NAME}".`,
                   }),
                 },
               ],
@@ -129,14 +140,22 @@ export const Conferences: CollectionConfig<'conferences'> = {
                   label: 'Primary color',
                   required: true,
                   defaultValue: '#0f172a',
-                  admin: { width: '50%' },
+                  admin: {
+                    width: '50%',
+                    description:
+                      'Used for buttons, links, and section accents. Adapted automatically for light and dark mode.',
+                  },
                 }),
                 colorField({
                   name: 'secondaryColor',
                   label: 'Secondary color',
                   required: true,
                   defaultValue: '#3b82f6',
-                  admin: { width: '50%' },
+                  admin: {
+                    width: '50%',
+                    description:
+                      'Used for keynotes, badges, and secondary highlights. Adapted automatically for light and dark mode.',
+                  },
                 }),
               ],
             },
@@ -144,18 +163,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
         },
         {
           label: 'Intro',
-          fields: [
-            {
-              name: 'description',
-              type: 'richText',
-              editor: flexibleLexical,
-              label: 'Page intro',
-              admin: {
-                description:
-                  'Opening content for the conference page: mix headings, text, images, tables, and horizontal rules freely.',
-              },
-            },
-          ],
+          fields: [introLayoutField()],
         },
         {
           label: 'Days',

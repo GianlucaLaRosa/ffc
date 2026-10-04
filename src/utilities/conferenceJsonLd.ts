@@ -1,4 +1,5 @@
 import type { Conference, ConferenceDay } from '@/payload-types'
+import { conferenceDateTimeIso } from '@/utilities/conferenceTime'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mediaUrl } from '@/utilities/conferenceUi'
 
@@ -17,26 +18,6 @@ const VENUE_FACT_LABELS = new Set([
   'dates',
   'quando',
 ])
-
-function combineDateAndTime(dateValue: string, timeValue?: string | null): string | null {
-  const day = new Date(dateValue)
-  if (Number.isNaN(day.getTime())) return null
-  if (!timeValue) return day.toISOString()
-
-  const time = new Date(timeValue)
-  if (Number.isNaN(time.getTime())) return day.toISOString()
-
-  return new Date(
-    Date.UTC(
-      day.getUTCFullYear(),
-      day.getUTCMonth(),
-      day.getUTCDate(),
-      time.getUTCHours(),
-      time.getUTCMinutes(),
-      time.getUTCSeconds(),
-    ),
-  ).toISOString()
-}
 
 function absoluteUrl(pathOrUrl: string | null): string | undefined {
   if (!pathOrUrl) return undefined
@@ -58,8 +39,8 @@ export function conferenceJsonLd({
   )
   const first = sortedDays[0]
   const last = sortedDays[sortedDays.length - 1]
-  const startDate = first ? combineDateAndTime(first.date, first.startTime) : null
-  const endDate = last ? combineDateAndTime(last.date, last.endTime) : startDate
+  const startDate = first ? conferenceDateTimeIso(first.date, first.startTime) : null
+  const endDate = last ? conferenceDateTimeIso(last.date, last.endTime) : startDate
 
   const name = conference.geo?.primaryEntity?.trim() || conference.title || 'Conference'
   const description =

@@ -24,38 +24,38 @@ export function VenueSection({ conference }: VenueSectionProps) {
   return (
     <section
       id="venue"
-      className="scroll-mt-10 md:scroll-mt-20 py-12 sm:py-16 border-t border-slate-200"
+      className="scroll-mt-10 md:scroll-mt-20 py-12 sm:py-16 border-t border-line"
     >
-      <div className="mb-8 pb-4 border-b border-slate-200">
-        <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+      <div className="mb-8 pb-4 border-b border-line">
+        <span className="text-xs font-bold uppercase tracking-wider text-brand-soft-fg">
           Location & Logistics
         </span>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-fg tracking-tight mt-1">
           Conference Venue
         </h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        <div className="lg:col-span-1 rounded-2xl bg-white border border-slate-200/90 p-6 shadow-xs space-y-5">
+        <div className="lg:col-span-1 rounded-2xl bg-surface border border-line/90 p-6 shadow-xs space-y-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100/70 text-emerald-800 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-brand-soft text-brand-soft-fg flex items-center justify-center shrink-0">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 text-base">Address & City</h3>
-              <p className="text-xs text-slate-500">Official conference hall</p>
+              <h3 className="font-bold text-fg text-base">Address & City</h3>
+              <p className="text-xs text-fg-subtle">Official conference hall</p>
             </div>
           </div>
 
-          <div className="text-sm text-slate-700 space-y-1 pl-1 border-l-2 border-emerald-500">
-            {address && <p className="font-medium text-slate-900">{address}</p>}
+          <div className="text-sm text-fg-muted space-y-1 pl-1 border-l-2 border-brand">
+            {address && <p className="font-medium text-fg">{address}</p>}
             {(city || country) && (
-              <p className="text-slate-600">{[city, country].filter(Boolean).join(', ')}</p>
+              <p className="text-fg-muted">{[city, country].filter(Boolean).join(', ')}</p>
             )}
           </div>
 
           {hasCoords && (
-            <div className="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-200/60 font-mono">
+            <div className="text-xs text-fg-subtle bg-subtle p-3 rounded-lg border border-line/60 font-mono">
               GPS: {latitude.toFixed(4)}° N, {longitude.toFixed(4)}° E
             </div>
           )}
@@ -65,7 +65,7 @@ export function VenueSection({ conference }: VenueSectionProps) {
               href={mapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold transition-colors shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-brand-fg text-sm font-semibold transition-colors shadow-xs focus:outline-none focus:ring-2 focus:ring-brand"
               aria-label="Open location in Google Maps (opens in new tab)"
             >
               <span>Get Directions in Maps</span>
@@ -74,16 +74,16 @@ export function VenueSection({ conference }: VenueSectionProps) {
           )}
         </div>
 
-        <div className="lg:col-span-2 rounded-2xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs">
-          <h3 className="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">
+        <div className="lg:col-span-2 rounded-2xl bg-surface border border-line/90 p-6 sm:p-8 shadow-xs">
+          <h3 className="text-lg font-bold text-fg mb-4 pb-2 border-b border-line">
             Directions, Transport & Delegate Services
           </h3>
           {location ? (
-            <div className="text-sm text-slate-700 leading-relaxed space-y-3">
+            <div className="text-sm text-fg-muted leading-relaxed space-y-3">
               <RichText content={location} />
             </div>
           ) : (
-            <p className="text-sm text-slate-500 italic">
+            <p className="text-sm text-fg-subtle italic">
               Venue transportation guidelines and local hotel agreements will be announced soon.
             </p>
           )}

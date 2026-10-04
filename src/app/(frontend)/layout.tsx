@@ -1,37 +1,59 @@
 import React from 'react'
 import type { Metadata, Viewport } from 'next'
+import { ThemeProvider } from '@/components/ThemeProvider'
+import { PwaProvider } from '@/components/PwaProvider'
+import { conferenceFaviconIcons } from '@/utilities/conferenceFavicon'
+import { cssHex } from '@/utilities/conferenceTheme'
+import { getActiveConferenceBrand, getActiveConferenceLogo } from '@/utilities/getConferenceEdition'
 import './styles.css'
 
-export const metadata: Metadata = {
-  title: 'FFC Scientific Conference - Official Programme & Abstracts',
-  description: 'Official conference application for the Cystic Fibrosis Scientific Conference.',
-  manifest: '/manifest.json',
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const logo = await getActiveConferenceLogo()
+  return {
+    title: 'FFC Scientific Conference - Official Programme & Abstracts',
+    description: 'Official conference application for the Cystic Fibrosis Scientific Conference.',
+    manifest: '/manifest.webmanifest',
+    icons: conferenceFaviconIcons(logo),
+    appleWebApp: {
+      capable: true,
+      title: 'FFC Conference',
+      statusBarStyle: 'default',
+    },
+    applicationName: 'FFC Conference',
+    formatDetection: {
+      telephone: false,
+    },
+  }
 }
 
-export const viewport: Viewport = {
-  themeColor: '#0d5c3a',
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 5,
+export async function generateViewport(): Promise<Viewport> {
+  const { primaryColor } = await getActiveConferenceBrand()
+  return {
+    themeColor: cssHex(primaryColor),
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+  }
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="application-name" content="FFC Conference" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="FFC Conference" />
-        <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__pwaDeferredPrompt=e;});',
+          }}
+        />
       </head>
       <body>
-        <div id="app">{children}</div>
+        <ThemeProvider>
+          <PwaProvider>
+            <div id="app">{children}</div>
+          </PwaProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

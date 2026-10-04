@@ -15,7 +15,7 @@ Keep the sidebar short for non-expert editors. Prefer hub + hide over one big bu
 - **People & orgs** — `People`, `Institutions` (cross-edition directories).
 - **Content** — Media, Users (and similar site infrastructure).
 - **Reference** — seeded lookups (`countries`, `italian-regions`, `abstract-statuses`). Keep them visible here, not mixed with edition or directory collections.
-- **Site** — Active conference and Conference archive use custom nav links and dashboard cards (`afterNavLinks` / `beforeDashboard`). Dashboard also links **Edit active edition** straight to the active conference document when set. Footer stays in the default Globals group. Do not put globals into Conferences.
+- **Site** — Active conference and Conference archive use custom nav links and dashboard cards (`afterNavLinks` / `beforeDashboard`). Dashboard also links **Edit active edition** straight to the active conference document when set. **Editor guide** (`/docs`) is a dashboard banner only; it is not a Payload global and does not sit in Site. Footer stays in the default Globals group. Do not put globals into Conferences.
 
 Collection slugs are plural (`conferences`). Global slugs are singular (`footer`).
 
@@ -23,13 +23,13 @@ Collection slugs are plural (`conferences`). Global slugs are singular (`footer`
 
 ### Basic rich text (`basicLexical`)
 
-Bold, italic, strikethrough, underline, superscript, subscript, inline code, ordered/unordered/checklist lists, indent, blockquote, horizontal rule, headings h3–h6, links. No h1/h2, align, uploads, or blocks unless asked.
+Bold, italic, strikethrough, underline, superscript, subscript, inline code, ordered/unordered lists, indent, blockquote, horizontal rule, headings h3–h6, links. No h1/h2, align, uploads, checklists, or blocks unless asked.
 
 Use for short formatted fields (names, location notes, appendix text). Prefer `@/fields/basicLexical`.
 
 ### Flexible description (`flexibleLexical`)
 
-Full Payload Lexical defaults (headings, lists, checklist, align, indent, blockquote, links, relationships, uploads, inline code, HR) plus MediaBlock, tables (`EXPERIMENTAL_TableFeature`), fixed toolbar, and text colors (`TextStateFeature`). Prefer `@/fields/flexibleLexical`.
+Full Payload Lexical defaults without checklists (headings, lists, align, indent, blockquote, links, relationships, uploads, inline code, HR) plus MediaBlock, tables (`EXPERIMENTAL_TableFeature`), fixed toolbar, and text colors (`TextStateFeature`). Prefer `@/fields/flexibleLexical`.
 
 ## Admin UX
 
@@ -76,3 +76,7 @@ Manual display order is a first-class requirement. Prefer Payload’s built-in `
 - Prefer drafts/versions when content is published to the frontend.
 - Register in `payload.config.ts`; extend SEO `generateTitle` / `generateURL` when SEO fields are present.
 - Venue coordinates: use two `number` fields (`longitude`, `latitude`) in a row — not Payload `point`. `point` + postgres drafts is broken in Payload 3.90 (`ST_GeomFromGeoJSON` on raw `[lng, lat]`). Do not name coordinates `location` if that is venue notes rich text.
+
+## Editor guide
+
+User-facing CMS or public-site features must be documented in the Italian Nextra guide (`content/*.mdx`, `/docs`). Follow `.cursor/rules/editor-docs.mdc`.

@@ -37,7 +37,6 @@ copy_tree "$ROOT/.cursor/rules" "$OVERLAY/.cursor/rules"
 
 mkdir -p "$OVERLAY/src/Footer/hooks"
 copy_file "$ROOT/src/Footer/config.ts" "$OVERLAY/src/Footer/config.ts"
-copy_file "$ROOT/src/Footer/RowLabel.tsx" "$OVERLAY/src/Footer/RowLabel.tsx"
 copy_file "$ROOT/src/Footer/hooks/revalidateFooter.ts" "$OVERLAY/src/Footer/hooks/revalidateFooter.ts"
 
 mkdir -p "$OVERLAY/src/blocks/MediaBlock"
