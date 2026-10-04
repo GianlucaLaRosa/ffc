@@ -1,70 +1,63 @@
-# FFC Comference
+# FFC Ricerca — piattaforma conferenze
 
-username: admin@fcc-conference.org
-password: Password123!
+Sito pubblico e CMS per le edizioni della conferenza FFC Ricerca: programma, abstract, sede, archivio e avvisi. Stack: **Next.js 16**, **Payload CMS 3**, **PostgreSQL**, **pnpm**.
 
-This template comes configured with the bare minimum to get started on anything you need.
+## Superfici
 
-## Quick start
+| URL | Ruolo |
+| --- | --- |
+| `/` | Edizione attiva (`Globals` → **Active conference**) |
+| `/archive/{slug}` | Edizioni passate con **Public archive** |
+| `/admin` | Pannello Payload (inglese) |
+| `/docs` | Guida editor in italiano (stesso login di `/admin`) |
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+Le voci di programma, abstract e appendice si editano **dall’edizione**, non come voci di menu separate. Il piè di pagina pubblico (`Footer`) ha solo i link **Structure** e **Delegation**; Cookie Policy e Privacy Policy sono fisse.
 
-## Quick Start - local setup
+## Avvio locale
 
-To spin up this template locally, follow these steps:
+Serve Node 20+ (o 18.20.2+) e pnpm. Postgres in Docker:
 
-### Clone
+```bash
+docker compose up -d db
+cp .env.example .env
+pnpm install
+pnpm payload migrate
+pnpm dev
+```
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+Apri `http://localhost:3101`. Al primo accesso a `/admin` Payload chiede di creare l’utente amministratore.
 
-### Development
+In `.env`, `NEXT_PUBLIC_SERVER_URL` deve coincidere con l’URL del dev server (`http://localhost:3101`). `DATABASE_URI` di default punta a Postgres su `localhost:5432` (utente/password/db: `postgres` / `postgres` / `fcc_conference`).
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+`pnpm seed` è disabilitato: non è più compatibile con lo schema FCR. Paesi, regioni italiane e stati abstract si popolano al boot (`onInit`). Edizioni e contenuti si creano da `/admin`.
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+### Script
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+| Comando | Uso |
+| --- | --- |
+| `pnpm dev` | Dev su porta **3101** |
+| `pnpm devsafe` | Come `dev`, dopo aver cancellato `.next` |
+| `pnpm build` / `pnpm start` | Build e avvio produzione (stessa porta) |
+| `pnpm payload migrate` | Applica le migration Postgres (`push: false`) |
+| `pnpm payload generate:types` | Rigenera `src/payload-types.ts` dopo cambi di schema |
+| `pnpm payload generate:importmap` | Rigenera l’import map admin |
+| `pnpm ci` | `migrate` + `build` |
 
-#### Docker (Optional)
+### Docker (app intera)
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+`docker compose up` avvia anche l’app sul **3000**, con Postgres interno. In quel caso `NEXT_PUBLIC_SERVER_URL` è `http://localhost:3000`. Per il lavoro quotidiano basta il servizio `db` + `pnpm dev`.
 
-To do so, follow these steps:
+## Ambiente
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+Vedi `.env.example`. Oltre a database, secret Payload e URL pubblico:
 
-## How it works
+- **`PREVIEW_SECRET`** — anteprima intro da admin (iframe / draft)
+- **`BLOB_READ_WRITE_TOKEN`** — media su Vercel Blob in produzione; in locale gli upload restano su disco
+- **`NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`** — push lock-screen (opzionale). Email di contatto: `Globals` → **Programme alerts**
+- **`CRON_SECRET`** — solo se uno scheduler esterno chiama `GET /api/programme-alerts`
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+Non committare `.env`. In produzione usa un `PAYLOAD_SECRET` casuale e una connection string Neon (o equivalente), non quella Docker.
 
-### Collections
+## Produzione
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
-
-- #### Users (Authentication)
-
-  Users are auth-enabled collections that have access to the admin panel.
-
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/3.x/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
-
-- #### Media
-
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
-
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+Deploy tipico: **Vercel** + **Neon** + Blob per i media. `pnpm ci` esegue le migration e la build. Schema Postgres solo via migration Payload, non via `db.push`.
