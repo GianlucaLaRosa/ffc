@@ -323,7 +323,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
                       components: {
                         Field: {
                           clientProps: { hasGenerateTitleFn: true },
-                          path: '@payloadcms/plugin-seo/client#MetaTitleComponent',
+                          path: '@/collections/Conferences/SeoMetaTitle#SeoMetaTitle',
                         },
                       },
                     },
@@ -378,7 +378,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
                             hasGenerateURLFn: true,
                             titlePath: 'meta.title',
                           },
-                          path: '@payloadcms/plugin-seo/client#PreviewComponent',
+                          path: '@/collections/Conferences/SeoPreview#SeoPreview',
                         },
                       },
                     } as UIField['admin'],

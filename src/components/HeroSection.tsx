@@ -10,10 +10,9 @@ export interface HeroSectionProps {
 }
 
 export function HeroSection({ conference, days }: HeroSectionProps) {
-  const { name, year, city, country, description, geo } = conference
+  const { name, year, city, country, description } = conference
   const dateRangeStr = formatDateRange(days)
   const locationStr = [city, country].filter(Boolean).join(', ')
-  const keyFacts = Array.isArray(geo?.keyFacts) ? geo.keyFacts : []
 
   return (
     <section className="relative overflow-hidden pt-10 pb-14 sm:pt-16 sm:pb-20 bg-gradient-to-b from-emerald-50/60 via-slate-50/30 to-white">
@@ -47,32 +46,10 @@ export function HeroSection({ conference, days }: HeroSectionProps) {
           <RichText content={name} />
         </h1>
 
-        {geo?.summary && (
-          <p className="max-w-3xl text-base sm:text-lg text-slate-700 leading-relaxed mb-4">
-            {geo.summary}
-          </p>
-        )}
-
         {description && (
           <div className="max-w-3xl text-base sm:text-lg text-slate-600 leading-relaxed space-y-3 mb-8">
             <RichText content={description} />
           </div>
-        )}
-
-        {keyFacts.length > 0 && (
-          <dl className="max-w-3xl grid grid-cols-1 sm:grid-cols-2 gap-2 mb-8">
-            {keyFacts.map((fact) => (
-              <div
-                key={fact.id || fact.label}
-                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-left"
-              >
-                <dt className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">
-                  {fact.label}
-                </dt>
-                <dd className="text-sm text-slate-700 mt-0.5">{fact.value}</dd>
-              </div>
-            ))}
-          </dl>
         )}
 
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">

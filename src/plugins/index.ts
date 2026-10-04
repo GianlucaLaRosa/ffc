@@ -6,8 +6,18 @@ import { Conference } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { conferencePublicPath, relationSlug } from '@/utilities/conferenceRoutes'
 
-const generateTitle: GenerateTitle<Conference> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | FFC` : 'FFC Conference'
+const conferenceDisplayTitle = (
+  doc: Conference | null | undefined,
+  headerTitle?: string,
+): string => {
+  if (typeof doc?.title === 'string' && doc.title.trim()) return doc.title.trim()
+  if (typeof headerTitle === 'string' && headerTitle.trim()) return headerTitle.trim()
+  return ''
+}
+
+const generateTitle: GenerateTitle<Conference> = ({ doc, title }) => {
+  const name = conferenceDisplayTitle(doc, title)
+  return name ? `${name} | FFC` : 'FFC Conference'
 }
 
 const generateURL: GenerateURL<Conference> = async ({ doc, req }) => {

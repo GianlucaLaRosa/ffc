@@ -22,6 +22,7 @@ export const ColorField: TextFieldClientComponent = ({ field, path, readOnly }) 
   const label = 'label' in field ? field.label : field.name
   const required = 'required' in field ? Boolean(field.required) : false
   const hex = normalizeHex(value)
+  const disabled = Boolean(readOnly)
 
   return (
     <div className="field-type color-field">
@@ -33,7 +34,8 @@ export const ColorField: TextFieldClientComponent = ({ field, path, readOnly }) 
           className="color-field__native"
           type="color"
           value={hex}
-          disabled={Boolean(readOnly)}
+          disabled={disabled}
+          suppressHydrationWarning
           onChange={(event) => setValue(event.target.value)}
         />
         <input
@@ -41,9 +43,10 @@ export const ColorField: TextFieldClientComponent = ({ field, path, readOnly }) 
           aria-label="Hex value"
           className="color-field__hex"
           type="text"
-          value={value ?? ''}
+          value={hex}
           placeholder="#000000"
-          disabled={Boolean(readOnly)}
+          disabled={disabled}
+          suppressHydrationWarning
           onChange={(event) => setValue(event.target.value)}
         />
       </div>

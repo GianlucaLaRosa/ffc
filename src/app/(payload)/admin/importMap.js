@@ -40,10 +40,10 @@ import { UploadFeatureClient as UploadFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { RelationshipFeatureClient as RelationshipFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { AlignFeatureClient as AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { OverviewComponent as OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
-import { MetaTitleComponent as MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
+import { SeoMetaTitle as SeoMetaTitle_1a34e707c6fc001972da091647d36f6a } from '@/collections/Conferences/SeoMetaTitle'
 import { MetaImageComponent as MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaDescriptionComponent as MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
-import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
+import { SeoPreview as SeoPreview_1bdd7b869c06406ffadac9c635ff0246 } from '@/collections/Conferences/SeoPreview'
 import { KeyFactRowLabel as KeyFactRowLabel_70a710d9b89a794be55e36c6d97b836e } from '@/collections/Conferences/KeyFactRowLabel'
 import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { ItalianRegionField as ItalianRegionField_911633a6e2cd90336dec82efeb0711b4 } from '@/collections/Institutions/ItalianRegionField'
@@ -100,10 +100,10 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#RelationshipFeatureClient": RelationshipFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#AlignFeatureClient": AlignFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/plugin-seo/client#OverviewComponent": OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
-  "@payloadcms/plugin-seo/client#MetaTitleComponent": MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c0860,
+  "@/collections/Conferences/SeoMetaTitle#SeoMetaTitle": SeoMetaTitle_1a34e707c6fc001972da091647d36f6a,
   "@payloadcms/plugin-seo/client#MetaImageComponent": MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaDescriptionComponent": MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860,
-  "@payloadcms/plugin-seo/client#PreviewComponent": PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
+  "@/collections/Conferences/SeoPreview#SeoPreview": SeoPreview_1bdd7b869c06406ffadac9c635ff0246,
   "@/collections/Conferences/KeyFactRowLabel#KeyFactRowLabel": KeyFactRowLabel_70a710d9b89a794be55e36c6d97b836e,
   "@payloadcms/next/client#SlugField": SlugField_2b8867833a34864a02ddf429b0728a40,
   "@/collections/Institutions/ItalianRegionField#ItalianRegionField": ItalianRegionField_911633a6e2cd90336dec82efeb0711b4,
