@@ -1,25 +1,23 @@
 import React from 'react'
 import { RichText } from './RichText'
 import { MapPin, ExternalLink } from './IconRenderer'
+import type { Conference } from '@/payload-types'
 
 export interface VenueSectionProps {
-  conference: any
+  conference: Conference
 }
 
 export function VenueSection({ conference }: VenueSectionProps) {
-  const { street, city, country, locationCoords, location } = conference
+  const { address, city, country, latitude, longitude, location } = conference
 
-  const hasAddress = street || city || country
-  const hasCoords =
-    locationCoords &&
-    typeof locationCoords.latitude === 'number' &&
-    typeof locationCoords.longitude === 'number'
+  const hasAddress = address || city || country
+  const hasCoords = typeof latitude === 'number' && typeof longitude === 'number'
 
   const mapUrl = hasCoords
-    ? `https://www.google.com/maps/search/?api=1&query=${locationCoords.latitude},${locationCoords.longitude}`
+    ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
     : hasAddress
       ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-          [street, city, country].filter(Boolean).join(', '),
+          [address, city, country].filter(Boolean).join(', '),
         )}`
       : null
 
@@ -38,7 +36,6 @@ export function VenueSection({ conference }: VenueSectionProps) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Venue Information Card */}
         <div className="lg:col-span-1 rounded-2xl bg-white border border-slate-200/90 p-6 shadow-xs space-y-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-100/70 text-emerald-800 flex items-center justify-center shrink-0">
@@ -51,7 +48,7 @@ export function VenueSection({ conference }: VenueSectionProps) {
           </div>
 
           <div className="text-sm text-slate-700 space-y-1 pl-1 border-l-2 border-emerald-500">
-            {street && <p className="font-medium text-slate-900">{street}</p>}
+            {address && <p className="font-medium text-slate-900">{address}</p>}
             {(city || country) && (
               <p className="text-slate-600">{[city, country].filter(Boolean).join(', ')}</p>
             )}
@@ -59,7 +56,7 @@ export function VenueSection({ conference }: VenueSectionProps) {
 
           {hasCoords && (
             <div className="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-200/60 font-mono">
-              GPS: {locationCoords.latitude.toFixed(4)}° N, {locationCoords.longitude.toFixed(4)}° E
+              GPS: {latitude.toFixed(4)}° N, {longitude.toFixed(4)}° E
             </div>
           )}
 
@@ -77,7 +74,6 @@ export function VenueSection({ conference }: VenueSectionProps) {
           )}
         </div>
 
-        {/* Venue Details & Logistics Notes */}
         <div className="lg:col-span-2 rounded-2xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xs">
           <h3 className="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">
             Directions, Transport & Delegate Services

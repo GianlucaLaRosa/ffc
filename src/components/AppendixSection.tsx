@@ -2,18 +2,29 @@
 
 import React, { useState } from 'react'
 import { RichText } from './RichText'
-import { Building2, User, BookOpen, ExternalLink } from 'lucide-react'
+import { Building2, BookOpen, ExternalLink, FileText, Users, FlaskConical } from 'lucide-react'
 import { useModal } from '@/context/ModalContext'
+import type { Abstract, Appendix, Institution } from '@/payload-types'
+import { abstractStatusLabel } from '@/utilities/conferenceUi'
 
 export interface AppendixSectionProps {
-  abstracts: any[]
-  institutions: any[]
-  people: any[]
+  abstracts: Abstract[]
+  appendix: Appendix | null
 }
 
-export function AppendixSection({ abstracts, institutions, people }: AppendixSectionProps) {
+type TabId = 'abstracts' | string
+
+export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
   const { openAbstractModal } = useModal()
-  const [activeTab, setActiveTab] = useState<'abstracts' | 'institutions' | 'people'>('abstracts')
+  const blocks = appendix?.blocks ?? []
+  const [activeTab, setActiveTab] = useState<TabId>('abstracts')
+
+  const tabClass = (id: TabId) =>
+    `px-4 py-2.5 text-sm font-semibold rounded-t-xl border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
+      activeTab === id
+        ? 'border-emerald-600 text-emerald-800 bg-emerald-50/50'
+        : 'border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+    }`
 
   return (
     <section
@@ -29,7 +40,6 @@ export function AppendixSection({ abstracts, institutions, people }: AppendixSec
         </h2>
       </div>
 
-      {/* Tabs */}
       <div
         className="flex border-b border-slate-200 gap-2 overflow-x-auto pb-1 mb-8"
         role="tablist"
@@ -38,56 +48,44 @@ export function AppendixSection({ abstracts, institutions, people }: AppendixSec
           type="button"
           role="tab"
           aria-selected={activeTab === 'abstracts'}
-          aria-controls="appendix-panel-abstracts"
           onClick={() => setActiveTab('abstracts')}
-          className={`px-4 py-2.5 text-sm font-semibold rounded-t-xl border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
-            activeTab === 'abstracts'
-              ? 'border-emerald-600 text-emerald-800 bg-emerald-50/50'
-              : 'border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-          }`}
+          className={tabClass('abstracts')}
         >
           <BookOpen className="w-4 h-4" />
-          <span>Appendix 1: Scientific Abstracts ({abstracts.length})</span>
+          <span>Scientific Abstracts ({abstracts.length})</span>
         </button>
 
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'institutions'}
-          aria-controls="appendix-panel-institutions"
-          onClick={() => setActiveTab('institutions')}
-          className={`px-4 py-2.5 text-sm font-semibold rounded-t-xl border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
-            activeTab === 'institutions'
-              ? 'border-emerald-600 text-emerald-800 bg-emerald-50/50'
-              : 'border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-          }`}
-        >
-          <Building2 className="w-4 h-4" />
-          <span>Appendix 2: Research Institutions ({institutions.length})</span>
-        </button>
-
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'people'}
-          aria-controls="appendix-panel-people"
-          onClick={() => setActiveTab('people')}
-          className={`px-4 py-2.5 text-sm font-semibold rounded-t-xl border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
-            activeTab === 'people'
-              ? 'border-emerald-600 text-emerald-800 bg-emerald-50/50'
-              : 'border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-          }`}
-        >
-          <User className="w-4 h-4" />
-          <span>Appendix 3: Researchers & Speakers ({people.length})</span>
-        </button>
+        {blocks.map((block, index) => {
+          const id = block.id || `${block.blockType}-${index}`
+          const Icon =
+            block.blockType === 'institutions'
+              ? Building2
+              : block.blockType === 'reviewers'
+                ? Users
+                : block.blockType === 'researchProjects'
+                  ? FlaskConical
+                  : FileText
+          return (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === id}
+              onClick={() => setActiveTab(id)}
+              className={tabClass(id)}
+            >
+              <Icon className="w-4 h-4" />
+              <span>{block.title}</span>
+            </button>
+          )
+        })}
       </div>
 
-      {/* Tab Panels */}
-      <div>
-        {/* Appendix 1: Abstracts */}
-        {activeTab === 'abstracts' && (
-          <div id="appendix-panel-abstracts" role="tabpanel" className="space-y-4">
+      {activeTab === 'abstracts' && (
+        <div role="tabpanel" className="space-y-4">
+          {abstracts.length === 0 ? (
+            <p className="text-sm text-slate-500 italic">No published abstracts yet.</p>
+          ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {abstracts.map((abs) => (
                 <div
@@ -100,12 +98,9 @@ export function AppendixSection({ abstracts, institutions, people }: AppendixSec
                       <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
                         {abs.code || 'ABSTRACT'}
                       </span>
-                      {abs.status?.name && (
-                        <span
-                          className="text-[10px] font-bold uppercase tracking-wider text-white px-2 py-0.5 rounded"
-                          style={{ backgroundColor: abs.status.color || '#3b82f6' }}
-                        >
-                          {abs.status.name}
+                      {abstractStatusLabel(abs.status) && (
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-white px-2 py-0.5 rounded bg-emerald-700">
+                          {abstractStatusLabel(abs.status)}
                         </span>
                       )}
                     </div>
@@ -127,85 +122,71 @@ export function AppendixSection({ abstracts, institutions, people }: AppendixSec
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
+      )}
 
-        {/* Appendix 2: Institutions */}
-        {activeTab === 'institutions' && (
-          <div id="appendix-panel-institutions" role="tabpanel" className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {institutions.map((inst) => {
-                const countryName =
-                  typeof inst.country === 'object' ? inst.country?.name : inst.country || ''
-                const regionName =
-                  typeof inst.region === 'object' ? inst.region?.name : inst.region || ''
+      {blocks.map((block, index) => {
+        const id = block.id || `${block.blockType}-${index}`
+        if (activeTab !== id) return null
 
-                return (
-                  <div
-                    key={inst.id}
-                    className="p-4 rounded-xl border border-slate-200/90 bg-white shadow-2xs flex items-start gap-3"
-                  >
-                    <div className="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
-                      <Building2 className="w-5 h-5" />
+        if (block.blockType === 'institutions') {
+          const institutions = Array.isArray(block.institutions)
+            ? block.institutions.filter((item): item is Institution => typeof item === 'object')
+            : []
+          return (
+            <div key={id} role="tabpanel" className="space-y-4">
+              {block.description && (
+                <div className="text-sm text-slate-600 mb-4">
+                  <RichText content={block.description} />
+                </div>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {institutions.map((inst) => {
+                  const countryName =
+                    typeof inst.country === 'object' ? inst.country?.name : ''
+                  const regionName =
+                    typeof inst.region === 'object' && inst.region ? inst.region.name : ''
+                  return (
+                    <div
+                      key={inst.id}
+                      className="p-4 rounded-xl border border-slate-200/90 bg-white shadow-2xs flex items-start gap-3"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+                        <Building2 className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900 text-sm">{inst.name}</h4>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {[regionName, countryName].filter(Boolean).join(', ')}
+                        </p>
+                        {inst.description && (
+                          <div className="text-xs text-slate-600 mt-2 line-clamp-3">
+                            <RichText content={inst.description} />
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-slate-900 text-sm">{inst.name}</h4>
-                      <p className="text-xs text-slate-500 mt-0.5">
-                        {[regionName, countryName].filter(Boolean).join(', ')}
-                      </p>
-                    </div>
-                  </div>
-                )
-              })}
+                  )
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          )
+        }
 
-        {/* Appendix 3: People */}
-        {activeTab === 'people' && (
-          <div id="appendix-panel-people" role="tabpanel" className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {people.map((p) => {
-                const instName =
-                  typeof p.institution === 'object'
-                    ? p.institution?.name
-                    : p.institution || 'Affiliated Researcher'
-
-                return (
-                  <div
-                    key={p.id}
-                    className="p-4 rounded-xl border border-slate-200/90 bg-white shadow-2xs flex items-start gap-3.5"
-                  >
-                    <div className="w-11 h-11 rounded-full bg-emerald-100/70 text-emerald-800 flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden">
-                      {p.photo?.url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={p.photo.url}
-                          alt={`${p.firstName} ${p.lastName}`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <User className="w-5 h-5 text-emerald-700" />
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="font-bold text-slate-900 text-sm">
-                        {p.firstName} {p.lastName}
-                      </h4>
-                      <p className="text-xs text-slate-500 truncate mt-0.5">{instName}</p>
-                      {p.bio && (
-                        <div className="text-xs text-slate-600 mt-2 line-clamp-2">
-                          <RichText content={p.bio} />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+        return (
+          <div key={id} role="tabpanel" className="rounded-2xl border border-slate-200 bg-white p-6">
+            <h3 className="text-lg font-bold text-slate-900 mb-3">{block.title}</h3>
+            {block.description ? (
+              <div className="text-sm text-slate-700 leading-relaxed">
+                <RichText content={block.description} />
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500 italic">Content for this section is coming soon.</p>
+            )}
           </div>
-        )}
-      </div>
+        )
+      })}
     </section>
   )
 }

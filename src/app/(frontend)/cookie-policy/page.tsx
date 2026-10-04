@@ -188,14 +188,12 @@ export default function CookiePolicyPage() {
           <section className="border-t border-slate-100 pt-8">
             <h3 className="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
               <span className="text-emerald-700 font-mono text-base">05.</span>
-              Backoffice / Administrative Area
+              Staff authentication
             </h3>
             <p className="text-sm sm:text-base text-slate-600">
-              Only authenticated conference administrators accessing the CMS backoffice (
-              <code className="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-800">/admin</code>) receive
-              a strictly technical authentication session token (cookie) necessary to authenticate their login
-              credentials and maintain secure access to the editorial dashboard. Regular public visitors
-              browsing the conference website do not receive this token.
+              Authenticated conference staff receive a strictly technical session cookie needed to stay
+              signed in to the editorial area. Regular public visitors browsing the conference website do
+              not receive this token.
             </p>
           </section>
 

@@ -67,36 +67,62 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
-    conferences: Conference;
-    days: Day;
-    'agenda-items': AgendaItem;
-    abstracts: Abstract;
-    'abstract-statuses': AbstractStatus;
-    people: Person;
-    institutions: Institution;
-    countries: Country;
-    'italian-regions': ItalianRegion;
     media: Media;
+    users: User;
+    'abstract-statuses': AbstractStatus;
+    abstracts: Abstract;
+    appendices: Appendix;
+    'agenda-items': AgendaItem;
+    'conference-days': ConferenceDay;
+    conferences: Conference;
+    countries: Country;
+    institutions: Institution;
+    'italian-regions': ItalianRegion;
+    people: Person;
     'payload-kv': PayloadKv;
+    'payload-jobs': PayloadJob;
+    'payload-folders': FolderInterface;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    media: {
+      abstract: 'abstracts';
+      taggedPeople: 'people';
+    };
+    'agenda-items': {
+      children: 'agenda-items';
+      childAbstracts: 'abstracts';
+    };
+    'conference-days': {
+      agendaItems: 'agenda-items';
+    };
+    conferences: {
+      days: 'conference-days';
+      abstracts: 'abstracts';
+      appendices: 'appendices';
+    };
+    'payload-folders': {
+      documentsAndFolders: 'payload-folders' | 'media';
+    };
+  };
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
-    conferences: ConferencesSelect<false> | ConferencesSelect<true>;
-    days: DaysSelect<false> | DaysSelect<true>;
-    'agenda-items': AgendaItemsSelect<false> | AgendaItemsSelect<true>;
-    abstracts: AbstractsSelect<false> | AbstractsSelect<true>;
-    'abstract-statuses': AbstractStatusesSelect<false> | AbstractStatusesSelect<true>;
-    people: PeopleSelect<false> | PeopleSelect<true>;
-    institutions: InstitutionsSelect<false> | InstitutionsSelect<true>;
-    countries: CountriesSelect<false> | CountriesSelect<true>;
-    'italian-regions': ItalianRegionsSelect<false> | ItalianRegionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
+    'abstract-statuses': AbstractStatusesSelect<false> | AbstractStatusesSelect<true>;
+    abstracts: AbstractsSelect<false> | AbstractsSelect<true>;
+    appendices: AppendicesSelect<false> | AppendicesSelect<true>;
+    'agenda-items': AgendaItemsSelect<false> | AgendaItemsSelect<true>;
+    'conference-days': ConferenceDaysSelect<false> | ConferenceDaysSelect<true>;
+    conferences: ConferencesSelect<false> | ConferencesSelect<true>;
+    countries: CountriesSelect<false> | CountriesSelect<true>;
+    institutions: InstitutionsSelect<false> | InstitutionsSelect<true>;
+    'italian-regions': ItalianRegionsSelect<false> | ItalianRegionsSelect<true>;
+    people: PeopleSelect<false> | PeopleSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
+    'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -106,10 +132,14 @@ export interface Config {
   };
   fallbackLocale: null;
   globals: {
-    'site-settings': SiteSetting;
+    footer: Footer;
+    'active-conference': ActiveConference;
+    'conference-archive': ConferenceArchive;
   };
   globalsSelect: {
-    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+    'active-conference': ActiveConferenceSelect<false> | ActiveConferenceSelect<true>;
+    'conference-archive': ConferenceArchiveSelect<false> | ConferenceArchiveSelect<true>;
   };
   locale: null;
   widgets: {
@@ -117,7 +147,13 @@ export interface Config {
   };
   user: User;
   jobs: {
-    tasks: unknown;
+    tasks: {
+      schedulePublish: TaskSchedulePublish;
+      inline: {
+        input: unknown;
+        output: unknown;
+      };
+    };
     workflows: unknown;
   };
 }
@@ -141,100 +177,6 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "conferences".
- */
-export interface Conference {
-  id: number;
-  editionName: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  editionYear: number;
-  primaryColor?: string | null;
-  accentColor?: string | null;
-  logo?: (number | null) | Media;
-  startDate: string;
-  endDate: string;
-  days: (number | Day)[];
-  generalDescription?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  street?: string | null;
-  city?: string | null;
-  country?: string | null;
-  locationCoords?: {
-    latitude?: number | null;
-    longitude?: number | null;
-  };
-  location?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
@@ -255,9 +197,23 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
-  abstract?: (number | null) | Abstract;
-  taggedPeople?: (number | Person)[] | null;
-  cropFocus?: ('center' | 'top' | 'bottom' | 'left' | 'right') | null;
+  /**
+   * Abstracts that use this image. Edit the link from the abstract, not here.
+   */
+  abstract?: {
+    docs?: (number | Abstract)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * People whose profile photo is this file. Edit the photo on the person.
+   */
+  taggedPeople?: {
+    docs?: (number | Person)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -294,16 +250,27 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
   };
 }
 /**
+ * Scientific abstracts for one conference edition. Prefer creating and ordering them from the conference Abstracts tab.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "abstracts".
  */
 export interface Abstract {
   id: number;
-  code?: string | null;
-  status?: (number | null) | AbstractStatus;
+  _abstracts_abstracts_order?: string | null;
+  _abstracts_childAbstracts_order?: string | null;
+  _order?: string | null;
   title: {
     root: {
       type: string;
@@ -320,12 +287,30 @@ export interface Abstract {
     [k: string]: unknown;
   };
   /**
-   * Add, order, and edit content sections directly for this abstract (e.g. Background, Methods, Results, Conclusions).
+   * Research or session code (e.g. "CF crio"). Not required to be unique.
+   */
+  code?: string | null;
+  /**
+   * When selected and Content is empty, default sections are created for this status.
+   */
+  status?: (number | null) | AbstractStatus;
+  /**
+   * Additional code/status pairs for this abstract. Each row adds a matching appendix after the primary one (same order).
+   */
+  relatedCodes?:
+    | {
+        code?: string | null;
+        status?: (number | null) | AbstractStatus;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Structured abstract sections. Defaults are seeded when Status is selected and this list is empty.
    */
   content?:
     | {
-        title?: string | null;
-        description: {
+        title: string;
+        description?: {
           root: {
             type: string;
             children: {
@@ -339,48 +324,112 @@ export interface Abstract {
             version: number;
           };
           [k: string]: unknown;
-        };
+        } | null;
         id?: string | null;
       }[]
     | null;
-  authors?: (number | Person)[] | null;
-  photos?: (number | Media)[] | null;
-  speakers?: (number | Person)[] | null;
   /**
-   * Automatically synchronized from Speakers list. Check "Is Main Speaker" for plenary/main speakers.
+   * First row is the primary code/status appendix; following rows match Related codes in order. Row count is kept at 1 + Related codes automatically.
    */
-  mainSpeakers?:
+  appendices?:
     | {
-        speaker: number | Person;
-        isMain?: boolean | null;
+        title?: string | null;
+        body?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Ordered authors and speakers (same list). Drag rows to set order; assign a role per author and mark speakers with the checkbox. Each person can only appear once.
+   */
+  authors?:
+    | {
+        person: number | Person;
+        role: 'primaryInvestigator' | 'partner' | 'collaborator' | 'teamMember';
+        isSpeaker?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Ordered images for this abstract. Stored in the Media folder "Abstract pictures".
+   */
+  picture?:
+    | {
+        image: number | Media;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Conference edition this abstract belongs to. Set automatically when created from a conference.
+   */
+  conference: number | Conference;
+  /**
+   * Parent agenda items for this abstract. Must belong to the same conference edition. An abstract can appear under multiple sessions.
+   */
+  agendaItems?: (number | AgendaItem)[] | null;
+  /**
+   * Auto-generated plain-text title from Title (used in lists).
+   */
+  plainTitle?: string | null;
+  note?: string | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
+ * Abstract workflow statuses. Seeded; edit only if labels or colors need changing.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "abstract-statuses".
  */
 export interface AbstractStatus {
   id: number;
-  order?: number | null;
-  name: string;
-  slug?: string | null;
-  color?: string | null;
+  _order?: string | null;
+  /**
+   * Machine-readable status key (e.g. new, ongoing, concluded).
+   */
+  status: string;
+  /**
+   * Section titles seeded onto an abstract when this status is selected and Content is empty. Leave empty to seed nothing.
+   */
+  defaultContent?:
+    | {
+        title: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Researchers, authors, speakers, and reviewers.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "people".
  */
 export interface Person {
   id: number;
+  _order?: string | null;
   firstName: string;
   lastName: string;
   institution?: (number | null) | Institution;
+  /**
+   * Optional profile photo. Stored in the Media folder "People photos".
+   */
   photo?: (number | null) | Media;
   bio?: {
     root: {
@@ -397,114 +446,29 @@ export interface Person {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Auto-generated from first and last name.
+   */
+  fullName?: string | null;
+  note?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Research institutes and laboratories.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "institutions".
  */
 export interface Institution {
   id: number;
+  _order?: string | null;
   name: string;
   country: number | Country;
+  /**
+   * Only available when the country is Italy.
+   */
   region?: (number | null) | ItalianRegion;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "countries".
- */
-export interface Country {
-  id: number;
-  name: string;
-  code?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "italian-regions".
- */
-export interface ItalianRegion {
-  id: number;
-  name: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "days".
- */
-export interface Day {
-  id: number;
-  title: string;
-  date: string;
-  order?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "agenda-items".
- */
-export interface AgendaItem {
-  id: number;
-  title: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  day: number | Day;
-  isKeynote?: boolean | null;
-  startTime?: string | null;
-  endTime?: string | null;
-  duration?: string | null;
-  /**
-   * Icon displayed beside session title.
-   */
-  icon?:
-    | (
-        | 'mic'
-        | 'users'
-        | 'presentation'
-        | 'flask-conical'
-        | 'coffee'
-        | 'utensils'
-        | 'award'
-        | 'book-open'
-        | 'stethoscope'
-        | 'dna'
-        | 'activity'
-        | 'video'
-        | 'message-square'
-        | 'music'
-        | 'check-circle'
-        | 'calendar'
-        | 'clock'
-        | 'map-pin'
-        | 'info'
-      )
-    | null;
-  /**
-   * Clicking this agenda item in the frontend will open the full-screen view for this abstract.
-   */
-  abstract?: (number | null) | Abstract;
-  /**
-   * Nested talks or sub-events under this session.
-   */
-  children?: (number | AgendaItem)[] | null;
   description?: {
     root: {
       type: string;
@@ -522,6 +486,499 @@ export interface AgendaItem {
   } | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * World countries for institutions. Seeded reference data.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries".
+ */
+export interface Country {
+  id: number;
+  name: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Italian regions for institution addresses. Seeded reference data.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "italian-regions".
+ */
+export interface ItalianRegion {
+  id: number;
+  name: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Conference editions. Open an edition to manage days, abstracts, and appendix.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conferences".
+ */
+export interface Conference {
+  id: number;
+  /**
+   * Formatted conference name. Plain title and slug are derived from this.
+   */
+  name: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Edition year. Multiple editions per year are allowed.
+   */
+  year: number;
+  /**
+   * Stored in the Media folder "Conference logos".
+   */
+  logo?: (number | null) | Media;
+  primaryColor: string;
+  secondaryColor: string;
+  /**
+   * Opening content for the conference page: mix headings, text, images, tables, and horizontal rules freely.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Sorted by date (earliest first). One day per calendar date.
+   */
+  days?: {
+    docs?: (number | ConferenceDay)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Scientific abstracts for this conference edition only. Link them to agenda items from the abstract or from each session.
+   */
+  abstracts?: {
+    docs?: (number | Abstract)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * At most one appendix for this conference. Open it to add blocks and drag to reorder them.
+   */
+  appendices?: {
+    docs?: (number | Appendix)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  city: string;
+  country: string;
+  address: string;
+  /**
+   * X coordinate (e.g. 13.8046 for Trieste).
+   */
+  longitude?: number | null;
+  /**
+   * Y coordinate (e.g. 45.6495 for Trieste).
+   */
+  latitude?: number | null;
+  /**
+   * Optional venue details (e.g. hall, entrance, access notes).
+   */
+  location?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Questo blocco è la scheda breve che le persone vedono prima di aprire la pagina: il titolo blu su Google, l’anteprima su WhatsApp o LinkedIn, e il testo nella scheda del browser. Non è il contenuto della pagina (quello sta in Name, Intro e Venue).
+   */
+  meta?: {
+    /**
+     * Il titolo che Google e motori simili mostrano di solito. Scrivi il nome dell’edizione come la cercherebbe una persona, con l’anno se serve (esempio: «FCR 2026 — Trieste»). Resta sotto i 60 caratteri circa, così non viene tagliato. Usa Generate per copiare il nome della conferenza, poi accorcialo se serve. Se lo lasci vuoto, la pagina pubblica usa il nome della conferenza più «FCR».
+     */
+    title?: string | null;
+    /**
+     * L’immagine che compare quando qualcuno condivide il link di questa edizione (WhatsApp, Slack, LinkedIn, email). Meglio una foto orizzontale ampia della sede, del manifesto o del logo su sfondo semplice. Punta a meno di 500 KB; il limite di caricamento è 12 MB. Un’immagine 1200×630 px riempie l’anteprima senza tagliare il soggetto. Se la lasci vuota, il sito usa l’immagine di condivisione predefinita FCR.
+     */
+    image?: (number | null) | Media;
+    /**
+     * Due frasi (circa 150–160 caratteri) che compaiono sotto il titolo su Google e nell’anteprima di condivisione. Di’ che edizione è, dove si svolge e a chi è rivolta. Esempio: «FCR 2026 è un incontro di medicina rigenerativa a Trieste per clinici e ricercatori. Date, sede e programma.» Non inserire elenchi di parole chiave. Se lo lasci vuoto, i motori di ricerca ricostruiranno il testo dalla pagina.
+     */
+    description?: string | null;
+  };
+  /**
+   * Facoltativo. ChatGPT, Gemini, Perplexity e strumenti simili citano spesso fatti brevi e stabili, non i testi lunghi della pagina. Compila questi campi perché possano nominare l’edizione in modo corretto. Non vengono mostrati come FAQ sul sito. Date, città, indirizzo e coordinate si prendono da Days e Venue: non ripeterli qui, salvo che ti serva una formulazione precisa in una riga.
+   */
+  geo?: {
+    /**
+     * Una o due frasi di fatto che un assistente può citare. Inizia con il nome ufficiale, poi luogo, destinatari e tema. Esempio: «FCR 2026 è l’incontro annuale FCR di medicina rigenerativa, a Trieste, per clinici e ricercatori.» Evita slogan («il convegno migliore di sempre»). Se è vuoto, gli assistenti usano il testo breve sopra, poi il contenuto della pagina.
+     */
+    summary?: string | null;
+    /**
+     * Il nome esatto che vuoi sia citato come soggetto della pagina, per non confonderla con un altro anno o un altro evento FCR. Esempio: «FCR 2026» o «Fondazione conferenza 2026, Trieste». Tienilo breve. Se è vuoto, si usa il nome della conferenza.
+     */
+    primaryEntity?: string | null;
+    /**
+     * Coppie brevi etichetta–valore da citare così come sono. Usale per ciò che è facile sbagliare (tema, destinatari, lingua, organizzato da). Non duplicare città, indirizzo o date, salvo che serva una frase precisa. Esempi: Tema → Medicina rigenerativa; Destinatari → Clinici e ricercatori; Lingua → Inglese. Bastano quattro-otto fatti.
+     */
+    keyFacts?:
+      | {
+          /**
+           * Il tipo di fatto, in una o due parole. Esempi: Tema, Destinatari, Lingua, Organizzato da.
+           */
+          label?: string | null;
+          /**
+           * Il fatto, come lo diresti a un collega. Una sola riga. Esempio: «Clinici e ricercatori accademici».
+           */
+          value?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Auto-generated plain-text title from Name (used in lists, slug, and the public listing).
+   */
+  title?: string | null;
+  /**
+   * First time this edition went live on the site. Kept stable for SEO; not the event dates (those come from Days).
+   */
+  publishedAt?: string | null;
+  publicArchive?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conference-days".
+ */
+export interface ConferenceDay {
+  id: number;
+  date: string;
+  startTime: string;
+  /**
+   * May be earlier than start time for overnight days.
+   */
+  endTime: string;
+  /**
+   * Top-level sessions for this day. Nested items are managed on each parent. Drag to reorder.
+   */
+  agendaItems?: {
+    docs?: (number | AgendaItem)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Parent conference. Set automatically when created from a conference.
+   */
+  conference: number | Conference;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agenda-items".
+ */
+export interface AgendaItem {
+  id: number;
+  '_agenda-items_agendaItems_order'?: string | null;
+  '_agenda-items_children_order'?: string | null;
+  _order?: string | null;
+  /**
+   * Formatted talk or session title. Plain title is derived from this.
+   */
+  name: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Select the conference day first. Start and end times are limited to that day’s hours.
+   */
+  day: number | ConferenceDay;
+  startTime?: string | null;
+  endTime?: string | null;
+  /**
+   * Highlight this session graphically on the frontend.
+   */
+  isKeynote?: boolean | null;
+  durationMinutes?: number | null;
+  /**
+   * Optional Lucide icon. Search filters the full list; scroll to browse all icons.
+   */
+  icon: {
+    provider: string;
+    name?: string | null;
+  };
+  /**
+   * Optional notes or session details.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Nested talks or sub-sessions. Drag to set order within this item.
+   */
+  children?: {
+    docs?: (number | AgendaItem)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Scientific abstracts under this session. The same abstract can also appear under other agenda items.
+   */
+  childAbstracts?: {
+    docs?: (number | Abstract)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Auto-generated plain-text title from Title (used in lists).
+   */
+  title?: string | null;
+  /**
+   * Optional parent agenda item (same day). Leave empty for top-level sessions.
+   */
+  parent?: (number | null) | AgendaItem;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * One appendix per conference edition. Add ordered blocks (basic text, institutions list, …) and drag to reorder.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "appendices".
+ */
+export interface Appendix {
+  id: number;
+  /**
+   * Each block has a required title and an optional description. Drag to reorder.
+   */
+  blocks: (
+    BasicTextAppendixBlock | ReviewersAppendixBlock | ResearchProjectsAppendixBlock | InstitutionsAppendixBlock
+  )[];
+  /**
+   * Conference edition this appendix belongs to. Each conference may have only one appendix.
+   */
+  conference: number | Conference;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BasicTextAppendixBlock".
+ */
+export interface BasicTextAppendixBlock {
+  title: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'basicText';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ReviewersAppendixBlock".
+ */
+export interface ReviewersAppendixBlock {
+  title: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'reviewers';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ResearchProjectsAppendixBlock".
+ */
+export interface ResearchProjectsAppendixBlock {
+  title: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'researchProjects';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InstitutionsAppendixBlock".
+ */
+export interface InstitutionsAppendixBlock {
+  title: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * All institutions except those of non–team-member authors on this conference’s abstracts. Create new ones here if needed. Drag to set display order.
+   */
+  institutions?: (number | Institution)[] | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'institutions';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-folders".
+ */
+export interface FolderInterface {
+  id: number;
+  name: string;
+  folder?: (number | null) | FolderInterface;
+  documentsAndFolders?: {
+    docs?: (
+      | {
+          relationTo?: 'payload-folders';
+          value: number | FolderInterface;
+        }
+      | {
+          relationTo?: 'media';
+          value: number | Media;
+        }
+    )[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  folderType?: 'media'[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -542,54 +999,154 @@ export interface PayloadKv {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs".
+ */
+export interface PayloadJob {
+  id: number;
+  /**
+   * Input data provided to the job
+   */
+  input?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  taskStatus?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  completedAt?: string | null;
+  totalTried?: number | null;
+  /**
+   * If hasError is true this job will not be retried
+   */
+  hasError?: boolean | null;
+  /**
+   * If hasError is true, this is the error that caused it
+   */
+  error?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Task execution log
+   */
+  log?:
+    | {
+        executedAt: string;
+        completedAt: string;
+        taskSlug: 'inline' | 'schedulePublish';
+        taskID: string;
+        input?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        output?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        state: 'failed' | 'succeeded';
+        error?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  taskSlug?: ('inline' | 'schedulePublish') | null;
+  queue?: string | null;
+  waitUntil?: string | null;
+  processing?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
-      } | null)
-    | ({
-        relationTo: 'conferences';
-        value: number | Conference;
-      } | null)
-    | ({
-        relationTo: 'days';
-        value: number | Day;
-      } | null)
-    | ({
-        relationTo: 'agenda-items';
-        value: number | AgendaItem;
-      } | null)
-    | ({
-        relationTo: 'abstracts';
-        value: number | Abstract;
       } | null)
     | ({
         relationTo: 'abstract-statuses';
         value: number | AbstractStatus;
       } | null)
     | ({
-        relationTo: 'people';
-        value: number | Person;
+        relationTo: 'abstracts';
+        value: number | Abstract;
       } | null)
     | ({
-        relationTo: 'institutions';
-        value: number | Institution;
+        relationTo: 'appendices';
+        value: number | Appendix;
+      } | null)
+    | ({
+        relationTo: 'agenda-items';
+        value: number | AgendaItem;
+      } | null)
+    | ({
+        relationTo: 'conference-days';
+        value: number | ConferenceDay;
+      } | null)
+    | ({
+        relationTo: 'conferences';
+        value: number | Conference;
       } | null)
     | ({
         relationTo: 'countries';
         value: number | Country;
       } | null)
     | ({
+        relationTo: 'institutions';
+        value: number | Institution;
+      } | null)
+    | ({
         relationTo: 'italian-regions';
         value: number | ItalianRegion;
       } | null)
     | ({
-        relationTo: 'media';
-        value: number | Media;
+        relationTo: 'people';
+        value: number | Person;
+      } | null)
+    | ({
+        relationTo: 'payload-folders';
+        value: number | FolderInterface;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -635,168 +1192,6 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
- */
-export interface UsersSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  resetPasswordRequestedAt?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
-    | T
-    | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "conferences_select".
- */
-export interface ConferencesSelect<T extends boolean = true> {
-  editionName?: T;
-  editionYear?: T;
-  primaryColor?: T;
-  accentColor?: T;
-  logo?: T;
-  startDate?: T;
-  endDate?: T;
-  days?: T;
-  generalDescription?: T;
-  street?: T;
-  city?: T;
-  country?: T;
-  locationCoords?:
-    | T
-    | {
-        latitude?: T;
-        longitude?: T;
-      };
-  location?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "days_select".
- */
-export interface DaysSelect<T extends boolean = true> {
-  title?: T;
-  date?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "agenda-items_select".
- */
-export interface AgendaItemsSelect<T extends boolean = true> {
-  title?: T;
-  day?: T;
-  isKeynote?: T;
-  startTime?: T;
-  endTime?: T;
-  duration?: T;
-  icon?: T;
-  abstract?: T;
-  children?: T;
-  description?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "abstracts_select".
- */
-export interface AbstractsSelect<T extends boolean = true> {
-  code?: T;
-  status?: T;
-  title?: T;
-  content?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        id?: T;
-      };
-  authors?: T;
-  photos?: T;
-  speakers?: T;
-  mainSpeakers?:
-    | T
-    | {
-        speaker?: T;
-        isMain?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "abstract-statuses_select".
- */
-export interface AbstractStatusesSelect<T extends boolean = true> {
-  order?: T;
-  name?: T;
-  slug?: T;
-  color?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "people_select".
- */
-export interface PeopleSelect<T extends boolean = true> {
-  firstName?: T;
-  lastName?: T;
-  institution?: T;
-  photo?: T;
-  bio?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "institutions_select".
- */
-export interface InstitutionsSelect<T extends boolean = true> {
-  name?: T;
-  country?: T;
-  region?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "countries_select".
- */
-export interface CountriesSelect<T extends boolean = true> {
-  name?: T;
-  code?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "italian-regions_select".
- */
-export interface ItalianRegionsSelect<T extends boolean = true> {
-  name?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
@@ -804,7 +1199,7 @@ export interface MediaSelect<T extends boolean = true> {
   caption?: T;
   abstract?: T;
   taggedPeople?: T;
-  cropFocus?: T;
+  folder?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -849,7 +1244,310 @@ export interface MediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  resetPasswordRequestedAt?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "abstract-statuses_select".
+ */
+export interface AbstractStatusesSelect<T extends boolean = true> {
+  _order?: T;
+  status?: T;
+  defaultContent?:
+    | T
+    | {
+        title?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "abstracts_select".
+ */
+export interface AbstractsSelect<T extends boolean = true> {
+  _abstracts_abstracts_order?: T;
+  _abstracts_childAbstracts_order?: T;
+  _order?: T;
+  title?: T;
+  code?: T;
+  status?: T;
+  relatedCodes?:
+    | T
+    | {
+        code?: T;
+        status?: T;
+        id?: T;
+      };
+  content?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  appendices?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  authors?:
+    | T
+    | {
+        person?: T;
+        role?: T;
+        isSpeaker?: T;
+        id?: T;
+      };
+  picture?:
+    | T
+    | {
+        image?: T;
+        description?: T;
+        id?: T;
+      };
+  conference?: T;
+  agendaItems?: T;
+  plainTitle?: T;
+  note?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "appendices_select".
+ */
+export interface AppendicesSelect<T extends boolean = true> {
+  blocks?:
+    | T
+    | {
+        basicText?: T | BasicTextAppendixBlockSelect<T>;
+        reviewers?: T | ReviewersAppendixBlockSelect<T>;
+        researchProjects?: T | ResearchProjectsAppendixBlockSelect<T>;
+        institutions?: T | InstitutionsAppendixBlockSelect<T>;
+      };
+  conference?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BasicTextAppendixBlock_select".
+ */
+export interface BasicTextAppendixBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ReviewersAppendixBlock_select".
+ */
+export interface ReviewersAppendixBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ResearchProjectsAppendixBlock_select".
+ */
+export interface ResearchProjectsAppendixBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InstitutionsAppendixBlock_select".
+ */
+export interface InstitutionsAppendixBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  institutions?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agenda-items_select".
+ */
+export interface AgendaItemsSelect<T extends boolean = true> {
+  '_agenda-items_agendaItems_order'?: T;
+  '_agenda-items_children_order'?: T;
+  _order?: T;
+  name?: T;
+  day?: T;
+  startTime?: T;
+  endTime?: T;
+  isKeynote?: T;
+  durationMinutes?: T;
+  icon?:
+    | T
+    | {
+        provider?: T;
+        name?: T;
+      };
+  description?: T;
+  children?: T;
+  childAbstracts?: T;
+  title?: T;
+  parent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conference-days_select".
+ */
+export interface ConferenceDaysSelect<T extends boolean = true> {
+  date?: T;
+  startTime?: T;
+  endTime?: T;
+  agendaItems?: T;
+  conference?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conferences_select".
+ */
+export interface ConferencesSelect<T extends boolean = true> {
+  name?: T;
+  year?: T;
+  logo?: T;
+  primaryColor?: T;
+  secondaryColor?: T;
+  description?: T;
+  days?: T;
+  abstracts?: T;
+  appendices?: T;
+  city?: T;
+  country?: T;
+  address?: T;
+  longitude?: T;
+  latitude?: T;
+  location?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
+  geo?:
+    | T
+    | {
+        summary?: T;
+        primaryEntity?: T;
+        keyFacts?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              id?: T;
+            };
+      };
+  title?: T;
+  publishedAt?: T;
+  publicArchive?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries_select".
+ */
+export interface CountriesSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "institutions_select".
+ */
+export interface InstitutionsSelect<T extends boolean = true> {
+  _order?: T;
+  name?: T;
+  country?: T;
+  region?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "italian-regions_select".
+ */
+export interface ItalianRegionsSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people_select".
+ */
+export interface PeopleSelect<T extends boolean = true> {
+  _order?: T;
+  firstName?: T;
+  lastName?: T;
+  institution?: T;
+  photo?: T;
+  bio?: T;
+  fullName?: T;
+  note?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -858,6 +1556,49 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PayloadKvSelect<T extends boolean = true> {
   key?: T;
   data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs_select".
+ */
+export interface PayloadJobsSelect<T extends boolean = true> {
+  input?: T;
+  taskStatus?: T;
+  completedAt?: T;
+  totalTried?: T;
+  hasError?: T;
+  error?: T;
+  log?:
+    | T
+    | {
+        executedAt?: T;
+        completedAt?: T;
+        taskSlug?: T;
+        taskID?: T;
+        input?: T;
+        output?: T;
+        state?: T;
+        error?: T;
+        id?: T;
+      };
+  taskSlug?: T;
+  queue?: T;
+  waitUntil?: T;
+  processing?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-folders_select".
+ */
+export interface PayloadFoldersSelect<T extends boolean = true> {
+  name?: T;
+  folder?: T;
+  documentsAndFolders?: T;
+  folderType?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -893,23 +1634,140 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings".
+ * via the `definition` "footer".
  */
-export interface SiteSetting {
+export interface Footer {
   id: number;
-  /**
-   * Select the conference edition to be featured and displayed on the public website.
-   */
-  activeConference: number | Conference;
+  structure: {
+    /**
+     * Optional Lucide icon.
+     */
+    icon: {
+      provider: string;
+      name?: string | null;
+    };
+    label?: string | null;
+    /**
+     * External website. Opens in a new tab.
+     */
+    url?: string | null;
+  };
+  delegation: {
+    /**
+     * Optional Lucide icon.
+     */
+    icon: {
+      provider: string;
+      name?: string | null;
+    };
+    label?: string | null;
+    /**
+     * External website. Opens in a new tab.
+     */
+    url?: string | null;
+  };
+  navItems?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?: {
+            relationTo: 'conferences';
+            value: number | Conference;
+          } | null;
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings_select".
+ * via the `definition` "active-conference".
  */
-export interface SiteSettingsSelect<T extends boolean = true> {
-  activeConference?: T;
+export interface ActiveConference {
+  id: number;
+  /**
+   * Published edition at the site root (/). Required. That edition is removed from the public archive automatically.
+   */
+  conference: number | Conference;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conference-archive".
+ */
+export interface ConferenceArchive {
+  id: number;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  structure?:
+    | T
+    | {
+        icon?:
+          | T
+          | {
+              provider?: T;
+              name?: T;
+            };
+        label?: T;
+        url?: T;
+      };
+  delegation?:
+    | T
+    | {
+        icon?:
+          | T
+          | {
+              provider?: T;
+              name?: T;
+            };
+        label?: T;
+        url?: T;
+      };
+  navItems?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "active-conference_select".
+ */
+export interface ActiveConferenceSelect<T extends boolean = true> {
+  conference?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conference-archive_select".
+ */
+export interface ConferenceArchiveSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -923,6 +1781,36 @@ export interface CollectionsWidget {
     [k: string]: unknown;
   };
   width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSchedulePublish".
+ */
+export interface TaskSchedulePublish {
+  input: {
+    type?: ('publish' | 'unpublish') | null;
+    locale?: string | null;
+    doc?: {
+      relationTo: 'conferences';
+      value: number | Conference;
+    } | null;
+    global?: string | null;
+    user?: {
+      relationTo: 'users';
+      value: number | User;
+    } | null;
+  };
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBlock".
+ */
+export interface MediaBlock {
+  media: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

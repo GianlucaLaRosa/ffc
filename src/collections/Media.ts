@@ -1,20 +1,33 @@
 import type { CollectionConfig } from 'payload'
-import { limitedRichTextEditor } from '../fields/lexicalEditors'
+import {
+  FixedToolbarFeature,
+  InlineToolbarFeature,
+  lexicalEditor,
+} from '@payloadcms/richtext-lexical'
+
+import { anyone } from '../access/anyone'
+import { authenticated } from '../access/authenticated'
+import { assignFolderOnCreate } from './Media/hooks/assignFolderOnCreate'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  folders: true,
   admin: {
+    group: 'Content',
     useAsTitle: 'alt',
     defaultColumns: ['filename', 'alt', 'caption', 'updatedAt'],
-    group: 'Media & Assets',
   },
   access: {
-    read: () => true,
+    create: authenticated,
+    delete: authenticated,
+    read: anyone,
+    update: authenticated,
   },
   upload: {
     staticDir: 'media',
     adminThumbnail: 'thumbnail',
     mimeTypes: ['image/*'],
+    focalPoint: true,
     imageSizes: [
       {
         name: 'thumbnail',
@@ -33,6 +46,12 @@ export const Media: CollectionConfig = {
         width: 1920,
         height: 1080,
       },
+      {
+        name: 'og',
+        width: 1200,
+        height: 630,
+        crop: 'center',
+      },
     ],
   },
   fields: [
@@ -45,34 +64,41 @@ export const Media: CollectionConfig = {
     {
       name: 'caption',
       type: 'richText',
-      editor: limitedRichTextEditor,
-      label: 'Caption (Bold, Italic, Underline, Sub/Superscript, Strikethrough)',
+      editor: lexicalEditor({
+        features: ({ rootFeatures }) => {
+          return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
+        },
+      }),
+      label: 'Caption',
     },
     {
       name: 'abstract',
-      type: 'relationship',
-      relationTo: 'abstracts',
+      type: 'join',
+      collection: 'abstracts',
+      on: 'picture.image',
       label: 'Linked Abstract',
+      admin: {
+        readOnly: true,
+        allowCreate: false,
+        defaultColumns: ['plainTitle', 'code', 'conference'],
+        description: 'Abstracts that use this image. Edit the link from the abstract, not here.',
+      },
     },
     {
       name: 'taggedPeople',
-      type: 'relationship',
-      relationTo: 'people',
-      hasMany: true,
+      type: 'join',
+      collection: 'people',
+      on: 'photo',
       label: 'Tagged People / Researchers',
-    },
-    {
-      name: 'cropFocus',
-      type: 'select',
-      label: 'Crop Focus Point',
-      defaultValue: 'center',
-      options: [
-        { label: 'Center', value: 'center' },
-        { label: 'Top', value: 'top' },
-        { label: 'Bottom', value: 'bottom' },
-        { label: 'Left', value: 'left' },
-        { label: 'Right', value: 'right' },
-      ],
+      admin: {
+        readOnly: true,
+        allowCreate: false,
+        defaultColumns: ['fullName', 'institution'],
+        description: 'People whose profile photo is this file. Edit the photo on the person.',
+      },
     },
   ],
+  hooks: {
+    beforeChange: [assignFolderOnCreate],
+  },
 }

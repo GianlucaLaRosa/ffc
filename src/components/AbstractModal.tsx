@@ -3,9 +3,18 @@
 import React, { useEffect } from 'react'
 import { RichText } from './RichText'
 import { X, Building2, User, Sparkles } from './IconRenderer'
+import type { Abstract, Media } from '@/payload-types'
+import {
+  AUTHOR_ROLE_LABEL,
+  abstractAuthors,
+  abstractStatusLabel,
+  mediaUrl,
+  personInstitution,
+  personName,
+} from '@/utilities/conferenceUi'
 
 export interface AbstractModalProps {
-  abstract: any | null
+  abstract: Abstract | null
   isOpen: boolean
   onClose: () => void
 }
@@ -33,24 +42,12 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
 
   if (!isOpen || !abstract) return null
 
-  // Extract authors
-  const authors = Array.isArray(abstract.authors) ? abstract.authors : []
-
-  // Extract main speakers
-  const mainSpeakerItems = Array.isArray(abstract.mainSpeakers) ? abstract.mainSpeakers : []
-  const mainSpeakerIds = new Set(
-    mainSpeakerItems
-      .filter((m: any) => m.isMain)
-      .map((m: any) => (typeof m.speaker === 'object' ? m.speaker?.id : m.speaker)),
-  )
-
-  const speakers = Array.isArray(abstract.speakers) ? abstract.speakers : []
-
-  // Extract content sections
+  const authors = abstractAuthors(abstract)
+  const speakers = authors.filter((row) => row.isSpeaker)
   const contentSections = Array.isArray(abstract.content) ? abstract.content : []
-
-  // Extract photos
-  const photos = Array.isArray(abstract.photos) ? abstract.photos : []
+  const pictures = Array.isArray(abstract.picture) ? abstract.picture : []
+  const relatedCodes = Array.isArray(abstract.relatedCodes) ? abstract.relatedCodes : []
+  const appendices = Array.isArray(abstract.appendices) ? abstract.appendices : []
 
   return (
     <div
@@ -64,7 +61,6 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
         className="relative w-full max-w-4xl h-full sm:h-[88vh] bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header Bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50/90 backdrop-blur shrink-0">
           <div className="flex items-center gap-2.5 flex-wrap">
             {abstract.code && (
@@ -72,16 +68,20 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
                 {abstract.code}
               </span>
             )}
-            {abstract.status && typeof abstract.status === 'object' && (
-              <span
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider text-white"
-                style={{
-                  backgroundColor: abstract.status.color || '#3b82f6',
-                }}
-              >
-                {abstract.status.name}
+            {abstractStatusLabel(abstract.status) && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider text-white bg-emerald-700">
+                {abstractStatusLabel(abstract.status)}
               </span>
             )}
+            {relatedCodes.map((row) => (
+              <span
+                key={row.id || row.code}
+                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200"
+              >
+                {row.code}
+                {abstractStatusLabel(row.status) ? ` · ${abstractStatusLabel(row.status)}` : ''}
+              </span>
+            ))}
           </div>
 
           <button
@@ -94,9 +94,7 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
           </button>
         </div>
 
-        {/* Scrollable Body */}
         <div className="flex-1 overflow-y-auto px-6 py-6 sm:px-8 space-y-8">
-          {/* Title */}
           <div>
             <h1
               id="abstract-modal-title"
@@ -106,7 +104,6 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
             </h1>
           </div>
 
-          {/* Speakers Section */}
           {speakers.length > 0 && (
             <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50/40 border border-emerald-100/80">
               <h2 className="text-xs font-bold uppercase tracking-wider text-emerald-800 mb-3 flex items-center gap-1.5">
@@ -114,26 +111,20 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
                 Featured Presenters & Speakers
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {speakers.map((sp: any, i: number) => {
-                  const isMain = mainSpeakerIds.has(sp.id)
-                  const inst = sp.institution
-                  const instName =
-                    typeof inst === 'object' ? inst?.name : inst || 'Independent Researcher'
+                {speakers.map((row) => {
+                  const instName = personInstitution(row.person) || 'Independent Researcher'
+                  const photo = mediaUrl(row.person.photo)
                   return (
                     <div
-                      key={i}
-                      className={`p-3.5 rounded-lg border bg-white flex items-start gap-3 shadow-xs ${
-                        isMain
-                          ? 'border-emerald-300 ring-2 ring-emerald-500/20'
-                          : 'border-slate-200'
-                      }`}
+                      key={row.person.id}
+                      className="p-3.5 rounded-lg border bg-white flex items-start gap-3 shadow-xs border-emerald-300 ring-2 ring-emerald-500/20"
                     >
                       <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-800 shrink-0 overflow-hidden font-bold text-sm">
-                        {sp.photo?.url ? (
+                        {photo ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
-                            src={sp.photo.url}
-                            alt={`${sp.firstName} ${sp.lastName}`}
+                            src={photo}
+                            alt={personName(row.person)}
                             className="w-full h-full object-cover"
                           />
                         ) : (
@@ -143,18 +134,16 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-semibold text-slate-900 text-sm">
-                            {sp.firstName} {sp.lastName}
+                            {personName(row.person)}
                           </span>
-                          {isMain && (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white uppercase tracking-wider">
-                              Main Speaker
-                            </span>
-                          )}
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white uppercase tracking-wider">
+                            Speaker
+                          </span>
                         </div>
                         <p className="text-xs text-slate-500 truncate mt-0.5">{instName}</p>
-                        {sp.bio && (
+                        {row.person.bio && (
                           <div className="text-xs text-slate-600 mt-2 line-clamp-3">
-                            <RichText content={sp.bio} />
+                            <RichText content={row.person.bio} />
                           </div>
                         )}
                       </div>
@@ -165,23 +154,22 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
             </div>
           )}
 
-          {/* Authors List */}
           {authors.length > 0 && (
             <div>
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                 Authors & Affiliations
               </h2>
               <ul className="flex flex-wrap gap-2 text-sm text-slate-700">
-                {authors.map((author: any, i: number) => {
-                  const inst = author.institution
-                  const instName = typeof inst === 'object' ? inst?.name : inst || ''
+                {authors.map((row) => {
+                  const instName = personInstitution(row.person)
                   return (
                     <li
-                      key={i}
+                      key={row.person.id}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200/80 text-xs font-medium text-slate-800"
                     >
-                      <span>
-                        {author.firstName} {author.lastName}
+                      <span>{personName(row.person)}</span>
+                      <span className="text-slate-400">
+                        {AUTHOR_ROLE_LABEL[row.role] || row.role}
                       </span>
                       {instName && (
                         <span className="text-slate-400 flex items-center gap-0.5">
@@ -195,12 +183,11 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
             </div>
           )}
 
-          {/* Content Sections */}
           {contentSections.length > 0 && (
             <div className="space-y-6 pt-2">
-              {contentSections.map((sec: any, i: number) => (
+              {contentSections.map((sec, i) => (
                 <section
-                  key={i}
+                  key={sec.id || i}
                   className="p-5 rounded-xl bg-slate-50/70 border border-slate-200/80"
                 >
                   {sec.title && (
@@ -216,30 +203,54 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
             </div>
           )}
 
-          {/* Media & Figures Gallery */}
-          {photos.length > 0 && (
+          {appendices.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Abstract appendix
+              </h2>
+              {appendices.map((row, i) => (
+                <section
+                  key={row.id || i}
+                  className="p-5 rounded-xl border border-slate-200 bg-white"
+                >
+                  {row.title && (
+                    <h3 className="text-sm font-bold text-slate-900 mb-2">{row.title}</h3>
+                  )}
+                  {row.body && (
+                    <div className="text-sm text-slate-700 leading-relaxed">
+                      <RichText content={row.body} />
+                    </div>
+                  )}
+                </section>
+              ))}
+            </div>
+          )}
+
+          {pictures.length > 0 && (
             <div className="pt-2">
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
                 Figures, Charts & Media
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {photos.map((item: any, i: number) => {
-                  const imgUrl = item.url || `/api/media/file/${item.filename}`
+                {pictures.map((item, i) => {
+                  const image = item.image as Media | number
+                  const imgUrl = mediaUrl(typeof image === 'object' ? image : null)
+                  if (!imgUrl) return null
                   return (
                     <figure
-                      key={i}
+                      key={item.id || i}
                       className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50 flex flex-col"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={imgUrl}
-                        alt={item.alt || 'Scientific figure'}
+                        alt={item.description || 'Scientific figure'}
                         className="w-full h-52 object-cover"
                         loading="lazy"
                       />
-                      {item.caption && (
+                      {item.description && (
                         <figcaption className="p-3 text-xs text-slate-600 bg-white border-t border-slate-100 italic">
-                          <RichText content={item.caption} />
+                          {item.description}
                         </figcaption>
                       )}
                     </figure>
@@ -250,7 +261,6 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
           )}
         </div>
 
-        {/* Footer */}
         <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex justify-end shrink-0">
           <button
             type="button"

@@ -1,0 +1,22 @@
+{
+  "comment": "Align versions with the FCR repo (Payload 3.90.0, Next 16). Add only missing packages; do not downgrade a newer compatible Payload without checking.",
+  "dependencies": {
+    "@payloadcms/db-vercel-postgres": "3.90.0",
+    "@payloadcms/next": "3.90.0",
+    "@payloadcms/plugin-seo": "3.90.0",
+    "@payloadcms/richtext-lexical": "3.90.0",
+    "@payloadcms/storage-vercel-blob": "3.90.0",
+    "@payloadcms/ui": "3.90.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "@radix-ui/react-popover": "^1.1.23",
+    "@radix-ui/react-slot": "^1.0.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "graphql": "^16.8.2",
+    "lucide-react": "0.563.0",
+    "payload": "3.90.0",
+    "payload-plugin-icons": "^1.1.5",
+    "sharp": "0.35.4",
+    "tailwind-merge": "^3.4.0"
+  }
+}

@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react'
 import { RichText } from './RichText'
-import { Calendar, MapPin, BookOpen, ExternalLink } from 'lucide-react'
+import { Calendar, MapPin, BookOpen } from 'lucide-react'
+import { mediaUrl } from '@/utilities/conferenceUi'
 
 export interface HeaderProps {
   editionName: any
@@ -42,10 +43,10 @@ export function Header({ editionName, editionYear, logo }: HeaderProps) {
             }}
             className="flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-lg p-1"
           >
-            {logo?.url ? (
+            {mediaUrl(logo) ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={logo.url}
+                src={mediaUrl(logo) || ''}
                 alt="FFC Ricerca Logo"
                 className="h-10 sm:h-11 w-auto object-contain rounded"
               />
@@ -133,15 +134,6 @@ export function Header({ editionName, editionYear, logo }: HeaderProps) {
               </a>
             )
           })}
-          <div className="pt-2 border-t border-slate-100">
-            <a
-              href="/admin"
-              className="flex items-center justify-between px-4 py-2.5 rounded-lg text-xs font-bold text-slate-700 bg-slate-100"
-            >
-              <span>Backoffice Dashboard</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          </div>
         </div>
       )}
     </header>
