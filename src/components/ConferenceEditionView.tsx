@@ -14,6 +14,7 @@ import { UpcomingSessionBanner } from '@/components/SavedAgendaMenu'
 import { ConferenceNoticesBanner } from '@/components/ConferenceNoticesBanner'
 import { conferenceJsonLd } from '@/utilities/conferenceJsonLd'
 import { getArchivedConferences, type ConferenceEditionData } from '@/utilities/getConferenceEdition'
+import { ArchivedEditionBanner } from '@/components/ArchivedEditionBanner'
 
 export async function ConferenceEditionView({
   data,
@@ -24,6 +25,8 @@ export async function ConferenceEditionView({
 }) {
   const { conference, days, abstracts, appendix, notices, footer, programmeAlerts } = data
   const archivedEditions = await getArchivedConferences()
+
+  const isArchived = canonicalPath.startsWith('/archive')
 
   return (
     <ModalProvider allAbstracts={abstracts}>
@@ -45,10 +48,10 @@ export async function ConferenceEditionView({
             editionYear={conference.year}
             logo={conference.logo}
             archivedEditions={archivedEditions}
-            currentSlug={conference.slug}
-            isArchived={canonicalPath.startsWith('/archive/')}
+            isArchived={isArchived}
           />
           <div className="sticky top-[calc(4rem+env(safe-area-inset-top))] sm:top-[calc(5rem+env(safe-area-inset-top))] z-30 flex flex-col">
+            {isArchived ? <ArchivedEditionBanner year={conference.year} /> : null}
             <ConferenceNoticesBanner notices={notices ?? []} canonicalPath={canonicalPath} />
             <UpcomingSessionBanner />
           </div>

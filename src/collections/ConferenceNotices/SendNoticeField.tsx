@@ -1,10 +1,12 @@
 'use client'
 
 import type { UIFieldClientComponent } from 'payload'
-import { Button, toast, useDocumentInfo, useFormFields } from '@payloadcms/ui'
+import { Button, toast, useDocumentInfo, useFormFields, useTranslation } from '@payloadcms/ui'
 import React, { useState } from 'react'
+import { asT } from '@/i18n/asT'
 
 export const SendNoticeField: UIFieldClientComponent = () => {
+  const { t } = useTranslation()
   const { id } = useDocumentInfo()
   const sendPush = useFormFields(([fields]) => Boolean(fields.sendPush?.value))
   const sentAt = useFormFields(([fields]) => fields.sentAt?.value)
@@ -17,9 +19,7 @@ export const SendNoticeField: UIFieldClientComponent = () => {
   if (id == null) {
     return (
       <div className="field-type">
-        <p style={{ margin: 0, color: 'var(--theme-elevation-600)' }}>
-          Salvate l’avviso una prima volta, poi usate Invia push per le notifiche a schermo bloccato.
-        </p>
+        <p style={{ margin: 0, color: 'var(--theme-elevation-600)' }}>{asT(t)('fcr:sendSaveFirst')}</p>
       </div>
     )
   }
@@ -34,11 +34,11 @@ export const SendNoticeField: UIFieldClientComponent = () => {
     return (
       <div className="field-type">
         <p style={{ margin: 0 }}>
-          Push già inviata
-          {typeof pushSent === 'number' ? ` a ${pushSent} dispositivo/i` : ''}.
+          {asT(t)('fcr:sendAlreadySent')}
+          {typeof pushSent === 'number' ? asT(t)('fcr:sendAlreadySentTo', { count: pushSent }) : ''}
           <br />
           <span style={{ color: 'var(--theme-elevation-600)' }}>
-            {when}. Create un nuovo avviso se serve un altro messaggio.
+            {when}. {asT(t)('fcr:sendCreateAnother')}
           </span>
         </p>
       </div>
@@ -48,19 +48,14 @@ export const SendNoticeField: UIFieldClientComponent = () => {
   if (!sendPush) {
     return (
       <div className="field-type">
-        <p style={{ margin: 0, color: 'var(--theme-elevation-600)' }}>
-          Solo banner sul sito: accendete <strong>Show site banner</strong> e salvate. Accendete{' '}
-          <strong>Include push when sending</strong> se volete anche una notifica a schermo bloccato.
-        </p>
+        <p style={{ margin: 0, color: 'var(--theme-elevation-600)' }}>{asT(t)('fcr:sendBannerOnly')}</p>
       </div>
     )
   }
 
   const onSend = async () => {
-    const label = title || 'questo avviso'
-    const confirmed = window.confirm(
-      `Inviare la push per «${label}»? Arriva ai dispositivi iscritti della Conferenza attiva e non si può annullare.`,
-    )
+    const label = title || asT(t)('fcr:sendUntitled')
+    const confirmed = window.confirm(asT(t)('fcr:sendConfirm', { label }))
     if (!confirmed) return
 
     setPending(true)
@@ -78,17 +73,17 @@ export const SendNoticeField: UIFieldClientComponent = () => {
       } | null
 
       if (!res.ok) {
-        throw new Error(data?.message || 'Invio push non riuscito')
+        throw new Error(data?.message || asT(t)('fcr:sendFailed'))
       }
 
       toast.success(
-        `Push inviata a ${data?.sent ?? 0} dispositivo/i` +
-          (data?.skipped ? ` (${data.skipped} saltati)` : '') +
-          (data?.removed ? `, rimossi ${data.removed} scaduti` : ''),
+        asT(t)('fcr:sendSuccess', { sent: data?.sent ?? 0 }) +
+          (data?.skipped ? asT(t)('fcr:sendSkipped', { count: data.skipped }) : '') +
+          (data?.removed ? asT(t)('fcr:sendRemoved', { count: data.removed }) : ''),
       )
       window.location.reload()
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Invio push non riuscito')
+      toast.error(error instanceof Error ? error.message : asT(t)('fcr:sendFailed'))
     } finally {
       setPending(false)
     }
@@ -96,12 +91,9 @@ export const SendNoticeField: UIFieldClientComponent = () => {
 
   return (
     <div className="field-type">
-      <p style={{ margin: '0 0 0.75rem', color: 'var(--theme-elevation-600)' }}>
-        Salvate prima eventuali modifiche. Invia recapita una notifica a schermo bloccato una sola volta. Il banner
-        sul sito compare appena <strong>Show site banner</strong> è acceso e salvate.
-      </p>
+      <p style={{ margin: '0 0 0.75rem', color: 'var(--theme-elevation-600)' }}>{asT(t)('fcr:sendHint')}</p>
       <Button buttonStyle="primary" disabled={pending} onClick={() => void onSend()}>
-        {pending ? 'Invio…' : 'Invia push'}
+        {pending ? asT(t)('fcr:sending') : asT(t)('fcr:sendButton')}
       </Button>
     </div>
   )

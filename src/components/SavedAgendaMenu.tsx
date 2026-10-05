@@ -151,8 +151,7 @@ export function SavedAgendaMenu() {
             ) : null}
             {!isReady || items.length === 0 ? (
               <p className="text-sm text-fg-muted px-3 py-6 text-center">
-                Bookmark a session in the programme to add it here. Sessions with talks save each
-                talk.
+                Bookmark a talk or abstract in the programme to add it here.
               </p>
             ) : (
               <ul className="space-y-1.5">

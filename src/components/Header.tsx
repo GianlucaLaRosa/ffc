@@ -30,8 +30,10 @@ export interface HeaderProps {
   editionYear?: number | null
   logo?: any
   archivedEditions?: ArchivedEditionLink[]
-  currentSlug?: string | null
   isArchived?: boolean
+  brand?: 'edition' | 'archive'
+  showSectionNav?: boolean
+  showSavedAgenda?: boolean
 }
 
 export function Header({
@@ -39,22 +41,24 @@ export function Header({
   editionYear,
   logo,
   archivedEditions = [],
-  currentSlug,
   isArchived = false,
+  brand = 'edition',
+  showSectionNav = true,
+  showSavedAgenda = true,
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const logoSrc = mediaUrl(logo) || '/logo.png'
 
   const navLinks = [
-    { label: 'Programme', href: '#programme', icon: Calendar },
-    { label: 'Venue', href: '#venue', icon: MapPin },
-    { label: 'Appendix', href: '#appendix', icon: BookOpen },
+    { label: 'Programme', hash: 'programme', icon: Calendar },
+    { label: 'Venue', hash: 'venue', icon: MapPin },
+    { label: 'Appendix', hash: 'appendix', icon: BookOpen },
   ]
 
-  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
     e.preventDefault()
     setMobileMenuOpen(false)
-    const target = document.querySelector(href)
+    const target = document.getElementById(hash)
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' })
     }
@@ -79,7 +83,7 @@ export function Header({
                 }
                 setMobileMenuOpen(false)
               }}
-              className="shrink-0 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-brand"
+              className="shrink-0 rounded-lg p-1 outline-none focus-visible:ring-2 focus-visible:ring-brand"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -91,41 +95,50 @@ export function Header({
             <button
               type="button"
               onClick={scrollToTop}
-              className="leading-tight min-w-0 rounded-lg p-1 text-left focus:outline-none focus:ring-2 focus:ring-brand"
+              className="leading-tight min-w-0 rounded-lg p-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-brand"
             >
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-brand-soft-fg hidden sm:block">
-                Scientific Event {editionYear || ''}
-              </span>
-              <span className="block text-sm sm:text-base font-extrabold text-fg line-clamp-1">
-                <RichText content={editionName} disableContainer className="rich-text-inline" />
-              </span>
+              {brand === 'archive' ? (
+                <>
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-brand-soft-fg hidden sm:block">
+                    FFC Scientific Conference
+                  </span>
+                  <span className="block text-sm sm:text-base font-extrabold text-fg">Archive</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-brand-soft-fg hidden sm:block">
+                    {isArchived ? 'Archived edition' : 'Scientific Event'} {editionYear || ''}
+                  </span>
+                  <span className="block text-sm sm:text-base font-extrabold text-fg line-clamp-1">
+                    <RichText content={editionName} disableContainer className="rich-text-inline" />
+                  </span>
+                </>
+              )}
             </button>
           </div>
 
           <div className="flex items-center gap-0.5 sm:gap-2 shrink-0">
             <nav className="hidden md:flex items-center gap-1 sm:gap-2" aria-label="Main Navigation">
-              {navLinks.map((link) => {
-                const Icon = link.icon
-                return (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={(e) => handleScroll(e, link.href)}
-                    className={navLinkClassName}
-                  >
-                    <Icon className="w-4 h-4 text-brand" />
-                    <span>{link.label}</span>
-                  </a>
-                )
-              })}
-              {isArchived ? <CurrentEditionLink variant="desktop" /> : null}
-              <ArchiveNav
-                editions={archivedEditions}
-                currentSlug={currentSlug}
-                variant="desktop"
-              />
+              {showSectionNav
+                ? navLinks.map((link) => {
+                    const Icon = link.icon
+                    return (
+                      <a
+                        key={link.hash}
+                        href={`#${link.hash}`}
+                        onClick={(e) => handleScroll(e, link.hash)}
+                        className={navLinkClassName}
+                      >
+                        <Icon className="w-4 h-4 text-brand" />
+                        <span>{link.label}</span>
+                      </a>
+                    )
+                  })
+                : null}
+              {brand === 'archive' ? <CurrentEditionLink variant="desktop" /> : null}
+              <ArchiveNav editions={archivedEditions} variant="desktop" />
             </nav>
-            <SavedAgendaMenu />
+            {showSavedAgenda ? <SavedAgendaMenu /> : null}
             <div className="hidden md:block">
               <InstallPwaButton />
             </div>
@@ -164,24 +177,25 @@ export function Header({
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 border-b border-line bg-surface px-4 pt-3 pb-5 shadow-lg backdrop-blur-md animate-in slide-in-from-top-2">
           <div className="flex flex-col gap-2">
-            {navLinks.map((link) => {
-              const Icon = link.icon
-              return (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={(e) => handleScroll(e, link.href)}
-                  className={mobileNavLinkClassName}
-                >
-                  <Icon className="w-4 h-4 text-brand" />
-                  <span>{link.label}</span>
-                </a>
-              )
-            })}
-            {isArchived ? <CurrentEditionLink variant="mobile" /> : null}
+            {showSectionNav
+              ? navLinks.map((link) => {
+                  const Icon = link.icon
+                  return (
+                    <a
+                      key={link.hash}
+                      href={`#${link.hash}`}
+                      onClick={(e) => handleScroll(e, link.hash)}
+                      className={mobileNavLinkClassName}
+                    >
+                      <Icon className="w-4 h-4 text-brand" />
+                      <span>{link.label}</span>
+                    </a>
+                  )
+                })
+              : null}
+            {brand === 'archive' ? <CurrentEditionLink variant="mobile" /> : null}
             <ArchiveNav
               editions={archivedEditions}
-              currentSlug={currentSlug}
               variant="mobile"
               onNavigate={() => setMobileMenuOpen(false)}
             />

@@ -2,12 +2,13 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
+import { adminGroups, copy } from '@/i18n/copy'
 
 export const ItalianRegions: CollectionConfig<'italian-regions'> = {
   slug: 'italian-regions',
   labels: {
-    singular: 'Regione italiana',
-    plural: 'Regioni italiane',
+    singular: copy('Italian region', 'Regione italiana'),
+    plural: copy('Italian regions', 'Regioni italiane'),
   },
   access: {
     create: authenticated,
@@ -17,10 +18,13 @@ export const ItalianRegions: CollectionConfig<'italian-regions'> = {
   },
   defaultSort: 'name',
   admin: {
-    group: 'Riferimenti',
+    group: adminGroups.references,
     useAsTitle: 'name',
     defaultColumns: ['name', 'updatedAt'],
-    description: 'Regioni italiane per gli indirizzi degli enti. Dati di riferimento (seed).',
+    description: copy(
+      'Italian regions for institution addresses. Reference data (seeded).',
+      'Regioni italiane per gli indirizzi degli enti. Dati di riferimento (seed).',
+    ),
   },
   fields: [
     {

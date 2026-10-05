@@ -155,6 +155,12 @@ export const revalidateActiveConference: GlobalAfterChangeHook = ({ doc, req }) 
   return doc
 }
 
+export const revalidateConferenceArchiveGlobal: GlobalAfterChangeHook = ({ doc, req }) => {
+  if (!shouldRevalidatePublic(req)) return doc
+  scheduleTagRevalidation([CACHE_TAGS.archive, CACHE_TAGS.public], req.payload.logger)
+  return doc
+}
+
 export const revalidatePublicArchive: CollectionAfterChangeHook = ({ doc, previousDoc, req }) => {
   if (!shouldRevalidatePublic(req)) return doc
 

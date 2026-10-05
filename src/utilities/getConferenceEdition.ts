@@ -3,7 +3,8 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import configPromise from '@/payload.config'
 import type { Abstract, Appendix, Conference, ConferenceDay, Footer as FooterGlobal, Media } from '@/payload-types'
-import { joinDocs } from '@/utilities/conferenceUi'
+import { joinDocIds, joinDocs } from '@/utilities/conferenceUi'
+import { attachProgrammeAbstracts } from '@/utilities/programmeAbstracts'
 import { relationId, relationSlug } from '@/utilities/conferenceRoutes'
 import { CACHE_TAGS, conferenceIdTag, conferenceSlugTag } from '@/utilities/cacheTags'
 import {
@@ -31,6 +32,7 @@ export type ArchivedEditionLink = {
   slug: string
   title: string
   year: number | null
+  city: string | null
 }
 
 async function fetchActiveConferenceId(): Promise<{
@@ -73,26 +75,33 @@ async function fetchConferenceEdition(conferenceId: number | string): Promise<Co
     limit: 50,
   })
 
-  const orderedAbstracts = joinDocs<Abstract>(conference.abstracts).filter(
-    (abs) => !abs._status || abs._status === 'published',
+  const abstractsRes = await payload.find({
+    collection: 'abstracts',
+    where: {
+      and: [{ conference: { equals: conference.id } }, { _status: { equals: 'published' } }],
+    },
+    depth: 3,
+    draft: false,
+    limit: 1000,
+    pagination: false,
+  })
+  const abstractsById = new Map(
+    abstractsRes.docs.map((doc) => [String(doc.id), doc as Abstract]),
   )
-  const orderedAbstractIds = orderedAbstracts.map((abs) => abs.id)
-  let abstracts: Abstract[] = orderedAbstracts
-  if (orderedAbstractIds.length > 0) {
-    const abstractsRes = await payload.find({
-      collection: 'abstracts',
-      where: { id: { in: orderedAbstractIds } },
-      depth: 3,
-      draft: false,
-      limit: orderedAbstractIds.length,
-      pagination: false,
-    })
-    const byId = new Map(
-      abstractsRes.docs.map((doc) => [String(doc.id), doc as Abstract]),
-    )
-    abstracts = orderedAbstractIds
-      .map((id) => byId.get(String(id)))
-      .filter((doc): doc is Abstract => Boolean(doc))
+  const orderedAbstractIds = joinDocIds(conference.abstracts)
+  const seenAbstractIds = new Set<string>()
+  const abstracts: Abstract[] = []
+  for (const id of orderedAbstractIds) {
+    const doc = abstractsById.get(id)
+    if (!doc || seenAbstractIds.has(id)) continue
+    abstracts.push(doc)
+    seenAbstractIds.add(id)
+  }
+  for (const doc of abstractsRes.docs) {
+    const id = String(doc.id)
+    if (seenAbstractIds.has(id)) continue
+    abstracts.push(doc as Abstract)
+    seenAbstractIds.add(id)
   }
   const appendixDocs = joinDocs<Appendix>(conference.appendices).filter(
     (doc) => !doc._status || doc._status === 'published',
@@ -161,7 +170,7 @@ async function fetchConferenceEdition(conferenceId: number | string): Promise<Co
 
   return {
     conference,
-    days: daysRes.docs as ConferenceDay[],
+    days: attachProgrammeAbstracts(daysRes.docs as ConferenceDay[], abstracts),
     abstracts,
     appendix: appendixDocs[0] ?? null,
     notices,
@@ -228,7 +237,26 @@ async function fetchConferenceLogo(conferenceId: number | string): Promise<Media
   }
 }
 
+async function fetchPublicArchiveEnabled(): Promise<boolean> {
+  const payload = await getPayload({ config: configPromise })
+  try {
+    const settings = await payload.findGlobal({
+      slug: 'conference-archive',
+      depth: 0,
+      select: {
+        enablePublicArchive: true,
+      },
+    })
+    return settings.enablePublicArchive !== false
+  } catch {
+    return true
+  }
+}
+
 async function fetchArchivedConferences(): Promise<ArchivedEditionLink[]> {
+  const enabled = await fetchPublicArchiveEnabled()
+  if (!enabled) return []
+
   const payload = await getPayload({ config: configPromise })
   const result = await payload.find({
     collection: 'conferences',
@@ -244,6 +272,7 @@ async function fetchArchivedConferences(): Promise<ArchivedEditionLink[]> {
       title: true,
       slug: true,
       year: true,
+      city: true,
     },
   })
 
@@ -254,6 +283,7 @@ async function fetchArchivedConferences(): Promise<ArchivedEditionLink[]> {
         slug: doc.slug,
         title: typeof doc.title === 'string' && doc.title ? doc.title : doc.slug,
         year: typeof doc.year === 'number' ? doc.year : null,
+        city: typeof doc.city === 'string' && doc.city ? doc.city : null,
       } satisfies ArchivedEditionLink,
     ]
   })
@@ -290,7 +320,7 @@ export const getActiveConferenceId = cache(() =>
 export const loadConferenceEdition = cache((conferenceId: number | string) =>
   unstable_cache(
     () => fetchConferenceEdition(conferenceId),
-    ['loadConferenceEdition', String(conferenceId)],
+    ['loadConferenceEdition', 'programme-abstracts', String(conferenceId)],
     {
       tags: [
         conferenceIdTag(conferenceId),
@@ -338,5 +368,30 @@ export const findPublishedConferenceBySlug = cache((slug: string) =>
 export const getArchivedConferences = cache(() =>
   unstable_cache(fetchArchivedConferences, ['getArchivedConferences'], {
     tags: [CACHE_TAGS.archive, CACHE_TAGS.active],
+  })(),
+)
+
+export const isPublicArchiveEnabled = cache(() =>
+  unstable_cache(fetchPublicArchiveEnabled, ['isPublicArchiveEnabled'], {
+    tags: [CACHE_TAGS.archive],
+  })(),
+)
+
+async function fetchPublicFooter(): Promise<FooterGlobal | null> {
+  const payload = await getPayload({ config: configPromise })
+  try {
+    return (await payload.findGlobal({
+      slug: 'footer',
+      depth: 0,
+    })) as FooterGlobal
+  } catch {
+    return null
+  }
+}
+
+export const getPublicFooter = cache(() =>
+  unstable_cache(fetchPublicFooter, ['getPublicFooter', 'with-policies'], {
+    tags: [CACHE_TAGS.footer],
+    revalidate: 60,
   })(),
 )

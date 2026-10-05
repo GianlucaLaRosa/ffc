@@ -1,5 +1,6 @@
 import {
   dueProgrammeAlerts,
+  programmeAlertHref,
   programmeAlertTimestamps,
   type ProgrammeAlertKind,
   type SavedAgendaItem,
@@ -167,7 +168,7 @@ export async function fireDueProgrammeNotifications(input: {
     if (notified.has(alert.item.id)) continue
 
     const minutes = Math.max(1, Math.ceil(alert.minutes ?? input.leadMinutes ?? 5))
-    const url = `${origin}${path}?agenda=${encodeURIComponent(alert.item.id)}`
+    const url = programmeAlertHref(origin, path, alert.item)
     await showProgrammeNotification({
       title,
       body:

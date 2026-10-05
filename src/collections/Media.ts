@@ -8,6 +8,7 @@ import {
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { assignFolderOnCreate } from './Media/hooks/assignFolderOnCreate'
+import { adminGroups, copy } from '@/i18n/copy'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -17,7 +18,7 @@ export const Media: CollectionConfig = {
     plural: 'Media',
   },
   admin: {
-    group: 'Contenuti',
+    group: adminGroups.content,
     useAsTitle: 'alt',
     defaultColumns: ['filename', 'alt', 'caption', 'updatedAt'],
   },
@@ -85,7 +86,10 @@ export const Media: CollectionConfig = {
         readOnly: true,
         allowCreate: false,
         defaultColumns: ['plainTitle', 'code', 'conference'],
-        description: 'Abstract che usano questa immagine. Modificate il collegamento dall’abstract, non da qui.',
+        description: copy(
+          'Abstracts that use this image. Change the link from the abstract, not from here.',
+          'Abstract che usano questa immagine. Modificate il collegamento dall’abstract, non da qui.',
+        ),
       },
     },
     {
@@ -98,7 +102,10 @@ export const Media: CollectionConfig = {
         readOnly: true,
         allowCreate: false,
         defaultColumns: ['fullName', 'institution'],
-        description: 'Persone la cui foto profilo è questo file. Modificate la foto sulla persona.',
+        description: copy(
+          'People whose profile photo is this file. Change the photo on the person.',
+          'Persone la cui foto profilo è questo file. Modificate la foto sulla persona.',
+        ),
       },
     },
   ],

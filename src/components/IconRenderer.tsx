@@ -133,4 +133,5 @@ export {
   MapPin,
   Clock,
   Calendar,
+  FileText,
 }

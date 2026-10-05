@@ -2,6 +2,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { buildConfig } from 'payload'
+import { en } from 'payload/i18n/en'
 import { it } from 'payload/i18n/it'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
@@ -38,7 +39,9 @@ import {
 } from './utilities/mediaFolder'
 import { seedAbstractStatuses } from './utilities/seedAbstractStatuses'
 import { seedCountries } from './utilities/seedCountries'
+import { seedFooterPolicies } from './utilities/seedFooterPolicies'
 import { seedItalianRegions } from './utilities/seedItalianRegions'
+import { adminTranslations } from './i18n/adminTranslations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -48,7 +51,7 @@ export default buildConfig({
     meta: {
       titleSuffix: ' — FFC Ricerca',
       description:
-        'Pannello della Fondazione per la Ricerca sulla Fibrosi Cistica - ETS. Gestione delle edizioni della conferenza.',
+        'Panel of the Fondazione per la Ricerca sulla Fibrosi Cistica - ETS. Manage conference editions.',
       icons: [
         {
           rel: 'icon',
@@ -78,7 +81,7 @@ export default buildConfig({
     livePreview: {
       breakpoints: [
         {
-          label: 'Cellulare',
+          label: 'Mobile',
           name: 'mobile',
           width: 375,
           height: 667,
@@ -99,8 +102,9 @@ export default buildConfig({
     },
   },
   i18n: {
-    fallbackLanguage: 'it',
-    supportedLanguages: { it },
+    fallbackLanguage: 'en',
+    supportedLanguages: { en, it },
+    translations: adminTranslations,
   },
   editor: defaultLexical,
   db: postgresAdapter({
@@ -164,6 +168,7 @@ export default buildConfig({
     await seedAbstractStatuses({ payload })
     await seedItalianRegions({ payload })
     await seedCountries({ payload })
+    await seedFooterPolicies({ payload })
 
     const moveUploadToFolder = async ({
       folderName,

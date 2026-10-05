@@ -16,6 +16,8 @@ import {
   revalidateEditionByDay,
   revalidateEditionByDayDelete,
 } from '@/utilities/revalidatePublicCache'
+import { adminGroups, copy } from '@/i18n/copy'
+import { asT } from '@/i18n/asT'
 
 type LexicalJSON = Parameters<typeof convertLexicalToPlaintext>[0]['data']
 
@@ -112,14 +114,14 @@ const ensureTimesWithinDay: CollectionBeforeValidateHook = async ({
 
   if (startTime && !isTimeWithinWindow(minutesUtc(startTime), dayStart, dayEnd)) {
     errors.push({
-      message: 'Start time must fall within the selected conference day’s hours.',
+      message: asT(req.t)('fcr:startWithinDay'),
       path: 'startTime',
     })
   }
 
   if (endTime && !isTimeWithinWindow(minutesUtc(endTime), dayStart, dayEnd)) {
     errors.push({
-      message: 'End time must fall within the selected conference day’s hours.',
+      message: asT(req.t)('fcr:endWithinDay'),
       path: 'endTime',
     })
   }
@@ -169,8 +171,8 @@ const timeFieldAdmin = {
 export const AgendaItems: CollectionConfig<'agenda-items'> = {
   slug: 'agenda-items',
   labels: {
-    singular: 'Voce di programma',
-    plural: 'Voci di programma',
+    singular: copy('Programme item', 'Voce di programma'),
+    plural: copy('Programme items', 'Voci di programma'),
   },
   orderable: true,
   access: {
@@ -181,7 +183,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
   },
   admin: {
     hidden: true,
-    group: 'Conferenze',
+    group: adminGroups.conferences,
     useAsTitle: 'title',
     defaultColumns: ['title', 'day', 'startTime', 'endTime', 'isKeynote', 'updatedAt'],
   },
@@ -200,12 +202,15 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       editor: basicLexical,
       label: 'Title',
       admin: {
-        description: 'Titolo formattato della sessione. Title in testo semplice si ricava da questo.',
+        description: copy(
+          'Formatted session title. Plain Title is derived from this.',
+          'Titolo formattato della sessione. Title in testo semplice si ricava da questo.',
+        ),
       },
-      validate: (value) => {
-        if (!value) return 'Title è obbligatorio.'
+      validate: (value, { req }) => {
+        if (!value) return asT(req.t)('fcr:titleRequired')
         const plaintext = toPlainTitle(value as LexicalJSON)
-        if (!plaintext) return 'Title deve contenere del testo.'
+        if (!plaintext) return asT(req.t)('fcr:titleMustHaveText')
         return true
       },
     },
@@ -216,8 +221,10 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       required: true,
       index: true,
       admin: {
-        description:
+        description: copy(
+          'Select the day first. Start time and End time stay within that day’s hours.',
           'Selezionate prima il giorno. Start time e End time restano nei limiti orari di quel giorno.',
+        ),
       },
     },
     {
@@ -226,18 +233,28 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
         {
           name: 'startTime',
           type: 'date',
+          required: true,
           label: 'Start time',
           admin: {
             ...timeFieldAdmin,
+            description: copy(
+              'Required. On items without child sessions (talks) this drives “My programme” reminders. Must fall within the day’s window.',
+              'Obbligatorio. Sulle voci senza sotto-sessioni (talk) serve ai promemoria di “My programme”. Deve stare nella fascia del giorno.',
+            ),
             condition: (data) => Boolean(data?.day),
           },
         },
         {
           name: 'endTime',
           type: 'date',
+          required: true,
           label: 'End time',
           admin: {
             ...timeFieldAdmin,
+            description: copy(
+              'Required. Defines the end of the “Live” window. Must fall within the day’s hours.',
+              'Obbligatorio. Definisce la fine della fascia “Live”. Deve stare nella fascia del giorno.',
+            ),
             condition: (data) => Boolean(data?.day),
           },
         },
@@ -249,6 +266,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
         {
           name: 'duration',
           type: 'ui',
+          label: copy('Duration', 'Durata'),
           admin: {
             width: '50%',
             components: {
@@ -263,7 +281,10 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
           defaultValue: false,
           admin: {
             width: '50%',
-            description: 'Evidenzia graficamente questa sessione sul sito.',
+            description: copy(
+              'Highlights this session on the site.',
+              'Evidenzia graficamente questa sessione sul sito.',
+            ),
           },
         },
       ],
@@ -292,7 +313,10 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       label: 'Icon',
       required: false,
       admin: {
-        description: 'Icona Lucide facoltativa. La ricerca filtra l’elenco; scorrete per vederle tutte.',
+        description: copy(
+          'Optional Lucide icon. Search filters the list; scroll to see them all.',
+          'Icona Lucide facoltativa. La ricerca filtra l’elenco; scorrete per vederle tutte.',
+        ),
       },
     }),
     {
@@ -301,7 +325,10 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       editor: basicLexical,
       label: 'Description',
       admin: {
-        description: 'Note o dettagli facoltativi sulla sessione.',
+        description: copy(
+          'Optional notes or details about the session.',
+          'Note o dettagli facoltativi sulla sessione.',
+        ),
       },
     },
     {
@@ -314,7 +341,10 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       defaultSort: '_agenda-items_children_order',
       admin: {
         defaultColumns: ['title', 'startTime', 'endTime', 'isKeynote', '_status'],
-        description: 'Interventi o sotto-sessioni. Trascinate per l’ordine dentro questa voce.',
+        description: copy(
+          'Talks or nested sessions. Drag to order them inside this item.',
+          'Interventi o sotto-sessioni. Trascinate per l’ordine dentro questa voce.',
+        ),
       },
     },
     {
@@ -327,8 +357,10 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       defaultSort: '_abstracts_childAbstracts_order',
       admin: {
         defaultColumns: ['plainTitle', 'code', 'status', '_status'],
-        description:
+        description: copy(
+          'Scientific abstracts under this session. The same abstract can also appear on other items.',
           'Abstract scientifici sotto questa sessione. Lo stesso abstract può comparire anche in altre voci.',
+        ),
       },
     },
     {
@@ -337,7 +369,10 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Title in testo semplice ricavato da Title (elenchi).',
+        description: copy(
+          'Plain-text Title derived from Title (lists).',
+          'Title in testo semplice ricavato da Title (elenchi).',
+        ),
       },
     },
     {
@@ -348,8 +383,10 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       filterOptions: sameDayParentFilter,
       admin: {
         position: 'sidebar',
-        description:
+        description: copy(
+          'Optional parent item (same day). Leave empty for top-level sessions.',
           'Voce genitore facoltativa (stesso giorno). Lasciate vuoto per le sessioni di primo livello.',
+        ),
       },
     },
   ],

@@ -4,10 +4,11 @@ import { authenticated } from '@/access/authenticated'
 import { anyone } from '@/access/anyone'
 import { clearActivePublicArchive } from './hooks/clearActivePublicArchive'
 import { revalidateActiveConference } from './hooks/revalidateActiveConference'
+import { copy } from '@/i18n/copy'
 
 export const ActiveConference: GlobalConfig = {
   slug: 'active-conference',
-  label: 'Conferenza attiva',
+  label: copy('Active conference', 'Conferenza attiva'),
   access: {
     read: anyone,
     update: authenticated,
@@ -24,8 +25,10 @@ export const ActiveConference: GlobalConfig = {
       label: 'Conference',
       required: true,
       admin: {
-        description:
+        description: copy(
+          'Published edition on the home page (/). Required. That edition is removed from the public archive automatically.',
           'Edizione pubblicata in home (/). Obbligatoria. Quell’edizione viene tolta automaticamente dall’archivio pubblico.',
+        ),
       },
       filterOptions: {
         _status: {

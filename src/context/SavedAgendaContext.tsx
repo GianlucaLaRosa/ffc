@@ -8,9 +8,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import type { AgendaItem } from '@/payload-types'
 import {
-  collectLeafAgendaItems,
   isHappeningNow,
   isStartingSoon,
   minutesUntilStart,
@@ -18,7 +16,6 @@ import {
   savedAgendaStorageKey,
   serializeSavedAgendaStore,
   sortSavedAgendaItems,
-  toSavedAgendaItem,
   type SavedAgendaItem,
 } from '@/utilities/savedAgenda'
 import {
@@ -63,9 +60,8 @@ type SavedAgendaContextValue = {
   alertsEnabled: boolean
   leadMinutes: number
   conferenceUpdates: boolean
-  isSaved: (item: AgendaItem) => boolean
-  isPartiallySaved: (item: AgendaItem) => boolean
-  toggleItem: (item: AgendaItem) => void
+  isSaved: (id: string) => boolean
+  toggleSaved: (entry: SavedAgendaItem) => void
   removeItem: (id: string) => void
   focusItem: (id: string) => void
   clearFocus: () => void
@@ -159,40 +155,13 @@ export function SavedAgendaProvider({
 
   const savedIds = useMemo(() => new Set(items.map((item) => item.id)), [items])
 
-  const isSaved = useCallback(
-    (item: AgendaItem) => {
-      const leaves = collectLeafAgendaItems(item)
-      return leaves.length > 0 && leaves.every((leaf) => savedIds.has(String(leaf.id)))
-    },
-    [savedIds],
-  )
+  const isSaved = useCallback((id: string) => savedIds.has(id), [savedIds])
 
-  const isPartiallySaved = useCallback(
-    (item: AgendaItem) => {
-      const leaves = collectLeafAgendaItems(item)
-      const savedCount = leaves.filter((leaf) => savedIds.has(String(leaf.id))).length
-      return savedCount > 0 && savedCount < leaves.length
-    },
-    [savedIds],
-  )
-
-  const toggleItem = useCallback((item: AgendaItem) => {
-    const leaves = collectLeafAgendaItems(item).map(toSavedAgendaItem)
-    if (leaves.length === 0) return
-
+  const toggleSaved = useCallback((entry: SavedAgendaItem) => {
     setItems((prev) => {
-      const ids = new Set(prev.map((saved) => saved.id))
-      const allSaved = leaves.every((leaf) => ids.has(leaf.id))
-      if (allSaved) {
-        const remove = new Set(leaves.map((leaf) => leaf.id))
-        return prev.filter((saved) => !remove.has(saved.id))
-      }
-
-      const next = [...prev]
-      for (const leaf of leaves) {
-        if (!ids.has(leaf.id)) next.push(leaf)
-      }
-      return sortSavedAgendaItems(next)
+      const already = prev.some((saved) => saved.id === entry.id)
+      if (already) return prev.filter((saved) => saved.id !== entry.id)
+      return sortSavedAgendaItems([...prev, entry])
     })
   }, [])
 
@@ -324,8 +293,7 @@ export function SavedAgendaProvider({
       leadMinutes,
       conferenceUpdates,
       isSaved,
-      isPartiallySaved,
-      toggleItem,
+      toggleSaved,
       removeItem,
       focusItem,
       clearFocus,
@@ -347,8 +315,7 @@ export function SavedAgendaProvider({
       leadMinutes,
       conferenceUpdates,
       isSaved,
-      isPartiallySaved,
-      toggleItem,
+      toggleSaved,
       removeItem,
       focusItem,
       clearFocus,

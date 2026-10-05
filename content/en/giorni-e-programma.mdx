@@ -1,0 +1,69 @@
+---
+title: Days and programme
+description: How to add conference days and programme sessions.
+---
+
+import { Callout, Steps } from 'nextra/components'
+
+# Days and programme
+
+The programme is **not** a single sheet. First create the **days**, then inside each day the **sessions**.
+
+<Steps>
+
+### Open the Days tab
+
+On the conference, **Days** tab. Here you see the days of **this** edition.
+
+### Create New for each day
+
+For each date:
+
+1. **Date** — the calendar (one day per date, per edition)
+2. **Start time** / **End time** — start and end of the day (15-minute steps)
+
+End time can be **earlier** than start time if the day “crosses” after midnight.
+
+Save and, when it is ready, publish the day.
+
+### Add sessions
+
+On the day, the **Agenda items** list shows only **top-level** sessions (without a parent).
+
+**Create New**:
+
+1. **Title** — formatted session title
+2. The **day** is already linked if you start from here
+3. **Start time** and **End time** — required, and they must sit **inside** the day’s hours. They appear after you choose the day. Without a start time, “My programme” reminders do not fire
+4. **Keynote** — tick if you want it highlighted
+5. **Icon** — optional, searchable by name
+6. **Description** — optional notes
+
+Drag rows for display order.
+
+### Sessions inside other sessions
+
+Open a top-level session. The **Child items** list is talks or nested blocks.
+
+The day is inherited from the parent. The day’s hours still apply.
+
+On the site, participants save in “My programme” **only the leaves**:
+
+- if a session has **abstracts**, the bookmark is on each abstract (not the session)
+- if it has **Child items**, the bookmark is on the children (and so on)
+- if it has neither children nor abstracts, the session itself can be saved (e.g. check-in)
+
+Abstracts use the hours of the session they are linked to, for reminders.
+
+</Steps>
+
+<Callout type="info">
+  The same **abstract** can be linked to more than one session. On the public site, under each programme session you see **all** linked abstracts: a click opens the card. Abstracts are also managed from the conference **Abstract** tab. See [Abstracts](/en/docs/abstract).
+</Callout>
+
+## Typical errors
+
+- Two days with the **same date** on the same edition: the system rejects it.
+- Session time **outside** the day’s window: an error appears; widen the day or fix the time.
+- Empty **Start time** or **End time**: saving in the panel is rejected. They are also needed for reminders.
+- Looking for sessions in the side menu: they are hidden on purpose. Go **Conferences → edition → Days → day**.

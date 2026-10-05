@@ -3,17 +3,21 @@ import type { GlobalConfig } from 'payload'
 import { authenticated } from '@/access/authenticated'
 import { anyone } from '@/access/anyone'
 import { revalidateProgrammeAlerts } from '@/utilities/revalidatePublicCache'
+import { copy } from '@/i18n/copy'
+import { asT } from '@/i18n/asT'
 
 export const ProgrammeAlerts: GlobalConfig = {
   slug: 'programme-alerts',
-  label: 'Avvisi programma',
+  label: copy('Programme alerts', 'Avvisi programma'),
   access: {
     read: anyone,
     update: authenticated,
   },
   admin: {
-    description:
+    description: copy(
+      'Session reminders for My programme and technical push settings (also used by Notices). Keys stay in environment variables; this screen is for publishers.',
       'Promemoria delle sessioni per My programme e impostazioni tecniche della push (usate anche dagli avvisi in Notices). Le chiavi restano nelle variabili d’ambiente; questa schermata è per chi pubblica.',
+    ),
   },
   fields: [
     {
@@ -22,8 +26,10 @@ export const ProgrammeAlerts: GlobalConfig = {
       label: 'Enable session alerts',
       defaultValue: true,
       admin: {
-        description:
+        description: copy(
+          'If off, the site hides “Enable session alerts” and the minute cron sends nothing.',
           'Se è spento, il sito nasconde “Enable session alerts” e il cron al minuto non invia nulla.',
+        ),
       },
     },
     {
@@ -31,13 +37,15 @@ export const ProgrammeAlerts: GlobalConfig = {
       type: 'email',
       label: 'Push contact email',
       admin: {
-        description:
+        description: copy(
+          'Technical contact for Web Push providers (VAPID). Not shown to participants. Required while alerts are on.',
           'Contatto tecnico per i provider Web Push (VAPID). Non visibile ai partecipanti. Obbligatorio mentre gli avvisi sono accesi.',
+        ),
       },
-      validate: (value, { data }) => {
+      validate: (value, { data, req }) => {
         const enabled = Boolean(data && typeof data === 'object' && 'enabled' in data && data.enabled)
         if (enabled && (value == null || String(value).trim() === '')) {
-          return 'Obbligatorio quando Enable session alerts è acceso'
+          return asT(req.t)('fcr:pushContactRequired')
         }
         return true
       },
@@ -54,7 +62,10 @@ export const ProgrammeAlerts: GlobalConfig = {
           max: 30,
           admin: {
             width: '50%',
-            description: 'Avvisare tanti minuti prima di una sessione salvata.',
+            description: copy(
+              'How many minutes before a saved session to notify.',
+              'Avvisare tanti minuti prima di una sessione salvata.',
+            ),
             step: 1,
           },
         },
@@ -65,7 +76,10 @@ export const ProgrammeAlerts: GlobalConfig = {
           defaultValue: 'FFC Conference',
           admin: {
             width: '50%',
-            description: 'Nome breve sulle notifiche a schermo bloccato.',
+            description: copy(
+              'Short name on lock-screen notifications.',
+              'Nome breve sulle notifiche a schermo bloccato.',
+            ),
           },
         },
       ],

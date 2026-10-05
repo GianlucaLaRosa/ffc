@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { columnSizeField } from '@/fields/columnSize'
+import { copy } from '@/i18n/copy'
 
 export const IntroCtaBlock: Block = {
   slug: 'cta',
@@ -36,9 +37,12 @@ export const IntroCtaBlock: Block = {
       label: 'URL',
       admin: {
         condition: (_, siblingData) => siblingData?.destination === 'custom',
-        description: 'Sito esterno, o un percorso di pagina come /archive/…',
+        description: copy(
+          'External site, or a page path such as /archive/…',
+          'Sito esterno, o un percorso di pagina come /archive/…',
+        ),
       },
-      validate: (value, { siblingData }) => {
+      validate: (value: unknown, { siblingData }: { siblingData: unknown }) => {
         const data = siblingData as { destination?: string } | undefined
         if (data?.destination !== 'custom') return true
         const url = typeof value === 'string' ? value.trim() : ''

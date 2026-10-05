@@ -1,11 +1,16 @@
+'use client'
+
+import { useTranslation } from '@payloadcms/ui'
 import React from 'react'
+import { asT } from '@/i18n/asT'
 
 const BeforeLogin: React.FC = () => {
+  const { t } = useTranslation()
   return (
     <div>
       <p>
-        <b>Benvenuti nel pannello FFC Ricerca.</b>
-        {' Qui gestite le edizioni della conferenza, il programma e i contenuti del sito.'}
+        <b>{asT(t)('fcr:beforeLoginLead')}</b>
+        {asT(t)('fcr:beforeLoginBody')}
       </p>
     </div>
   )

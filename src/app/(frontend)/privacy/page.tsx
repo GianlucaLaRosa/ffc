@@ -1,70 +1,55 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { ArrowLeft, ShieldCheck, FileText } from 'lucide-react'
-import { Footer } from '@/components/Footer'
-import { PolicyChrome } from '@/components/PolicyChrome'
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { InstallPwaButton } from '@/components/InstallPwaButton'
-
-export const metadata: Metadata = {
-  title: 'Privacy Policy | FFC Scientific Conference',
-  description:
-    'Information on personal data processing for the official FFC Scientific Conference website in compliance with GDPR.',
-}
+import { PolicyLayout } from '@/components/PolicyLayout'
+import { RichText } from '@/components/RichText'
+import { getPublicFooter } from '@/utilities/getConferenceEdition'
 
 export const revalidate = 60
 
+export async function generateMetadata(): Promise<Metadata> {
+  const footer = await getPublicFooter()
+  const policy = footer?.privacyPolicy
+  const title = policy?.title?.trim() || 'Privacy Policy'
+  const description =
+    policy?.metaDescription?.trim() ||
+    'Information on personal data processing for the official FFC Scientific Conference website in compliance with GDPR.'
+
+  return {
+    title: `${title} | FFC Scientific Conference`,
+    description,
+  }
+}
+
+function websiteHost(url: string): string {
+  try {
+    return new URL(url).hostname
+  } catch {
+    return url.replace(/^https?:\/\//, '').replace(/\/$/, '')
+  }
+}
+
 export default async function PrivacyPolicyPage() {
-  const lastUpdated = 'October 2026'
+  const footer = await getPublicFooter()
+  const policy = footer?.privacyPolicy
+  const title = policy?.title?.trim() || 'Privacy Policy'
+  const website = policy?.controllerWebsite?.trim() || ''
+  const rights = policy?.rights?.filter((item) => item.title?.trim()) ?? []
+  const hasController =
+    Boolean(policy?.controllerName?.trim()) ||
+    Boolean(policy?.controllerAddress?.trim()) ||
+    Boolean(website)
 
   return (
-    <PolicyChrome>
-      {/* Top navigation bar */}
-      <header className="sticky top-0 z-30 bg-surface/95 backdrop-blur-md border-b border-line/80 pt-[env(safe-area-inset-top)]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
-          <Link
-            href="/"
-            prefetch={false}
-            className="inline-flex items-center gap-2 min-h-11 text-sm font-medium text-fg-muted hover:text-brand-soft-fg transition-colors min-w-0"
-          >
-            <ArrowLeft className="w-4 h-4 text-brand shrink-0" />
-            <span className="sm:hidden">Back</span>
-            <span className="hidden sm:inline">Back to Conference Home</span>
-          </Link>
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-brand-soft-fg bg-brand-soft border border-brand-border/80 px-3 py-1 rounded-full">
-              <ShieldCheck className="w-3.5 h-3.5 text-brand" />
-              <span>GDPR Compliant</span>
-            </div>
-            <InstallPwaButton />
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
-
-      {/* Main content container */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Document Header Card */}
-        <div className="bg-surface rounded-2xl border border-line shadow-xs p-6 sm:p-10 mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-subtle text-fg-muted text-xs font-semibold mb-4">
-            <FileText className="w-3.5 h-3.5 text-fg-subtle" />
-            <span>Articles 13 &amp; 14 - Regulation (EU) 2016/679 (GDPR)</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-fg tracking-tight mb-3">
-            Privacy Policy
-          </h1>
-          <p className="text-fg-muted text-base sm:text-lg leading-relaxed mb-4">
-            This notice describes how personal data is processed when visiting the official conference
-            platform of the <strong>FFC Scientific Conference</strong>, operated by{' '}
-            <strong>Fondazione Ricerca Fibrosi Cistica - ETS</strong>.
-          </p>
-          <p className="text-xs text-fg-subtle font-mono">Last updated: {lastUpdated}</p>
-        </div>
-
-        {/* Detailed Sections Card */}
-        <div className="bg-surface rounded-2xl border border-line shadow-xs p-6 sm:p-10 space-y-8 text-fg-muted leading-relaxed">
-          {/* Section 1: Data Controller */}
+    <PolicyLayout
+      headerBadge={policy?.headerBadge}
+      title={title}
+      kicker={policy?.kicker}
+      intro={policy?.intro ? <RichText content={policy.intro} disableContainer /> : null}
+      lastUpdated={policy?.lastUpdated}
+      footer={footer}
+    >
+      <div className="bg-surface rounded-2xl border border-line shadow-xs p-6 sm:p-10 space-y-8 text-fg-muted leading-relaxed">
+        {hasController ? (
           <section>
             <h2 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
               <span className="text-brand font-mono text-base">01.</span>
@@ -75,147 +60,72 @@ export default async function PrivacyPolicyPage() {
               website is:
             </p>
             <div className="bg-subtle border border-line rounded-xl p-4 text-sm space-y-1">
-              <p className="font-semibold text-fg">
-                Fondazione Ricerca Fibrosi Cistica - ETS (FFC Ricerca)
-              </p>
-              <p className="text-fg-muted">Piazza Bra 1 - Palazzo della Gran Guardia</p>
-              <p className="text-fg-muted">Verona (VR), Italy</p>
-              <p className="text-fg-muted">
-                Website:{' '}
-                <a
-                  href="https://www.fibrosicisticaricerca.it"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-brand underline hover:text-brand-hover"
-                >
-                  www.fibrosicisticaricerca.it
-                </a>
-              </p>
-            </div>
-          </section>
-
-          {/* Section 2: Categories of Data Collected */}
-          <section className="border-t border-line pt-8">
-            <h2 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
-              <span className="text-brand font-mono text-base">02.</span>
-              Categories of Personal Data Collected
-            </h2>
-            <div className="space-y-4 text-sm sm:text-base">
-              <div>
-                <h3 className="font-semibold text-fg mb-1">A. Technical Browsing Data (Log Files)</h3>
+              {policy?.controllerName ? (
+                <p className="font-semibold text-fg">{policy.controllerName}</p>
+              ) : null}
+              {policy?.controllerAddress
+                ? policy.controllerAddress.split('\n').map((line, index) => (
+                    <p key={`${index}-${line}`} className="text-fg-muted">
+                      {line}
+                    </p>
+                  ))
+                : null}
+              {website ? (
                 <p className="text-fg-muted">
-                  During normal operation, the software procedures and IT infrastructure providing this
-                  website automatically acquire specific data whose transmission is implicit in the use of
-                  Internet communication protocols (e.g., IP addresses, device operating system, browser
-                  user-agent, requested URI addresses, time of request, HTTP status code returned by the
-                  server). This data is processed strictly for technical diagnostics, cyber-security, and
-                  system stability.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-fg mb-1">B. Conference Scientific Directory</h3>
-                <p className="text-fg-muted">
-                  Names, institutional affiliations, and scientific biographies of speakers, session
-                  moderators, and abstract contributors displayed on this website are published solely for
-                  academic and scientific dissemination purposes in connection with the conference proceedings.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-fg mb-1">C. Cookies and Trackers</h3>
-                <p className="text-fg-muted">
-                  This website does <strong>not</strong> install cookies, tracking pixels, or fingerprinting
-                  tools on visitors’ browsers. For complete details, consult our dedicated{' '}
-                  <Link
-                    href="/cookie-policy"
-                    className="text-brand font-semibold underline hover:text-brand-hover"
+                  Website:{' '}
+                  <a
+                    href={website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-brand underline hover:text-brand-hover"
                   >
-                    Cookie Policy
-                  </Link>.
+                    {websiteHost(website)}
+                  </a>
                 </p>
-              </div>
+              ) : null}
             </div>
           </section>
+        ) : null}
 
-          {/* Section 3: Legal Basis & Purpose */}
+        {policy?.content ? (
+          <div className={hasController ? 'border-t border-line pt-8' : undefined}>
+            <RichText content={policy.content} className="policy-rich-text" />
+          </div>
+        ) : null}
+
+        {policy?.rightsHeading || policy?.rightsIntro || rights.length > 0 || policy?.complaintNote ? (
           <section className="border-t border-line pt-8">
-            <h2 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
-              <span className="text-brand font-mono text-base">03.</span>
-              Legal Basis and Purpose of Processing
-            </h2>
-            <ul className="space-y-3 text-sm sm:text-base list-disc list-inside text-fg-muted pl-1">
-              <li>
-                <strong className="text-fg">Operational Delivery &amp; Security:</strong> Processing
-                technical connection data is necessary for the legitimate interest of the Data Controller to
-                ensure network security, prevent cyber attacks, and maintain web platform availability (Art.
-                6(1)(f) GDPR).
-              </li>
-              <li>
-                <strong className="text-fg">Scientific Communication:</strong> Presentation of conference
-                programmes, abstracts, and speaker credentials serves the legitimate statutory interest of the
-                Foundation in fostering non-profit medical and scientific research (Art. 6(1)(f) GDPR).
-              </li>
-            </ul>
+            {policy?.rightsHeading ? (
+              <h2 className="text-xl font-bold text-fg mb-3">{policy.rightsHeading}</h2>
+            ) : null}
+            {policy?.rightsIntro ? (
+              <div className="text-sm sm:text-base mb-3 text-fg-muted">
+                <RichText content={policy.rightsIntro} disableContainer />
+              </div>
+            ) : null}
+            {rights.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                {rights.map((item, index) => (
+                  <div
+                    key={item.id ?? `${item.title}-${index}`}
+                    className="p-3 rounded-xl bg-subtle border border-line"
+                  >
+                    <span className="font-semibold text-fg block mb-0.5">{item.title}</span>
+                    {item.description ? (
+                      <span className="text-fg-muted">{item.description}</span>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            {policy?.complaintNote ? (
+              <div className="text-xs sm:text-sm text-fg-subtle mt-4">
+                <RichText content={policy.complaintNote} disableContainer />
+              </div>
+            ) : null}
           </section>
-
-          {/* Section 4: Data Retention */}
-          <section className="border-t border-line pt-8">
-            <h2 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
-              <span className="text-brand font-mono text-base">04.</span>
-              Data Retention Periods
-            </h2>
-            <p className="text-sm sm:text-base text-fg-muted">
-              Technical server connection logs are retained for no longer than necessary to verify server
-              integrity and security incidents (typically up to 30 days), after which they are deleted or
-              irreversibly anonymized. Scientific conference schedules and abstract archives remain accessible
-              for historical reference and scientific documentation.
-            </p>
-          </section>
-
-          {/* Section 5: Data Subject Rights */}
-          <section className="border-t border-line pt-8">
-            <h2 className="text-xl font-bold text-fg mb-3 flex items-center gap-2">
-              <span className="text-brand font-mono text-base">05.</span>
-              Your Rights Under GDPR (Articles 15-22)
-            </h2>
-            <p className="text-sm sm:text-base mb-3 text-fg-muted">
-              As an interested data subject, you have the right to exercise at any time the rights guaranteed
-              under Chapter III of the GDPR:
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-              <div className="p-3 rounded-xl bg-subtle border border-line">
-                <span className="font-semibold text-fg block mb-0.5">Right of Access (Art. 15)</span>
-                <span className="text-fg-muted">Confirm whether your data is being processed and obtain copies.</span>
-              </div>
-              <div className="p-3 rounded-xl bg-subtle border border-line">
-                <span className="font-semibold text-fg block mb-0.5">Right to Rectification (Art. 16)</span>
-                <span className="text-fg-muted">Request correction of inaccurate or incomplete information.</span>
-              </div>
-              <div className="p-3 rounded-xl bg-subtle border border-line">
-                <span className="font-semibold text-fg block mb-0.5">Right to Erasure (Art. 17)</span>
-                <span className="text-fg-muted">Request deletion of data where legal grounds apply.</span>
-              </div>
-              <div className="p-3 rounded-xl bg-subtle border border-line">
-                <span className="font-semibold text-fg block mb-0.5">Right to Object (Art. 21)</span>
-                <span className="text-fg-muted">Object at any time to processing based on legitimate interests.</span>
-              </div>
-            </div>
-            <p className="text-xs sm:text-sm text-fg-subtle mt-4">
-              You also have the right to lodge a formal complaint with the supervisory authority (in Italy:
-              <em> Garante per la protezione dei dati personali</em>,{' '}
-              <a
-                href="https://www.garanteprivacy.it"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-brand underline hover:text-brand-hover"
-              >
-                www.garanteprivacy.it
-              </a>).
-            </p>
-          </section>
-        </div>
-      </main>
-
-      <Footer />
-    </PolicyChrome>
+        ) : null}
+      </div>
+    </PolicyLayout>
   )
 }

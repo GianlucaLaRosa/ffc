@@ -1,14 +1,18 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
+import { adminGroups, copy } from '@/i18n/copy'
 
 export const ProgrammePushSubscriptions: CollectionConfig = {
   slug: 'programme-push-subscriptions',
   admin: {
     hidden: true,
-    group: 'Contenuti',
+    group: adminGroups.content,
     useAsTitle: 'endpoint',
-    description: 'Endpoint push del browser per gli avvisi di My programme. Non si modificano da qui.',
+    description: copy(
+      'Browser push endpoints for My programme alerts. Do not edit them here.',
+      'Endpoint push del browser per gli avvisi di My programme. Non si modificano da qui.',
+    ),
   },
   access: {
     create: () => false,
@@ -56,8 +60,10 @@ export const ProgrammePushSubscriptions: CollectionConfig = {
       defaultValue: true,
       index: true,
       admin: {
-        description:
+        description: copy(
+          'If true, this endpoint also receives editorial notices (room/time), not only session reminders.',
           'Se è vero, questo endpoint riceve anche gli avvisi editoriali (sala/orario), non solo i promemoria di sessione.',
+        ),
       },
     },
     {

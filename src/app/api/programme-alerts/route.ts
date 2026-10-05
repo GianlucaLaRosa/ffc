@@ -3,7 +3,8 @@ import configPromise from '@payload-config'
 import webpush from 'web-push'
 import {
   dueProgrammeAlerts,
-  parseSavedAgendaStore,
+  parseSavedAgendaItems,
+  programmeAlertHref,
   type SavedAgendaItem,
 } from '@/utilities/savedAgenda'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -41,9 +42,7 @@ function configureVapid(contactEmail?: string | null): boolean {
 }
 
 function asItems(value: unknown): SavedAgendaItem[] {
-  return parseSavedAgendaStore(
-    JSON.stringify({ v: 1, items: Array.isArray(value) ? value : [] }),
-  )
+  return parseSavedAgendaItems(value)
 }
 
 function asIdList(value: unknown): string[] {
@@ -200,7 +199,7 @@ export async function GET(request: Request): Promise<Response> {
         if (bucket.has(alert.item.id)) continue
 
         const minutes = Math.max(1, Math.ceil(alert.minutes ?? settings.leadMinutes))
-        const url = `${origin}${path}?agenda=${encodeURIComponent(alert.item.id)}`
+        const url = programmeAlertHref(origin, path, alert.item)
         try {
           await webpush.sendNotification(
             {

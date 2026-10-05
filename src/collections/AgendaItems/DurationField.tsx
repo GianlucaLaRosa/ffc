@@ -1,8 +1,9 @@
 'use client'
 
-import { FieldDescription, FieldLabel, useFormFields } from '@payloadcms/ui'
+import { FieldDescription, FieldLabel, useFormFields, useTranslation } from '@payloadcms/ui'
 
 import { formatMinutesLabel, minutesLocal } from './timeUtils'
+import { asT } from '@/i18n/asT'
 
 const toTimeValue = (value: unknown): string | null => {
   if (typeof value === 'string' && value.length > 0) return value
@@ -41,6 +42,7 @@ export const DurationField = (props: DurationFieldProps) => {
     path,
   } = props
 
+  const { t } = useTranslation()
   const startTime = useFormFields(([fields]) => toTimeValue(fields.startTime?.value))
   const endTime = useFormFields(([fields]) => toTimeValue(fields.endTime?.value))
   const minutes = startTime && endTime ? liveDurationMinutes(startTime, endTime) : null
@@ -52,7 +54,7 @@ export const DurationField = (props: DurationFieldProps) => {
         <p style={{ fontSize: 14, margin: '0 0 4px' }}>
           {minutes == null ? (
             <span style={{ color: 'var(--theme-elevation-500)' }}>
-              Compare quando Start time e End time sono entrambi impostati
+              {asT(t)('fcr:durationEmpty')}
             </span>
           ) : (
             <>

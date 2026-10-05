@@ -1,0 +1,50 @@
+---
+title: Conference handbook
+description: How to use the panel to create and update an FFC Ricerca conference edition.
+---
+
+import { Cards, Callout } from 'nextra/components'
+
+# Welcome
+
+This handbook explains, step by step, how to **create and manage a conference** from the admin panel. It is visible only to people signed in at `/admin` (same account).
+
+You do not need to know how the website works internally. You need an account, a computer, and some patience. **Field names** stay in **English** (`Name`, `Year`): these pages quote them that way. Menus, tabs, and buttons follow the panel language (English by default, or Italiano).
+
+<Callout type="info">
+  The public site (programme, abstracts, map) is one thing. The **panel** (`/admin`) is another: that is where you enter content. This handbook is about the panel.
+</Callout>
+
+## What you can do
+
+<Cards>
+  <Cards.Card title="Sign in and get oriented" href="/en/docs/primo-accesso" />
+  <Cards.Card title="Create a new edition" href="/en/docs/nuova-edizione" />
+  <Cards.Card title="Fill the programme" href="/en/docs/giorni-e-programma" />
+  <Cards.Card title="Put everything online" href="/en/docs/mettere-online" />
+  <Cards.Card title="Live notices" href="/en/docs/avvisi-conferenza" />
+</Cards>
+
+## Suggested order of work
+
+Think of an edition as a **folder**. First create the folder (name, year, venue), then fill the sections.
+
+1. **People and institutions** (if they are not already in the lists)
+2. **New conference**: name, year, colours, logo
+3. **Venue**
+4. **Opening copy** (intro)
+5. **Days** and, inside each day, the **programme**
+6. **Abstracts** linked to sessions
+7. **Appendix** (extra tabs at the bottom of the page)
+8. **Publish** and, when it is time, set the **active** edition on the home page
+9. During the event: **Notices** for time or room changes ([guide](/en/docs/avvisi-conferenza))
+
+## Where content appears
+
+| What you enter | Where the public sees it |
+| --- | --- |
+| **Active** edition (**Active conference**) | Site home, main address |
+| Edition in the **public archive** | List at `/archive` (if **Enable public archive** is on). Each edition is `/archive/` + **Slug**. If there is at least one, **Archive** appears in the menu. From the list, **Current edition** (or the **logo**) returns home; from an edition page, **Open current edition** in the bar, or the **logo**. The slug is set on the conference (right column); see [Create an edition](/en/docs/nuova-edizione) |
+| Draft | Only people signed into the panel, or preview |
+
+If you are unsure, open [Common problems](/en/docs/problemi-frequenti).

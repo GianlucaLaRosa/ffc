@@ -5,6 +5,7 @@ import { authenticated } from '../../access/authenticated'
 import { flexibleLexical } from '../../fields/flexibleLexical'
 import { mediaFolderUploadAdmin } from '@/fields/mediaFolderUpload'
 import { PEOPLE_PHOTOS_FOLDER_NAME } from '@/utilities/mediaFolder'
+import { adminGroups, copy } from '@/i18n/copy'
 import { assignPhotoToFolder } from './hooks/assignPhotoToFolder'
 import {
   revalidatePublicDirectories,
@@ -29,8 +30,8 @@ const populateFullName: CollectionBeforeValidateHook = ({ data }) => {
 export const People: CollectionConfig<'people'> = {
   slug: 'people',
   labels: {
-    singular: 'Persona',
-    plural: 'Persone',
+    singular: copy('Person', 'Persona'),
+    plural: copy('People', 'Persone'),
   },
   orderable: true,
   access: {
@@ -40,10 +41,13 @@ export const People: CollectionConfig<'people'> = {
     update: authenticated,
   },
   admin: {
-    group: 'Persone e organizzazioni',
+    group: adminGroups.people,
     useAsTitle: 'fullName',
     defaultColumns: ['fullName', 'institution', 'updatedAt'],
-    description: 'Ricercatori, autori, relatori e revisori.',
+    description: copy(
+      'Researchers, authors, speakers, and reviewers.',
+      'Ricercatori, autori, relatori e revisori.',
+    ),
   },
   fields: [
     {
@@ -77,7 +81,10 @@ export const People: CollectionConfig<'people'> = {
       relationTo: 'media',
       label: 'Photo',
       admin: mediaFolderUploadAdmin(PEOPLE_PHOTOS_FOLDER_NAME, {
-        description: `Foto profilo facoltativa. Cartella Media «${PEOPLE_PHOTOS_FOLDER_NAME}».`,
+        description: copy(
+          `Optional profile photo. Media folder “${PEOPLE_PHOTOS_FOLDER_NAME}”.`,
+          `Foto profilo facoltativa. Cartella Media «${PEOPLE_PHOTOS_FOLDER_NAME}».`,
+        ),
       }),
     },
     {
@@ -92,7 +99,10 @@ export const People: CollectionConfig<'people'> = {
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Generato da First name e Last name.',
+        description: copy(
+          'Generated from First name and Last name.',
+          'Generato da First name e Last name.',
+        ),
       },
     },
     {

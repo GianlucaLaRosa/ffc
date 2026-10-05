@@ -6,6 +6,7 @@ import { conferenceMetadata } from '@/components/ConferenceSeo'
 import {
   findPublishedConferenceBySlug,
   getActiveConferenceId,
+  isPublicArchiveEnabled,
   loadConferenceEdition,
 } from '@/utilities/getConferenceEdition'
 
@@ -17,6 +18,9 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
+  if (!(await isPublicArchiveEnabled())) {
+    return { title: 'Conference archive' }
+  }
   const { slug: activeSlug } = await getActiveConferenceId()
   if (activeSlug && slug === activeSlug) {
     return { title: 'FFC Scientific Conference' }
@@ -37,6 +41,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ArchiveConferencePage({ params }: PageProps) {
   const { slug } = await params
+  if (!(await isPublicArchiveEnabled())) notFound()
+
   const { slug: activeSlug } = await getActiveConferenceId()
 
   if (activeSlug && slug === activeSlug) {

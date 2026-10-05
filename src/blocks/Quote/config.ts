@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { columnSizeField } from '@/fields/columnSize'
+import { copy } from '@/i18n/copy'
 
 export const IntroQuoteBlock: Block = {
   slug: 'quote',
@@ -22,7 +23,10 @@ export const IntroQuoteBlock: Block = {
       type: 'text',
       label: 'Attribution',
       admin: {
-        description: 'Relatore, ruolo o fonte, facoltativo.',
+        description: copy(
+          'Speaker, role, or source, optional.',
+          'Relatore, ruolo o fonte, facoltativo.',
+        ),
       },
     },
   ],

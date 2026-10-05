@@ -1,16 +1,12 @@
-import type { UploadField } from 'payload'
-
 /**
  * Marks an upload field so new media created from it land in a named folder.
  */
-export function mediaFolderUploadAdmin(
-  folderName: string,
-  admin: UploadField['admin'] = {},
-): UploadField['admin'] {
+export function mediaFolderUploadAdmin(folderName: string, admin: object = {}) {
+  const current = admin as { components?: { afterInput?: unknown[] } }
   return {
-    ...admin,
+    ...current,
     components: {
-      ...admin.components,
+      ...current.components,
       afterInput: [
         {
           clientProps: { folderName },

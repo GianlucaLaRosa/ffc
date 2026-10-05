@@ -18,6 +18,8 @@ import {
   revalidateEditionByConference,
   revalidateEditionByConferenceDelete,
 } from '@/utilities/revalidatePublicCache'
+import { adminGroups, copy } from '@/i18n/copy'
+import { asT } from '@/i18n/asT'
 
 type LexicalJSON = Parameters<typeof convertLexicalToPlaintext>[0]['data']
 
@@ -198,11 +200,13 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
   },
   admin: {
     hidden: true,
-    group: 'Conferenze',
+    group: adminGroups.conferences,
     useAsTitle: 'plainTitle',
     defaultColumns: ['plainTitle', 'conference', 'agendaItems', 'code', 'updatedAt'],
-    description:
+    description: copy(
+      'Scientific abstracts for an edition. Best created and ordered from the conference Abstract tab.',
       'Abstract scientifici di un’edizione. Meglio crearli e ordinarli dal tab Abstract della conferenza.',
+    ),
   },
   defaultSort: '_order',
   fields: [
@@ -210,7 +214,7 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
       type: 'tabs',
       tabs: [
         {
-          label: 'Panoramica',
+          label: copy('Overview', 'Panoramica'),
           fields: [
             {
               name: 'title',
@@ -218,10 +222,10 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
               required: true,
               editor: basicLexical,
               label: 'Title',
-              validate: (value) => {
-                if (!value) return 'Title è obbligatorio.'
+              validate: (value, { req }) => {
+                if (!value) return asT(req.t)('fcr:titleRequired')
                 const plaintext = toPlainTitle(value as LexicalJSON)
-                if (!plaintext) return 'Title deve contenere del testo.'
+                if (!plaintext) return asT(req.t)('fcr:titleMustHaveText')
                 return true
               },
             },
@@ -234,8 +238,10 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
                   label: 'Code',
                   admin: {
                     width: '50%',
-                    description:
+                    description: copy(
+                      'Research or session code (e.g. “CF crio”). Does not have to be unique.',
                       'Codice di ricerca o sessione (es. «CF crio»). Non deve essere unico.',
+                    ),
                   },
                 },
                 {
@@ -245,8 +251,10 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
                   label: 'Status',
                   admin: {
                     width: '50%',
-                    description:
+                    description: copy(
+                      'If selected and Content is empty, the default sections for this Status are created.',
                       'Se selezionato e Content è vuoto, si creano le sezioni predefinite di questo Status.',
+                    ),
                     components: {
                       Field: '@/collections/Abstracts/AbstractStatusField#AbstractStatusField',
                     },
@@ -263,8 +271,10 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
                 plural: 'Related codes',
               },
               admin: {
-                description:
+                description: copy(
+                  'Other Code/Status pairs. Each row adds an appendix after the main one (same order).',
                   'Altre coppie Code/Status. Ogni riga aggiunge un’appendice dopo quella principale (stesso ordine).',
+                ),
                 components: {
                   Field: '@/collections/Abstracts/RelatedCodesField#RelatedCodesField',
                   RowLabel: '@/collections/Abstracts/RelatedCodeRowLabel#RelatedCodeRowLabel',
@@ -304,8 +314,10 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
                 plural: 'Sections',
               },
               admin: {
-                description:
+                description: copy(
+                  'Structured sections. Defaults are created when you select Status and this list is empty.',
                   'Sezioni strutturate. I predefiniti si creano quando selezionate Status e questo elenco è vuoto.',
+                ),
                 components: {
                   RowLabel: '@/collections/Abstracts/ContentRowLabel#ContentRowLabel',
                 },
@@ -328,7 +340,7 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
           ],
         },
         {
-          label: 'Appendice',
+          label: copy('Appendix', 'Appendice'),
           fields: [
             {
               name: 'appendices',
@@ -340,8 +352,10 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
               },
               minRows: 1,
               admin: {
-                description:
+                description: copy(
+                  'The first row is the appendix for the main Code/Status; the following follow Related codes. The row count stays 1 + Related codes.',
                   'La prima riga è l’appendice del Code/Status principale; le successive seguono Related codes. Il numero di righe resta 1 + Related codes.',
+                ),
                 components: {
                   Field: '@/collections/Abstracts/AppendicesField#AppendicesField',
                   RowLabel: '@/collections/Abstracts/AppendixRowLabel#AppendixRowLabel',
@@ -364,7 +378,7 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
           ],
         },
         {
-          label: 'Autori e foto',
+          label: copy('Authors and photos', 'Autori e foto'),
           fields: [
             {
               name: 'authors',
@@ -375,16 +389,18 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
                 plural: 'Authors',
               },
               admin: {
-                description:
+                description: copy(
+                  'Authors and speakers in order (same list). Drag rows; assign a Role and tick Speaker. Each person can appear only once.',
                   'Autori e relatori in ordine (stesso elenco). Trascinate le righe; assegnate un Role e spuntate Speaker. Ogni persona può comparire una sola volta.',
+                ),
               },
-              validate: (value) => {
+              validate: (value, { req }) => {
                 if (!Array.isArray(value)) return true
                 const ids = value
                   .map((row) => toRelationId((row as { person?: unknown })?.person))
                   .filter((id): id is number | string => id != null)
                 if (new Set(ids.map(String)).size !== ids.length) {
-                  return 'Ogni persona può comparire una sola volta come Author in questo abstract.'
+                  return asT(req.t)('fcr:uniqueAuthor')
                 }
                 return true
               },
@@ -446,7 +462,10 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
                 plural: 'Pictures',
               },
               admin: {
-                description: `Foto ordinate di questo abstract (solo immagini). Sul sito compaiono per prime nel carosello, poi le foto degli Speaker (Team Member esclusi). Cartella Media «${ABSTRACT_PICTURES_FOLDER_NAME}».`,
+                description: copy(
+                  `Ordered photos for this abstract (images only). On the site they appear first in the carousel, then Speaker photos (Team Member excluded). Media folder “${ABSTRACT_PICTURES_FOLDER_NAME}”.`,
+                  `Foto ordinate di questo abstract (solo immagini). Sul sito compaiono per prime nel carosello, poi le foto degli Speaker (Team Member esclusi). Cartella Media «${ABSTRACT_PICTURES_FOLDER_NAME}».`,
+                ),
               },
               fields: [
                 {
@@ -481,8 +500,10 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
       label: 'Conference',
       admin: {
         position: 'sidebar',
-        description:
+        description: copy(
+          'Edition this abstract belongs to. Set automatically if you create it from the conference.',
           'Edizione a cui appartiene questo abstract. Impostata in automatico se lo create dalla conferenza.',
+        ),
       },
     },
     {
@@ -494,8 +515,10 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
       label: 'Agenda items',
       admin: {
         position: 'sidebar',
-        description:
+        description: copy(
+          'Sessions (Agenda items) of this edition. The same abstract can sit under more than one session.',
           'Sessioni (Agenda items) di questa edizione. Lo stesso abstract può stare sotto più sessioni.',
+        ),
         isSortable: true,
       },
     },
@@ -505,7 +528,10 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Title in testo semplice ricavato da Title (elenchi).',
+        description: copy(
+          'Plain-text Title derived from Title (lists).',
+          'Title in testo semplice ricavato da Title (elenchi).',
+        ),
       },
     },
     {

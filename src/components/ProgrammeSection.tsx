@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from 'react'
 import { RichText } from './RichText'
-import { SessionIcon, ChevronDown, Sparkles, Clock } from './IconRenderer'
-import { SaveAgendaButton } from './SaveAgendaButton'
+import { SessionIcon, ChevronDown, Sparkles, Clock, FileText } from './IconRenderer'
+import { SaveAbstractButton, SaveAgendaButton } from './SaveAgendaButton'
 import { useModal } from '@/context/ModalContext'
 import { useSavedAgenda } from '@/context/SavedAgendaContext'
-import type { Abstract, AgendaItem, ConferenceDay } from '@/payload-types'
+import type { AgendaItem, ConferenceDay } from '@/payload-types'
 import {
   abstractStatusLabel,
   formatDayTitle,
@@ -14,10 +14,13 @@ import {
 } from '@/utilities/conferenceUi'
 import { formatConferenceTime } from '@/utilities/conferenceTime'
 import {
-  findAgendaItemLocation,
+  findProgrammeFocus,
   isHappeningNow,
   isStartingSoon,
+  itemAbstracts,
   minutesUntilStart,
+  savedAbstractKey,
+  savedSessionKey,
 } from '@/utilities/savedAgenda'
 
 export interface ProgrammeSectionProps {
@@ -27,11 +30,12 @@ export interface ProgrammeSectionProps {
 export function ProgrammeSection({ days }: ProgrammeSectionProps) {
   const [expandedDays, setExpandedDays] = useState<Record<string, boolean>>({})
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
-  const { focusedItemId, clearFocus, now, isSaved, isReady, leadMinutes } = useSavedAgenda()
+  const { focusedItemId, clearFocus, now, isReady, leadMinutes } = useSavedAgenda()
+  const { openAbstractModal } = useModal()
 
   useEffect(() => {
     if (!focusedItemId) return
-    const location = findAgendaItemLocation(days, focusedItemId)
+    const location = findProgrammeFocus(days, focusedItemId)
     if (!location) {
       clearFocus()
       return
@@ -53,16 +57,16 @@ export function ProgrammeSection({ days }: ProgrammeSectionProps) {
 
   useEffect(() => {
     if (!focusedItemId) return
-    const location = findAgendaItemLocation(days, focusedItemId)
+    const location = findProgrammeFocus(days, focusedItemId)
     if (!location) return
     if (!expandedDays[location.dayId]) return
     if (location.expandItemIds.some((id) => !expandedItems[id])) return
 
-    const node = document.getElementById(`agenda-item-${focusedItemId}`)
-    if (!node) return
-    node.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    const node = document.getElementById(location.scrollId)
+    if (node) node.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    if (location.abstract) openAbstractModal(location.abstract)
     clearFocus()
-  }, [clearFocus, days, expandedDays, expandedItems, focusedItemId])
+  }, [clearFocus, days, expandedDays, expandedItems, focusedItemId, openAbstractModal])
 
   const toggleDay = (dayId: string) => {
     setExpandedDays((prev) => ({
@@ -156,7 +160,6 @@ export function ProgrammeSection({ days }: ProgrammeSectionProps) {
                         formatTime={formatTime}
                         now={now}
                         isReady={isReady}
-                        isSaved={isSaved}
                         leadMinutes={leadMinutes}
                       />
                     ))
@@ -178,7 +181,6 @@ function AgendaItemCard({
   formatTime,
   now,
   isReady,
-  isSaved,
   leadMinutes,
   isChild = false,
 }: {
@@ -188,20 +190,24 @@ function AgendaItemCard({
   formatTime: (d?: string | null) => string
   now: Date
   isReady: boolean
-  isSaved: (item: AgendaItem) => boolean
   leadMinutes: number
   isChild?: boolean
 }) {
   const { openAbstractModal } = useModal()
-  const linkedAbstracts = joinDocs<Abstract>(item.childAbstracts)
+  const { isSaved } = useSavedAgenda()
+  const linkedAbstracts = itemAbstracts(item)
   const children = joinDocs<AgendaItem>(item.children)
   const hasAbstract = linkedAbstracts.length > 0
-  const primaryAbstract = linkedAbstracts[0]
+  const primaryAbstract = linkedAbstracts.length === 1 ? linkedAbstracts[0] : undefined
   const hasChildren = children.length > 0
   const isKeynote = Boolean(item.isKeynote)
   const isExpanded = Boolean(expandedItems[item.id])
   const live = isReady && isHappeningNow(item, now)
-  const soon = isReady && !live && isSaved(item) && isStartingSoon(item, now, leadMinutes)
+  const anyLeafSaved =
+    isSaved(savedSessionKey(item.id)) ||
+    linkedAbstracts.some((abs) => isSaved(savedAbstractKey(abs.id)))
+  const soon =
+    isReady && !live && anyLeafSaved && isStartingSoon(item, now, leadMinutes)
   const soonMinutes = soon ? Math.max(1, Math.ceil(minutesUntilStart(item, now) ?? leadMinutes)) : null
 
   const startTimeStr = formatTime(item.startTime)
@@ -262,7 +268,9 @@ function AgendaItemCard({
           <div className="flex items-center gap-2 shrink-0">
             {hasAbstract && (
               <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-soft text-brand-soft-fg">
-                View Abstract &rarr;
+                {linkedAbstracts.length === 1
+                  ? 'View abstract →'
+                  : `${linkedAbstracts.length} abstracts`}
               </span>
             )}
             <SaveAgendaButton item={item} />
@@ -284,25 +292,43 @@ function AgendaItemCard({
 
         {linkedAbstracts.length > 0 && (
           <div className="mt-3 pt-3 border-t border-line space-y-1.5">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-fg-subtle">
+              {linkedAbstracts.length === 1 ? 'Abstract' : 'Abstracts'}
+            </p>
             {linkedAbstracts.map((abs) => (
-              <button
+              <div
                 key={abs.id}
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  openAbstractModal(abs)
-                }}
-                className="w-full flex items-center justify-between gap-2 min-h-11 text-xs text-fg-subtle hover:text-brand-soft-fg"
+                id={`agenda-abstract-${abs.id}`}
+                className="flex items-stretch gap-1"
               >
-                <span className="font-semibold text-brand-soft-fg truncate">
-                  {abs.code || abs.plainTitle || 'Scientific Abstract'}
-                </span>
-                {abstractStatusLabel(abs.status) && (
-                  <span className="px-2 py-0.5 rounded bg-subtle font-medium">
-                    {abstractStatusLabel(abs.status)}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    openAbstractModal(abs)
+                  }}
+                  className="min-w-0 flex-1 flex items-start gap-2 min-h-11 px-2.5 py-2 rounded-lg text-left bg-subtle/80 hover:bg-brand-soft/70 border border-transparent hover:border-brand-border transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+                >
+                  <FileText className="w-4 h-4 mt-0.5 shrink-0 text-brand" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold text-fg leading-snug">
+                      {abs.plainTitle || abs.code || 'Scientific abstract'}
+                    </span>
+                    <span className="mt-0.5 flex items-center gap-2 text-xs text-fg-subtle">
+                      {abs.code ? <span className="font-medium">{abs.code}</span> : null}
+                      {abstractStatusLabel(abs.status) ? (
+                        <span className="px-2 py-0.5 rounded bg-surface font-medium text-fg-muted">
+                          {abstractStatusLabel(abs.status)}
+                        </span>
+                      ) : null}
+                    </span>
                   </span>
-                )}
-              </button>
+                  <span className="shrink-0 text-xs font-semibold text-brand-soft-fg self-center">
+                    Read
+                  </span>
+                </button>
+                <SaveAbstractButton abstract={abs} session={item} />
+              </div>
             ))}
           </div>
         )}
@@ -345,7 +371,6 @@ function AgendaItemCard({
               formatTime={formatTime}
               now={now}
               isReady={isReady}
-              isSaved={isSaved}
               leadMinutes={leadMinutes}
               isChild={true}
             />

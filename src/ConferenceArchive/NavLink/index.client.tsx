@@ -1,9 +1,10 @@
 'use client'
 
-import { Link } from '@payloadcms/ui'
+import { Link, useTranslation } from '@payloadcms/ui'
 import { usePathname } from 'next/navigation.js'
 import { formatAdminURL } from 'payload/shared'
 import React from 'react'
+import { asT } from '@/i18n/asT'
 
 const baseClass = 'nav'
 
@@ -18,6 +19,7 @@ export function ConferenceArchiveNavLinkClient({
   enabledCount,
   totalCount,
 }: Props) {
+  const { t } = useTranslation()
   const pathname = usePathname()
   const href = formatAdminURL({
     adminRoute,
@@ -26,8 +28,8 @@ export function ConferenceArchiveNavLinkClient({
   const isActive = pathname.startsWith(href) && ['/', undefined].includes(pathname[href.length])
   const label =
     totalCount > 0
-      ? `Archivio conferenze · ${enabledCount}/${totalCount} pubbliche`
-      : 'Archivio conferenze'
+      ? `${asT(t)('fcr:conferenceArchive')} · ${asT(t)('fcr:publicRatio', { enabled: enabledCount, total: totalCount })}`
+      : asT(t)('fcr:conferenceArchive')
 
   const content = (
     <>

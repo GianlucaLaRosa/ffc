@@ -2,12 +2,13 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
+import { adminGroups, copy } from '@/i18n/copy'
 
 export const AbstractStatuses: CollectionConfig<'abstract-statuses'> = {
   slug: 'abstract-statuses',
   labels: {
-    singular: 'Stato abstract',
-    plural: 'Stati abstract',
+    singular: copy('Abstract status', 'Stato abstract'),
+    plural: copy('Abstract statuses', 'Stati abstract'),
   },
   orderable: true,
   access: {
@@ -17,10 +18,13 @@ export const AbstractStatuses: CollectionConfig<'abstract-statuses'> = {
     update: authenticated,
   },
   admin: {
-    group: 'Riferimenti',
+    group: adminGroups.references,
     useAsTitle: 'status',
     defaultColumns: ['status', 'updatedAt'],
-    description: 'Stati del flusso abstract. Seed; modificare solo se servono etichette o colori diversi.',
+    description: copy(
+      'Abstract workflow statuses. Seeded; change only if you need different labels or colours.',
+      'Stati del flusso abstract. Seed; modificare solo se servono etichette o colori diversi.',
+    ),
   },
   fields: [
     {
@@ -30,7 +34,10 @@ export const AbstractStatuses: CollectionConfig<'abstract-statuses'> = {
       unique: true,
       label: 'Status',
       admin: {
-        description: 'Chiave dello stato (es. new, ongoing, concluded).',
+        description: copy(
+          'Status key (e.g. new, ongoing, concluded).',
+          'Chiave dello stato (es. new, ongoing, concluded).',
+        ),
       },
     },
     {
@@ -42,8 +49,10 @@ export const AbstractStatuses: CollectionConfig<'abstract-statuses'> = {
         plural: 'Sections',
       },
       admin: {
-        description:
+        description: copy(
+          'Section titles copied onto the abstract when you select this Status and Content is empty. Leave empty to copy nothing.',
           'Titoli di sezione copiati sull’abstract quando selezionate questo Status e Content è vuoto. Lasciate vuoto per non copiare nulla.',
+        ),
       },
       fields: [
         {

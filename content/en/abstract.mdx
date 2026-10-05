@@ -1,0 +1,48 @@
+---
+title: Abstracts
+description: How to enter scientific abstracts and link them to people and sessions.
+---
+
+import { Callout } from 'nextra/components'
+
+# Abstracts
+
+Each abstract belongs to **one edition**. Prefer creating them from the conference **Abstract** tab: they stay in a draggable order and already linked to the edition.
+
+## Main fields (Overview)
+
+- **Title** — formatted title. On the right the plain-text title appears, generated automatically.
+- **Code** — working code (e.g. a project code). It does not have to be unique.
+- **Status** — abstract status (reference list). If you pick a status and **Content** is empty, the system can create the text sections for that status.
+- **Related codes** — other code/status pairs, if the same abstract “lives” in more than one track.
+
+## Authors and content
+
+In the other tabs, link **people** (authors, presenters) already in **People**. If someone is missing, [create them first](/en/docs/persone-e-enti).
+
+The long abstract text lives in the fields defined by the status (sections). You can add an image where it is provided: it goes into the Media folder for abstract photos.
+
+## Link to the programme
+
+You can:
+
+- from the **session**: **Abstracts** list
+- from the **abstract**: link to sessions (**agenda items**)
+
+Sessions must belong to days of **this** conference. If the system rejects the link, check you have not mixed editions.
+
+<Callout>
+  Publish both the abstract and the session (and the day) if you want them on the public site. A published session with abstracts still in draft does not show that text to the public.
+</Callout>
+
+On the conference programme (home if it is the **active** edition, or `/archive/…`), under each session you see **all** abstracts linked to that item. Open the card with a click; if there is more than one, pick from the list.
+
+## Public link of the card
+
+On the site, each open abstract has its own address, so you can copy it and the browser back button closes the card (not the page).
+
+- Home (active edition): `/?abstract=` followed by **Code** (e.g. `/?abstract=FFC123`)
+- Archive: `/archive/` + the conference **Slug** + `?abstract=` and the same code
+- If the abstract has photos, the gallery adds `&photo=1` (photo number, starting at 1)
+
+The link-icon button at the top right of the card copies the address. If two abstracts share the same **Code**, the site opens the first it finds: in that case change the code or use the numeric id.

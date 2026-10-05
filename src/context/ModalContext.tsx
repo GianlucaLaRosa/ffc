@@ -122,15 +122,17 @@ export function ModalProvider({
 
   const openAbstractModal = useCallback((abstract: Abstract) => {
     if (!abstract) return
-    const codeOrId = abstractOverlayId(abstract)
+    const full =
+      abstractsRef.current.find((doc) => String(doc.id) === String(abstract.id)) ?? abstract
+    const codeOrId = abstractOverlayId(full)
     const current = readOverlayQuery()
     if (current.abstract === codeOrId && current.photo == null) {
-      setSelectedAbstract(abstract)
+      setSelectedAbstract(full)
       setPhotoIndex(null)
       return
     }
     pushOverlay({ abstract: codeOrId, photo: null })
-    setSelectedAbstract(abstract)
+    setSelectedAbstract(full)
     setPhotoIndex(null)
   }, [])
 

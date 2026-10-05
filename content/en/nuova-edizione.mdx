@@ -1,0 +1,54 @@
+---
+title: Create an edition
+description: How to open a new conference and fill name, year, logo, and colours.
+---
+
+import { Callout, Steps } from 'nextra/components'
+
+# Create an edition
+
+A **conference** in the panel is **one edition** (for example the 2026 meeting). You can have more than one edition in the same year.
+
+<Steps>
+
+### Conferences → Create New
+
+In the left menu open **Conferences**, then **Create New**.
+
+### Write the name
+
+The **Name** field is formatted text (bold, italic, lists). It is the name people see.
+
+On the right, **Title** fills itself with plain text. It is used for lists, the web address, and Google. Do not edit it by hand.
+
+### Year, logo, and colours (Overview tab)
+
+- **Year** — edition year (required).
+- **Logo** — image used in the header and as the browser tab icon. Upload it from here: it goes into the Media logos folder.
+- **Primary color** and **Secondary color** — site colours for this edition (buttons, accents, keynote highlight). The site adapts them to light and dark theme.
+
+### Venue
+
+Switch to the **Venue** tab. You need city, country, and address. Details in [Venue and map](/en/docs/sede).
+
+### Save as draft
+
+At the top right save (**Save** / **Save Draft**). It is not public yet. Finish intro, days, and programme before you publish.
+
+</Steps>
+
+<Callout>
+  The **Slug** (right column) is the conference’s URL piece. It is created automatically from **Year** and **Title**, usually `year-name` (e.g. `2026-la-seconda-conferenza-italiana`). You can change it if needed, but do it **before** you share links.
+
+  - **Active** edition (home): `/` — the slug does not appear in the address
+  - The same edition in the **public archive**: `/archive/` + slug (e.g. `/archive/2026-la-seconda-conferenza-italiana`)
+  - List of archived editions: `/archive`
+
+  After publication, changing the slug breaks links already sent (archive page, abstract `?abstract=`, bookmarks).
+</Callout>
+
+## What not to do in this step
+
+- Do not create days from another menu: use the **Days** tab of the same conference.
+- Do not look for “programme” in the side menu: it lives inside each **day**.
+- Do not set **Active conference** yet: do that when the edition is ready and published. See [Publish and archive](/en/docs/mettere-online).

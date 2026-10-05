@@ -205,7 +205,7 @@ export interface Media {
     [k: string]: unknown;
   } | null;
   /**
-   * Abstract che usano questa immagine. Modificate il collegamento dall’abstract, non da qui.
+   * Abstracts that use this image. Change the link from the abstract, not from here.
    */
   abstract?: {
     docs?: (number | Abstract)[];
@@ -213,7 +213,7 @@ export interface Media {
     totalDocs?: number;
   };
   /**
-   * Persone la cui foto profilo è questo file. Modificate la foto sulla persona.
+   * People whose profile photo is this file. Change the photo on the person.
    */
   taggedPeople?: {
     docs?: (number | Person)[];
@@ -268,7 +268,7 @@ export interface Media {
   };
 }
 /**
- * Abstract scientifici di un’edizione. Meglio crearli e ordinarli dal tab Abstract della conferenza.
+ * Scientific abstracts for an edition. Best created and ordered from the conference Abstract tab.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "abstracts".
@@ -294,15 +294,15 @@ export interface Abstract {
     [k: string]: unknown;
   };
   /**
-   * Codice di ricerca o sessione (es. «CF crio»). Non deve essere unico.
+   * Research or session code (e.g. “CF crio”). Does not have to be unique.
    */
   code?: string | null;
   /**
-   * Se selezionato e Content è vuoto, si creano le sezioni predefinite di questo Status.
+   * If selected and Content is empty, the default sections for this Status are created.
    */
   status?: (number | null) | AbstractStatus;
   /**
-   * Altre coppie Code/Status. Ogni riga aggiunge un’appendice dopo quella principale (stesso ordine).
+   * Other Code/Status pairs. Each row adds an appendix after the main one (same order).
    */
   relatedCodes?:
     | {
@@ -312,7 +312,7 @@ export interface Abstract {
       }[]
     | null;
   /**
-   * Sezioni strutturate. I predefiniti si creano quando selezionate Status e questo elenco è vuoto.
+   * Structured sections. Defaults are created when you select Status and this list is empty.
    */
   content?:
     | {
@@ -336,7 +336,7 @@ export interface Abstract {
       }[]
     | null;
   /**
-   * La prima riga è l’appendice del Code/Status principale; le successive seguono Related codes. Il numero di righe resta 1 + Related codes.
+   * The first row is the appendix for the main Code/Status; the following follow Related codes. The row count stays 1 + Related codes.
    */
   appendices?:
     | {
@@ -360,7 +360,7 @@ export interface Abstract {
       }[]
     | null;
   /**
-   * Autori e relatori in ordine (stesso elenco). Trascinate le righe; assegnate un Role e spuntate Speaker. Ogni persona può comparire una sola volta.
+   * Authors and speakers in order (same list). Drag rows; assign a Role and tick Speaker. Each person can appear only once.
    */
   authors?:
     | {
@@ -371,7 +371,7 @@ export interface Abstract {
       }[]
     | null;
   /**
-   * Foto ordinate di questo abstract (solo immagini). Sul sito compaiono per prime nel carosello, poi le foto degli Speaker (Team Member esclusi). Cartella Media «Abstract pictures».
+   * Ordered photos for this abstract (images only). On the site they appear first in the carousel, then Speaker photos (Team Member excluded). Media folder “Abstract pictures”.
    */
   picture?:
     | {
@@ -381,15 +381,15 @@ export interface Abstract {
       }[]
     | null;
   /**
-   * Edizione a cui appartiene questo abstract. Impostata in automatico se lo create dalla conferenza.
+   * Edition this abstract belongs to. Set automatically if you create it from the conference.
    */
   conference: number | Conference;
   /**
-   * Sessioni (Agenda items) di questa edizione. Lo stesso abstract può stare sotto più sessioni.
+   * Sessions (Agenda items) of this edition. The same abstract can sit under more than one session.
    */
   agendaItems?: (number | AgendaItem)[] | null;
   /**
-   * Title in testo semplice ricavato da Title (elenchi).
+   * Plain-text Title derived from Title (lists).
    */
   plainTitle?: string | null;
   note?: string | null;
@@ -398,7 +398,7 @@ export interface Abstract {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Stati del flusso abstract. Seed; modificare solo se servono etichette o colori diversi.
+ * Abstract workflow statuses. Seeded; change only if you need different labels or colours.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "abstract-statuses".
@@ -407,11 +407,11 @@ export interface AbstractStatus {
   id: number;
   _order?: string | null;
   /**
-   * Chiave dello stato (es. new, ongoing, concluded).
+   * Status key (e.g. new, ongoing, concluded).
    */
   status: string;
   /**
-   * Titoli di sezione copiati sull’abstract quando selezionate questo Status e Content è vuoto. Lasciate vuoto per non copiare nulla.
+   * Section titles copied onto the abstract when you select this Status and Content is empty. Leave empty to copy nothing.
    */
   defaultContent?:
     | {
@@ -423,7 +423,7 @@ export interface AbstractStatus {
   createdAt: string;
 }
 /**
- * Ricercatori, autori, relatori e revisori.
+ * Researchers, authors, speakers, and reviewers.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "people".
@@ -435,7 +435,7 @@ export interface Person {
   lastName: string;
   institution?: (number | null) | Institution;
   /**
-   * Foto profilo facoltativa. Cartella Media «People photos».
+   * Optional profile photo. Media folder “People photos”.
    */
   photo?: (number | null) | Media;
   bio?: {
@@ -454,7 +454,7 @@ export interface Person {
     [k: string]: unknown;
   } | null;
   /**
-   * Generato da First name e Last name.
+   * Generated from First name and Last name.
    */
   fullName?: string | null;
   note?: string | null;
@@ -462,7 +462,7 @@ export interface Person {
   createdAt: string;
 }
 /**
- * Istituti di ricerca e laboratori.
+ * Research institutes and labs.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "institutions".
@@ -473,7 +473,7 @@ export interface Institution {
   name: string;
   country: number | Country;
   /**
-   * Disponibile solo se Country è Italy.
+   * Available only when Country is Italy.
    */
   region?: (number | null) | ItalianRegion;
   description?: {
@@ -495,7 +495,7 @@ export interface Institution {
   createdAt: string;
 }
 /**
- * Paesi del mondo per gli enti. Dati di riferimento (seed).
+ * World countries for institutions. Reference data (seeded).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "countries".
@@ -507,7 +507,7 @@ export interface Country {
   createdAt: string;
 }
 /**
- * Regioni italiane per gli indirizzi degli enti. Dati di riferimento (seed).
+ * Italian regions for institution addresses. Reference data (seeded).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "italian-regions".
@@ -519,7 +519,7 @@ export interface ItalianRegion {
   createdAt: string;
 }
 /**
- * Edizioni della conferenza. Aprite un’edizione per gestire giorni, abstract e appendice.
+ * Conference editions. Open an edition to manage days, abstracts, and the appendix.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "conferences".
@@ -527,7 +527,7 @@ export interface ItalianRegion {
 export interface Conference {
   id: number;
   /**
-   * Nome formattato della conferenza. Title e slug si ricavano da questo testo.
+   * Formatted conference name. Title and slug are derived from this text.
    */
   name: {
     root: {
@@ -545,23 +545,23 @@ export interface Conference {
     [k: string]: unknown;
   };
   /**
-   * Anno dell’edizione. Più edizioni nello stesso anno sono ammesse.
+   * Edition year. Several editions in the same year are allowed.
    */
   year: number;
   /**
-   * Usato nell’intestazione e come icona della scheda del browser. Cartella Media «Conference logos».
+   * Used in the header and as the browser tab icon. Media folder “Conference logos”.
    */
   logo?: (number | null) | Media;
   /**
-   * Pulsanti, link e accenti delle sezioni. Si adatta da solo a tema chiaro e scuro.
+   * Buttons, links, and section accents. Adapts automatically to light and dark theme.
    */
   primaryColor: string;
   /**
-   * Keynote, badge e evidenziazioni secondarie. Si adatta da solo a tema chiaro e scuro.
+   * Keynotes, badges, and secondary highlights. Adapts automatically to light and dark theme.
    */
   secondaryColor: string;
   /**
-   * Aggiungete Content (una o più colonne di testo con una Width, come nelle Pages del template Payload), accordion, callout, pulsanti, citazioni e separatori. I blocchi diversi da Content hanno anch’essi una Width. Le larghezze si sommano su una riga a 12 colonne dal breakpoint grande in su (Full = 12, Two thirds = 8, Half = 6, One third = 4) e vanno a capo. Sugli schermi piccoli tutto è a larghezza piena e si impila in ordine.
+   * Add Content (one or more text columns with a Width, as in the Payload Pages template), accordion, callout, buttons, quotes, and separators. Blocks other than Content also have a Width. Widths add up on a 12-column row from the large breakpoint up (Full = 12, Two thirds = 8, Half = 6, One third = 4) and wrap. On small screens everything is full width and stacks in order.
    */
   intro?:
     | (
@@ -574,7 +574,7 @@ export interface Conference {
       )[]
     | null;
   /**
-   * Ordinati per data (la più vicina per prima). Un giorno per data di calendario.
+   * Sorted by date (soonest first). One day per calendar date.
    */
   days?: {
     docs?: (number | ConferenceDay)[];
@@ -582,7 +582,7 @@ export interface Conference {
     totalDocs?: number;
   };
   /**
-   * Abstract scientifici di questa edizione. Collegateli alle sessioni dall’abstract o dalla sessione.
+   * Scientific abstracts for this edition. Link them to sessions from the abstract or from the session.
    */
   abstracts?: {
     docs?: (number | Abstract)[];
@@ -590,7 +590,7 @@ export interface Conference {
     totalDocs?: number;
   };
   /**
-   * Al massimo un’appendice per conferenza. Apritela per aggiungere blocchi e trascinarli per l’ordine.
+   * At most one appendix per conference. Open it to add blocks and drag them to reorder.
    */
   appendices?: {
     docs?: (number | Appendix)[];
@@ -598,7 +598,7 @@ export interface Conference {
     totalDocs?: number;
   };
   /**
-   * Avvisi brevi in testo semplice. Trascinate per l’ordine del banner. Create un nuovo avviso per ogni push: non si può reinviare.
+   * Short plain-text notices. Drag to set banner order. Create a new notice for each push: it cannot be sent again.
    */
   notices?: {
     docs?: (number | ConferenceNotice)[];
@@ -609,15 +609,15 @@ export interface Conference {
   country: string;
   address: string;
   /**
-   * Coordinata X (es. 13.8046 per Trieste).
+   * X coordinate (e.g. 13.8046 for Trieste).
    */
   longitude?: number | null;
   /**
-   * Coordinata Y (es. 45.6495 per Trieste).
+   * Y coordinate (e.g. 45.6495 for Trieste).
    */
   latitude?: number | null;
   /**
-   * Dettagli facoltativi (sala, ingresso, accessibilità).
+   * Optional details (room, entrance, accessibility).
    */
   location?: {
     root: {
@@ -635,45 +635,45 @@ export interface Conference {
     [k: string]: unknown;
   } | null;
   /**
-   * Questo blocco è la scheda breve che le persone vedono prima di aprire la pagina: il titolo blu su Google, l’anteprima su WhatsApp o LinkedIn, e il testo nella scheda del browser. Non è il contenuto della pagina (quello sta in Name, Intro e Venue).
+   * This block is the short card people see before opening the page: the blue title on Google, the preview on WhatsApp or LinkedIn, and the browser tab text. It is not the page content (that lives in Name, Intro, and Venue).
    */
   meta?: {
     /**
-     * Il titolo che Google e motori simili mostrano di solito. Scrivi il nome dell’edizione come la cercherebbe una persona, con l’anno se serve (esempio: «FCR 2026 — Trieste»). Resta sotto i 60 caratteri circa, così non viene tagliato. Usa Generate per copiare il nome della conferenza, poi accorcialo se serve. Se lo lasci vuoto, la pagina pubblica usa il nome della conferenza più «FCR».
+     * The title Google and similar engines usually show. Write the edition name as someone would search for it, with the year if needed (example: “FCR 2026 — Trieste”). Stay around 60 characters so it is not cut. Use Generate to copy the conference name, then shorten it if needed. If you leave it empty, the public page uses the conference name plus “FCR”.
      */
     title?: string | null;
     /**
-     * L’immagine che compare quando qualcuno condivide il link di questa edizione (WhatsApp, Slack, LinkedIn, email). Meglio una foto orizzontale ampia della sede, del manifesto o del logo su sfondo semplice. Punta a meno di 500 KB; il limite di caricamento è 12 MB. Un’immagine 1200×630 px riempie l’anteprima senza tagliare il soggetto. Se la lasci vuota, il sito usa l’immagine di condivisione predefinita FCR.
+     * The image that appears when someone shares this edition’s link (WhatsApp, Slack, LinkedIn, email). Prefer a wide landscape photo of the venue, poster, or logo on a simple background. Aim under 500 KB; the upload limit is 12 MB. A 1200×630 px image fills the preview without cropping the subject. If you leave it empty, the site uses the default FCR share image.
      */
     image?: (number | null) | Media;
     /**
-     * Due frasi (circa 150–160 caratteri) che compaiono sotto il titolo su Google e nell’anteprima di condivisione. Di’ che edizione è, dove si svolge e a chi è rivolta. Esempio: «FCR 2026 è un incontro di medicina rigenerativa a Trieste per clinici e ricercatori. Date, sede e programma.» Non inserire elenchi di parole chiave. Se lo lasci vuoto, i motori di ricerca ricostruiranno il testo dalla pagina.
+     * Two sentences (about 150–160 characters) under the title on Google and in the share preview. Say which edition it is, where it is held, and who it is for. Example: “FCR 2026 is a regenerative medicine meeting in Trieste for clinicians and researchers. Dates, venue, and programme.” Do not paste keyword lists. If you leave it empty, search engines reconstruct the text from the page.
      */
     description?: string | null;
   };
   /**
-   * Facoltativo. ChatGPT, Gemini, Perplexity e strumenti simili citano spesso fatti brevi e stabili, non i testi lunghi della pagina. Compila questi campi perché possano nominare l’edizione in modo corretto. Non vengono mostrati come FAQ sul sito. Date, città, indirizzo e coordinate si prendono da Days e Venue: non ripeterli qui, salvo che ti serva una formulazione precisa in una riga.
+   * Optional. ChatGPT, Gemini, Perplexity, and similar tools often cite short stable facts, not long page copy. Fill these so they can name the edition correctly. They are not shown as FAQs on the site. Dates, city, address, and coordinates come from Days and Venue: do not repeat them here unless you need a precise one-line wording.
    */
   geo?: {
     /**
-     * Una o due frasi di fatto che un assistente può citare. Inizia con il nome ufficiale, poi luogo, destinatari e tema. Esempio: «FCR 2026 è l’incontro annuale FCR di medicina rigenerativa, a Trieste, per clinici e ricercatori.» Evita slogan («il convegno migliore di sempre»). Se è vuoto, gli assistenti usano il testo breve sopra, poi il contenuto della pagina.
+     * One or two factual sentences an assistant can quote. Start with the official name, then place, audience, and topic. Example: “FCR 2026 is the annual FCR regenerative medicine meeting in Trieste for clinicians and researchers.” Avoid slogans. If empty, assistants use the short listing text above, then the page content.
      */
     summary?: string | null;
     /**
-     * Il nome esatto che vuoi sia citato come soggetto della pagina, per non confonderla con un altro anno o un altro evento FCR. Esempio: «FCR 2026» o «Fondazione conferenza 2026, Trieste». Tienilo breve. Se è vuoto, si usa il nome della conferenza.
+     * The exact name you want cited as the subject of the page, so it is not confused with another year or FCR event. Example: “FCR 2026” or “Fondazione conferenza 2026, Trieste”. Keep it short. If empty, the conference name is used.
      */
     primaryEntity?: string | null;
     /**
-     * Coppie brevi etichetta–valore da citare così come sono. Usale per ciò che è facile sbagliare (tema, destinatari, lingua, organizzato da). Non duplicare città, indirizzo o date, salvo che serva una frase precisa. Esempi: Tema → Medicina rigenerativa; Destinatari → Clinici e ricercatori; Lingua → Inglese. Bastano quattro-otto fatti.
+     * Short label–value pairs to quote as-is. Use them for things that are easy to get wrong (topic, audience, language, organised by). Do not duplicate city, address, or dates unless you need a precise sentence. Examples: Topic → Regenerative medicine; Audience → Clinicians and researchers; Language → English. Four to eight facts are enough.
      */
     keyFacts?:
       | {
           /**
-           * Il tipo di fatto, in una o due parole. Esempi: Tema, Destinatari, Lingua, Organizzato da.
+           * The kind of fact, in one or two words. Examples: Topic, Audience, Language, Organised by.
            */
           label?: string | null;
           /**
-           * Il fatto, come lo diresti a un collega. Una sola riga. Esempio: «Clinici e ricercatori accademici».
+           * The fact, as you would tell a colleague. One line. Example: “Clinicians and academic researchers”.
            */
           value?: string | null;
           id?: string | null;
@@ -681,11 +681,11 @@ export interface Conference {
       | null;
   };
   /**
-   * Title in testo semplice ricavato da Name (elenchi, slug e scheda pubblica).
+   * Plain-text Title derived from Name (lists, slug, and public listing).
    */
   title?: string | null;
   /**
-   * Prima messa online di questa edizione. Resta stabile per la SEO; non sono le date dell’evento (quelle stanno in Days).
+   * First time this edition went live. Stays stable for SEO; these are not the event dates (those live in Days).
    */
   publishedAt?: string | null;
   publicArchive?: boolean | null;
@@ -704,7 +704,7 @@ export interface Conference {
  */
 export interface IntroContentBlock {
   /**
-   * Le Width si sommano su una riga a 12 colonne dal breakpoint grande in su (Full = 12, Two thirds = 8, Half = 6, One third = 4) e vanno a capo. Sugli schermi piccoli ogni colonna è a larghezza piena.
+   * Widths add up on a 12-column row from the large breakpoint up (Full = 12, Two thirds = 8, Half = 6, One third = 4) and wrap. On small screens each column is full width.
    */
   columns?:
     | {
@@ -770,7 +770,7 @@ export interface IntroAccordionBlock {
 export interface IntroCalloutBlock {
   size: 'full' | 'twoThirds' | 'half' | 'oneThird';
   /**
-   * Usate Deadline per date e scadenze, Important per avvisi da leggere.
+   * Use Deadline for dates and deadlines, Important for notices to read.
    */
   tone: 'note' | 'important' | 'deadline';
   title?: string | null;
@@ -802,7 +802,7 @@ export interface IntroCtaBlock {
   label: string;
   destination: 'programme' | 'venue' | 'appendix' | 'custom';
   /**
-   * Sito esterno, o un percorso di pagina come /archive/…
+   * External site, or a page path such as /archive/…
    */
   url?: string | null;
   newTab?: boolean | null;
@@ -819,7 +819,7 @@ export interface IntroQuoteBlock {
   size: 'full' | 'twoThirds' | 'half' | 'oneThird';
   quote: string;
   /**
-   * Relatore, ruolo o fonte, facoltativo.
+   * Speaker, role, or source, optional.
    */
   attribution?: string | null;
   id?: string | null;
@@ -846,11 +846,11 @@ export interface ConferenceDay {
   date: string;
   startTime: string;
   /**
-   * Può essere prima di Start time se il giorno passa la mezzanotte.
+   * Can be earlier than Start time if the day crosses midnight.
    */
   endTime: string;
   /**
-   * Sessioni di primo livello di questo giorno. Le voci nidificate si gestiscono sul genitore. Trascinate per riordinare.
+   * Top-level sessions of this day. Nested items are managed on the parent. Drag to reorder.
    */
   agendaItems?: {
     docs?: (number | AgendaItem)[];
@@ -858,7 +858,7 @@ export interface ConferenceDay {
     totalDocs?: number;
   };
   /**
-   * Conferenza di appartenenza. Impostata in automatico se create il giorno dalla conferenza.
+   * Owning conference. Set automatically if you create the day from the conference.
    */
   conference: number | Conference;
   updatedAt: string;
@@ -875,7 +875,7 @@ export interface AgendaItem {
   '_agenda-items_children_order'?: string | null;
   _order?: string | null;
   /**
-   * Titolo formattato della sessione. Title in testo semplice si ricava da questo.
+   * Formatted session title. Plain Title is derived from this.
    */
   name: {
     root: {
@@ -893,25 +893,31 @@ export interface AgendaItem {
     [k: string]: unknown;
   };
   /**
-   * Selezionate prima il giorno. Start time e End time restano nei limiti orari di quel giorno.
+   * Select the day first. Start time and End time stay within that day’s hours.
    */
   day: number | ConferenceDay;
+  /**
+   * Required. On items without child sessions (talks) this drives “My programme” reminders. Must fall within the day’s window.
+   */
   startTime?: string | null;
+  /**
+   * Required. Defines the end of the “Live” window. Must fall within the day’s hours.
+   */
   endTime?: string | null;
   /**
-   * Evidenzia graficamente questa sessione sul sito.
+   * Highlights this session on the site.
    */
   isKeynote?: boolean | null;
   durationMinutes?: number | null;
   /**
-   * Icona Lucide facoltativa. La ricerca filtra l’elenco; scorrete per vederle tutte.
+   * Optional Lucide icon. Search filters the list; scroll to see them all.
    */
   icon: {
     provider: string;
     name?: string | null;
   };
   /**
-   * Note o dettagli facoltativi sulla sessione.
+   * Optional notes or details about the session.
    */
   description?: {
     root: {
@@ -929,7 +935,7 @@ export interface AgendaItem {
     [k: string]: unknown;
   } | null;
   /**
-   * Interventi o sotto-sessioni. Trascinate per l’ordine dentro questa voce.
+   * Talks or nested sessions. Drag to order them inside this item.
    */
   children?: {
     docs?: (number | AgendaItem)[];
@@ -937,7 +943,7 @@ export interface AgendaItem {
     totalDocs?: number;
   };
   /**
-   * Abstract scientifici sotto questa sessione. Lo stesso abstract può comparire anche in altre voci.
+   * Scientific abstracts under this session. The same abstract can also appear on other items.
    */
   childAbstracts?: {
     docs?: (number | Abstract)[];
@@ -945,11 +951,11 @@ export interface AgendaItem {
     totalDocs?: number;
   };
   /**
-   * Title in testo semplice ricavato da Title (elenchi).
+   * Plain-text Title derived from Title (lists).
    */
   title?: string | null;
   /**
-   * Voce genitore facoltativa (stesso giorno). Lasciate vuoto per le sessioni di primo livello.
+   * Optional parent item (same day). Leave empty for top-level sessions.
    */
   parent?: (number | null) | AgendaItem;
   updatedAt: string;
@@ -957,7 +963,7 @@ export interface AgendaItem {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Un’appendice per edizione. Aggiungete blocchi ordinati (testo, elenco enti, …) e trascinateli per l’ordine.
+ * One appendix per edition. Add ordered blocks (text, institution list, …) and drag to reorder.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "appendices".
@@ -965,13 +971,13 @@ export interface AgendaItem {
 export interface Appendix {
   id: number;
   /**
-   * Ogni blocco ha un Title obbligatorio (etichetta della linguetta). Basic text usa le stesse colonne Content, accordion e layout dell’intro. Trascinate per riordinare le linguette.
+   * Each block needs a Title (tab label). Basic text uses the same Content columns, accordion, and layout as the intro. Drag to reorder tabs.
    */
   blocks: (
     BasicTextAppendixBlock | ReviewersAppendixBlock | ResearchProjectsAppendixBlock | InstitutionsAppendixBlock
   )[];
   /**
-   * Edizione a cui appartiene questa appendice. Ogni conferenza può averne una sola.
+   * Edition this appendix belongs to. Each conference can have only one.
    */
   conference: number | Conference;
   updatedAt: string;
@@ -984,7 +990,7 @@ export interface Appendix {
  */
 export interface BasicTextAppendixBlock {
   /**
-   * Etichetta della linguetta nell’appendice pubblica.
+   * Tab label in the public appendix.
    */
   title: string;
   /**
@@ -995,7 +1001,7 @@ export interface BasicTextAppendixBlock {
     name?: string | null;
   };
   /**
-   * Aggiungete Content (una o più colonne di testo con una Width, come nelle Pages del template Payload), accordion, callout, pulsanti, citazioni e separatori. I blocchi diversi da Content hanno anch’essi una Width. Le larghezze si sommano su una riga a 12 colonne dal breakpoint grande in su (Full = 12, Two thirds = 8, Half = 6, One third = 4) e vanno a capo. Sugli schermi piccoli tutto è a larghezza piena e si impila in ordine.
+   * Add Content (one or more text columns with a Width, as in the Payload Pages template), accordion, callout, buttons, quotes, and separators. Blocks other than Content also have a Width. Widths add up on a 12-column row from the large breakpoint up (Full = 12, Two thirds = 8, Half = 6, One third = 4) and wrap. On small screens everything is full width and stacks in order.
    */
   layout?:
     | (
@@ -1112,7 +1118,7 @@ export interface InstitutionsAppendixBlock {
   blockType: 'institutions';
 }
 /**
- * Cambiamenti in diretta sul programma. Si modificano dal tab Avvisi della conferenza. Usate Invia push per le notifiche a schermo bloccato.
+ * Live programme changes. Edit them from the conference Notices tab. Use Send push for lock-screen notifications.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "conference-notices".
@@ -1122,55 +1128,55 @@ export interface ConferenceNotice {
   '_conference-notices_notices_order'?: string | null;
   _order?: string | null;
   /**
-   * Titolo breve per banner e schermo bloccato (max 40 caratteri).
+   * Short title for the banner and lock screen (max 40 characters).
    */
   title: string;
   /**
-   * Solo testo (max 120 caratteri). Compare sul banner del sito e nella push.
+   * Plain text only (max 120 characters). Appears on the site banner and in the push.
    */
   body: string;
   /**
-   * Colore del banner. Preferite Change per cambi di sala o orario.
+   * Banner colour. Prefer Change for room or time changes.
    */
   severity: 'info' | 'change' | 'urgent';
   /**
-   * Se è acceso, i visitatori vedono l’avviso sulla pagina pubblica dell’edizione.
+   * If on, visitors see the notice on the edition’s public page.
    */
   showOnSite?: boolean | null;
   /**
-   * Se è acceso, Invia push recapita una notifica a schermo bloccato ai dispositivi iscritti di questa edizione.
+   * If on, Send push delivers a lock-screen notification to subscribed devices of this edition.
    */
   sendPush?: boolean | null;
   /**
-   * Facoltativo. La push arriva solo a chi ha salvato questa sessione (più chi è iscritto agli aggiornamenti della conferenza). Il banner resta visibile a tutti.
+   * Optional. The push goes to people who saved this item, a talk inside it, or a linked abstract, plus people subscribed to conference updates. The banner stays visible to everyone.
    */
   relatedAgendaItem?: (number | null) | AgendaItem;
   /**
-   * Percorso facoltativo su questo sito, es. #programme o ?agenda=123. Vuoto apre la home dell’edizione (o la sessione collegata, se impostata).
+   * Optional path on this site, e.g. #programme or ?agenda=123. Empty opens the edition home (or the linked session, if set).
    */
   linkPath?: string | null;
   /**
-   * Facoltativo. Banner nascosto prima di questo orario.
+   * Optional. Banner hidden before this time.
    */
   startsAt?: string | null;
   /**
-   * Facoltativo. Banner nascosto dopo questo orario.
+   * Optional. Banner hidden after this time.
    */
   expiresAt?: string | null;
   /**
-   * Compilato in automatico dopo un invio push riuscito.
+   * Filled automatically after a successful push send.
    */
   sentAt?: string | null;
   /**
-   * Dispositivi che hanno ricevuto l’ultimo invio.
+   * Devices that received the last send.
    */
   pushSent?: number | null;
   /**
-   * Endpoint push scaduti o assenti, puliti all’ultimo invio.
+   * Expired or missing push endpoints, cleaned on the last send.
    */
   pushRemoved?: number | null;
   /**
-   * Edizione a cui appartiene questo avviso.
+   * Edition this notice belongs to.
    */
   conference: number | Conference;
   updatedAt: string;
@@ -1230,7 +1236,7 @@ export interface User {
   collection: 'users';
 }
 /**
- * Endpoint push del browser per gli avvisi di My programme. Non si modificano da qui.
+ * Browser push endpoints for My programme alerts. Do not edit them here.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "programme-push-subscriptions".
@@ -1252,7 +1258,7 @@ export interface ProgrammePushSubscription {
     | boolean
     | null;
   /**
-   * Se è vero, questo endpoint riceve anche gli avvisi editoriali (sala/orario), non solo i promemoria di sessione.
+   * If true, this endpoint also receives editorial notices (room/time), not only session reminders.
    */
   conferenceUpdates?: boolean | null;
   notifiedSoon?:
@@ -2099,6 +2105,8 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * Institutional footer links and the public Cookie Policy and Privacy Policy pages.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer".
  */
@@ -2106,7 +2114,7 @@ export interface Footer {
   id: number;
   structure: {
     /**
-     * Icona Lucide facoltativa.
+     * Optional Lucide icon.
      */
     icon: {
       provider: string;
@@ -2114,13 +2122,13 @@ export interface Footer {
     };
     label?: string | null;
     /**
-     * Sito esterno. Si apre in una nuova scheda.
+     * External site. Opens in a new tab.
      */
     url?: string | null;
   };
   delegation: {
     /**
-     * Icona Lucide facoltativa.
+     * Optional Lucide icon.
      */
     icon: {
       provider: string;
@@ -2128,9 +2136,197 @@ export interface Footer {
     };
     label?: string | null;
     /**
-     * Sito esterno. Si apre in una nuova scheda.
+     * External site. Opens in a new tab.
      */
     url?: string | null;
+  };
+  cookiePolicy: {
+    /**
+     * Page heading and footer link label.
+     */
+    title: string;
+    /**
+     * Small label above the title.
+     */
+    kicker?: string | null;
+    /**
+     * Badge in the top bar on desktop.
+     */
+    headerBadge?: string | null;
+    /**
+     * Shown as “Last updated: …”.
+     */
+    lastUpdated?: string | null;
+    /**
+     * Search snippet for this page.
+     */
+    metaDescription?: string | null;
+    /**
+     * Lead paragraph under the title.
+     */
+    intro?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    /**
+     * Heading of the highlighted summary box.
+     */
+    summaryTitle?: string | null;
+    summary?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    /**
+     * Short points under the summary (e.g. no profiling cookies).
+     */
+    highlights?:
+      | {
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Numbered sections of the cookie statement (use Heading 3).
+     */
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+  };
+  privacyPolicy: {
+    /**
+     * Page heading and footer link label.
+     */
+    title: string;
+    /**
+     * Small label above the title.
+     */
+    kicker?: string | null;
+    /**
+     * Badge in the top bar on desktop.
+     */
+    headerBadge?: string | null;
+    /**
+     * Shown as “Last updated: …”.
+     */
+    lastUpdated?: string | null;
+    /**
+     * Search snippet for this page.
+     */
+    metaDescription?: string | null;
+    /**
+     * Lead paragraph under the title.
+     */
+    intro?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    controllerName?: string | null;
+    controllerAddress?: string | null;
+    controllerWebsite?: string | null;
+    /**
+     * Main body after the controller box (use Heading 3 / Heading 4).
+     */
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    rightsHeading?: string | null;
+    rightsIntro?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    rights?:
+      | {
+          title: string;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Closing note on lodging a complaint with the Garante.
+     */
+    complaintNote?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2142,7 +2338,7 @@ export interface Footer {
 export interface ActiveConference {
   id: number;
   /**
-   * Edizione pubblicata in home (/). Obbligatoria. Quell’edizione viene tolta automaticamente dall’archivio pubblico.
+   * Published edition on the home page (/). Required. That edition is removed from the public archive automatically.
    */
   conference: number | Conference;
   updatedAt?: string | null;
@@ -2154,11 +2350,15 @@ export interface ActiveConference {
  */
 export interface ConferenceArchive {
   id: number;
+  /**
+   * When on, /archive and /archive/{slug} are public. When off, those URLs return 404 and Archive is hidden in the menu.
+   */
+  enablePublicArchive?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
- * Promemoria delle sessioni per My programme e impostazioni tecniche della push (usate anche dagli avvisi in Notices). Le chiavi restano nelle variabili d’ambiente; questa schermata è per chi pubblica.
+ * Session reminders for My programme and technical push settings (also used by Notices). Keys stay in environment variables; this screen is for publishers.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "programme-alerts".
@@ -2166,19 +2366,19 @@ export interface ConferenceArchive {
 export interface ProgrammeAlert {
   id: number;
   /**
-   * Se è spento, il sito nasconde “Enable session alerts” e il cron al minuto non invia nulla.
+   * If off, the site hides “Enable session alerts” and the minute cron sends nothing.
    */
   enabled?: boolean | null;
   /**
-   * Contatto tecnico per i provider Web Push (VAPID). Non visibile ai partecipanti. Obbligatorio mentre gli avvisi sono accesi.
+   * Technical contact for Web Push providers (VAPID). Not shown to participants. Required while alerts are on.
    */
   contactEmail?: string | null;
   /**
-   * Avvisare tanti minuti prima di una sessione salvata.
+   * How many minutes before a saved session to notify.
    */
   leadMinutes?: number | null;
   /**
-   * Nome breve sulle notifiche a schermo bloccato.
+   * Short name on lock-screen notifications.
    */
   notificationTitle?: string | null;
   updatedAt?: string | null;
@@ -2213,6 +2413,49 @@ export interface FooterSelect<T extends boolean = true> {
         label?: T;
         url?: T;
       };
+  cookiePolicy?:
+    | T
+    | {
+        title?: T;
+        kicker?: T;
+        headerBadge?: T;
+        lastUpdated?: T;
+        metaDescription?: T;
+        intro?: T;
+        summaryTitle?: T;
+        summary?: T;
+        highlights?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+        content?: T;
+      };
+  privacyPolicy?:
+    | T
+    | {
+        title?: T;
+        kicker?: T;
+        headerBadge?: T;
+        lastUpdated?: T;
+        metaDescription?: T;
+        intro?: T;
+        controllerName?: T;
+        controllerAddress?: T;
+        controllerWebsite?: T;
+        content?: T;
+        rightsHeading?: T;
+        rightsIntro?: T;
+        rights?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+        complaintNote?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2232,6 +2475,7 @@ export interface ActiveConferenceSelect<T extends boolean = true> {
  * via the `definition` "conference-archive_select".
  */
 export interface ConferenceArchiveSelect<T extends boolean = true> {
+  enablePublicArchive?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

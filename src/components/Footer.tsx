@@ -64,14 +64,14 @@ export function Footer({ editionYear = 2026, footer }: FooterProps) {
               prefetch={false}
               className="font-medium text-fg-muted hover:text-brand-soft-fg transition-colors"
             >
-              Cookie Policy
+              {footer?.cookiePolicy?.title?.trim() || 'Cookie Policy'}
             </Link>
             <Link
               href="/privacy"
               prefetch={false}
               className="font-medium text-fg-muted hover:text-brand-soft-fg transition-colors"
             >
-              Privacy Policy
+              {footer?.privacyPolicy?.title?.trim() || 'Privacy Policy'}
             </Link>
           </div>
         </div>

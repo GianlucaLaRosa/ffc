@@ -240,3 +240,46 @@ a:focus-visible {
   display: inline;
   margin: 0;
 }
+
+.policy-intro .rich-text,
+.policy-intro p {
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+.policy-summary .rich-text,
+.policy-summary p {
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+.policy-rich-text.rich-text h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 2rem 0 0.75rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgb(var(--line));
+}
+
+.policy-rich-text.rich-text > h3:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.policy-rich-text.rich-text h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.25rem;
+}
+
+.policy-rich-text.rich-text blockquote {
+  background: rgb(var(--subtle));
+  border: 1px solid rgb(var(--line));
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin: 0 0 0.75rem;
+  font-style: normal;
+}

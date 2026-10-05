@@ -12,6 +12,7 @@ const withNextra = nextra({
   contentDirBasePath: '/docs',
   defaultShowCopyCode: true,
   search: false,
+  unstable_shouldAddLocaleToLinks: true,
 })
 
 const nextConfig: NextConfig = {
@@ -34,9 +35,9 @@ const nextConfig: NextConfig = {
 
     return webpackConfig
   },
-  env: {
-    NEXTRA_LOCALES: JSON.stringify(['']),
-    NEXTRA_SHOULD_ADD_LOCALE_TO_LINKS: 'false',
+  i18n: {
+    locales: ['en', 'it'],
+    defaultLocale: 'en',
   },
   turbopack: {
     root: path.resolve(dirname),
@@ -59,6 +60,20 @@ const nextConfig: NextConfig = {
         },
         {
           source: '/docs/:path*',
+          headers: [
+            { key: 'Cache-Control', value: 'private, no-store, max-age=0, must-revalidate' },
+            { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+          ],
+        },
+        {
+          source: '/:lang(en|it)/docs',
+          headers: [
+            { key: 'Cache-Control', value: 'private, no-store, max-age=0, must-revalidate' },
+            { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+          ],
+        },
+        {
+          source: '/:lang(en|it)/docs/:path*',
           headers: [
             { key: 'Cache-Control', value: 'private, no-store, max-age=0, must-revalidate' },
             { key: 'X-Robots-Tag', value: 'noindex, nofollow' },

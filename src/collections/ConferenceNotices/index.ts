@@ -2,6 +2,8 @@ import type {
   CollectionBeforeValidateHook,
   CollectionConfig,
   FilterOptions,
+  PayloadRequest,
+  TextareaFieldValidation,
   TextFieldValidation,
 } from 'payload'
 
@@ -11,6 +13,8 @@ import {
   revalidateEditionByConferenceDelete,
 } from '@/utilities/revalidatePublicCache'
 import { sendConferenceNoticeEndpoint } from './endpoints/sendNotice'
+import { adminGroups, copy } from '@/i18n/copy'
+import { asT } from '@/i18n/asT'
 
 const toRelationId = (value: unknown): number | string | null => {
   if (value == null) return null
@@ -23,11 +27,14 @@ const toRelationId = (value: unknown): number | string | null => {
 
 const trimText =
   (max: number, label: string) =>
-  (value: unknown): string | true => {
-    if (typeof value !== 'string' || !value.trim()) return `${label} è obbligatorio.`
-    if (value.trim().length > max) return `${label} deve avere al massimo ${max} caratteri.`
+  (value: unknown, { req }: { req: PayloadRequest }) => {
+    if (typeof value !== 'string' || !value.trim()) return asT(req.t)('fcr:requiredNamed', { label })
+    if (value.trim().length > max) return asT(req.t)('fcr:maxCharsNamed', { label, max })
     return true
   }
+
+const trimTitle: TextFieldValidation = (value, args) => trimText(40, 'Title')(value, args)
+const trimBody: TextareaFieldValidation = (value, args) => trimText(120, 'Body')(value, args)
 
 const filterAgendaByConference: FilterOptions = async ({ data, req }) => {
   const conferenceId = toRelationId(data?.conference)
@@ -50,15 +57,15 @@ const filterAgendaByConference: FilterOptions = async ({ data, req }) => {
   return { day: { in: dayIds } }
 }
 
-const validateLinkPath: TextFieldValidation = (value) => {
+const validateLinkPath: TextFieldValidation = (value, { req }) => {
   if (value == null || value === '') return true
-  if (typeof value !== 'string') return 'Percorso non valido.'
+  if (typeof value !== 'string') return asT(req.t)('fcr:invalidPath')
   const trimmed = value.trim()
   if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-    return 'Usate un percorso di questo sito (inizia con / , ? o #), non un URL completo.'
+    return asT(req.t)('fcr:useSitePath')
   }
   if (!trimmed.startsWith('/') && !trimmed.startsWith('?') && !trimmed.startsWith('#')) {
-    return 'Il percorso deve iniziare con /, ? o #.'
+    return asT(req.t)('fcr:pathPrefix')
   }
   return true
 }
@@ -76,8 +83,8 @@ const normalizeDates: CollectionBeforeValidateHook = ({ data }) => {
 export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
   slug: 'conference-notices',
   labels: {
-    singular: 'Avviso conferenza',
-    plural: 'Avvisi conferenza',
+    singular: copy('Conference notice', 'Avviso conferenza'),
+    plural: copy('Conference notices', 'Avvisi conferenza'),
   },
   orderable: true,
   access: {
@@ -91,11 +98,13 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
   },
   admin: {
     hidden: true,
-    group: 'Conferenze',
+    group: adminGroups.conferences,
     useAsTitle: 'title',
     defaultColumns: ['title', 'severity', 'showOnSite', 'sentAt', 'updatedAt'],
-    description:
+    description: copy(
+      'Live programme changes. Edit them from the conference Notices tab. Use Send push for lock-screen notifications.',
       'Cambiamenti in diretta sul programma. Si modificano dal tab Avvisi della conferenza. Usate Invia push per le notifiche a schermo bloccato.',
+    ),
   },
   endpoints: [sendConferenceNoticeEndpoint],
   fields: [
@@ -106,12 +115,15 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
       maxLength: 40,
       label: 'Title',
       admin: {
-        description: 'Titolo breve per banner e schermo bloccato (max 40 caratteri).',
+        description: copy(
+          'Short title for the banner and lock screen (max 40 characters).',
+          'Titolo breve per banner e schermo bloccato (max 40 caratteri).',
+        ),
         components: {
           Field: '@/collections/ConferenceNotices/LimitedPlainTextField#LimitedTextField',
         },
       },
-      validate: trimText(40, 'Title'),
+      validate: trimTitle,
     },
     {
       name: 'body',
@@ -120,12 +132,15 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
       maxLength: 120,
       label: 'Body',
       admin: {
-        description: 'Solo testo (max 120 caratteri). Compare sul banner del sito e nella push.',
+        description: copy(
+          'Plain text only (max 120 characters). Appears on the site banner and in the push.',
+          'Solo testo (max 120 caratteri). Compare sul banner del sito e nella push.',
+        ),
         components: {
           Field: '@/collections/ConferenceNotices/LimitedPlainTextField#LimitedTextareaField',
         },
       },
-      validate: trimText(120, 'Body'),
+      validate: trimBody,
     },
     {
       type: 'row',
@@ -143,7 +158,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
           ],
           admin: {
             width: '50%',
-            description: 'Colore del banner. Preferite Change per cambi di sala o orario.',
+            description: copy(
+              'Banner colour. Prefer Change for room or time changes.',
+              'Colore del banner. Preferite Change per cambi di sala o orario.',
+            ),
           },
         },
         {
@@ -153,7 +171,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
           defaultValue: true,
           admin: {
             width: '50%',
-            description: 'Se è acceso, i visitatori vedono l’avviso sulla pagina pubblica dell’edizione.',
+            description: copy(
+              'If on, visitors see the notice on the edition’s public page.',
+              'Se è acceso, i visitatori vedono l’avviso sulla pagina pubblica dell’edizione.',
+            ),
           },
         },
       ],
@@ -164,8 +185,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
       label: 'Include push when sending',
       defaultValue: true,
       admin: {
-        description:
+        description: copy(
+          'If on, Send push delivers a lock-screen notification to subscribed devices of this edition.',
           'Se è acceso, Invia push recapita una notifica a schermo bloccato ai dispositivi iscritti di questa edizione.',
+        ),
       },
     },
     {
@@ -175,8 +198,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
       label: 'Related session',
       filterOptions: filterAgendaByConference,
       admin: {
-        description:
-          'Facoltativo. La push arriva solo a chi ha salvato questa sessione (più chi è iscritto agli aggiornamenti della conferenza). Il banner resta visibile a tutti.',
+        description: copy(
+          'Optional. The push goes to people who saved this item, a talk inside it, or a linked abstract, plus people subscribed to conference updates. The banner stays visible to everyone.',
+          'Facoltativo. La push arriva a chi ha salvato questa voce, un talk dentro di essa, o un abstract collegato, più chi è iscritto agli aggiornamenti della conferenza. Il banner resta visibile a tutti.',
+        ),
       },
     },
     {
@@ -184,8 +209,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
       type: 'text',
       label: 'Link path',
       admin: {
-        description:
+        description: copy(
+          'Optional path on this site, e.g. #programme or ?agenda=123. Empty opens the edition home (or the linked session, if set).',
           'Percorso facoltativo su questo sito, es. #programme o ?agenda=123. Vuoto apre la home dell’edizione (o la sessione collegata, se impostata).',
+        ),
       },
       validate: validateLinkPath,
     },
@@ -199,7 +226,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
           admin: {
             width: '50%',
             date: { pickerAppearance: 'dayAndTime' },
-            description: 'Facoltativo. Banner nascosto prima di questo orario.',
+            description: copy(
+              'Optional. Banner hidden before this time.',
+              'Facoltativo. Banner nascosto prima di questo orario.',
+            ),
           },
         },
         {
@@ -209,7 +239,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
           admin: {
             width: '50%',
             date: { pickerAppearance: 'dayAndTime' },
-            description: 'Facoltativo. Banner nascosto dopo questo orario.',
+            description: copy(
+              'Optional. Banner hidden after this time.',
+              'Facoltativo. Banner nascosto dopo questo orario.',
+            ),
           },
         },
       ],
@@ -234,7 +267,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
             width: '34%',
             readOnly: true,
             date: { pickerAppearance: 'dayAndTime' },
-            description: 'Compilato in automatico dopo un invio push riuscito.',
+            description: copy(
+              'Filled automatically after a successful push send.',
+              'Compilato in automatico dopo un invio push riuscito.',
+            ),
           },
         },
         {
@@ -244,7 +280,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
           admin: {
             width: '33%',
             readOnly: true,
-            description: 'Dispositivi che hanno ricevuto l’ultimo invio.',
+            description: copy(
+              'Devices that received the last send.',
+              'Dispositivi che hanno ricevuto l’ultimo invio.',
+            ),
           },
         },
         {
@@ -254,7 +293,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
           admin: {
             width: '33%',
             readOnly: true,
-            description: 'Endpoint push scaduti o assenti, puliti all’ultimo invio.',
+            description: copy(
+              'Expired or missing push endpoints, cleaned on the last send.',
+              'Endpoint push scaduti o assenti, puliti all’ultimo invio.',
+            ),
           },
         },
       ],
@@ -268,7 +310,10 @@ export const ConferenceNotices: CollectionConfig<'conference-notices'> = {
       label: 'Conference',
       admin: {
         position: 'sidebar',
-        description: 'Edizione a cui appartiene questo avviso.',
+        description: copy(
+          'Edition this notice belongs to.',
+          'Edizione a cui appartiene questo avviso.',
+        ),
       },
     },
   ],

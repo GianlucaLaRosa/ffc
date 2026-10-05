@@ -6,7 +6,9 @@ import {
   vapidMailtoFromEmail,
 } from '@/utilities/programmeAlertSettings'
 import { getServerSideURL } from '@/utilities/getURL'
-import { parseSavedAgendaStore, type SavedAgendaItem } from '@/utilities/savedAgenda'
+import { collectAgendaSubtreeIds } from '@/utilities/agendaSubtree'
+import { parseSavedAgendaItems, savedMatchesRelatedAgenda, type SavedAgendaItem } from '@/utilities/savedAgenda'
+import { asT } from '@/i18n/asT'
 
 function vapidConfigured(): boolean {
   return Boolean(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY)
@@ -33,9 +35,7 @@ function relationId(value: unknown): number | string | null {
 }
 
 function asItems(value: unknown): SavedAgendaItem[] {
-  return parseSavedAgendaStore(
-    JSON.stringify({ v: 1, items: Array.isArray(value) ? value : [] }),
-  )
+  return parseSavedAgendaItems(value)
 }
 
 function resolveNoticeUrl(input: {
@@ -88,7 +88,7 @@ export const sendConferenceNoticeEndpoint: Endpoint = {
 
     if (notice.sentAt) {
       return Response.json(
-        { message: 'Push già inviata per questo avviso. Create un nuovo avviso per inviarne un’altra.' },
+        { message: asT(req.t)('fcr:pushAlreadySent') },
         { status: 400 },
       )
     }
@@ -96,8 +96,7 @@ export const sendConferenceNoticeEndpoint: Endpoint = {
     if (!notice.sendPush) {
       return Response.json(
         {
-          message:
-            'Questo avviso non è marcato per la push. Accendete «Include push when sending», salvate, poi riprovate.',
+          message: asT(req.t)('fcr:pushNotMarked'),
         },
         { status: 400 },
       )
@@ -105,7 +104,7 @@ export const sendConferenceNoticeEndpoint: Endpoint = {
 
     const conferenceId = relationId(notice.conference)
     if (conferenceId == null) {
-      return Response.json({ message: 'L’avviso deve appartenere a una conferenza.' }, { status: 400 })
+      return Response.json({ message: asT(req.t)('fcr:noticeNeedsConference') }, { status: 400 })
     }
 
     const conference = await req.payload.findByID({
@@ -125,7 +124,7 @@ export const sendConferenceNoticeEndpoint: Endpoint = {
 
     if (conference._status !== 'published') {
       return Response.json(
-        { message: 'Pubblicate la conferenza prima di inviare una push.' },
+        { message: asT(req.t)('fcr:publishBeforePush') },
         { status: 400 },
       )
     }
@@ -142,8 +141,7 @@ export const sendConferenceNoticeEndpoint: Endpoint = {
     if (activeId == null || String(activeId) !== String(conferenceId)) {
       return Response.json(
         {
-          message:
-            'Le push si inviano solo per la Conferenza attiva (home del sito). Il banner sul sito funziona su qualsiasi edizione pubblicata.',
+          message: asT(req.t)('fcr:pushActiveOnly'),
         },
         { status: 400 },
       )
@@ -151,7 +149,7 @@ export const sendConferenceNoticeEndpoint: Endpoint = {
 
     if (!vapidConfigured()) {
       return Response.json(
-        { message: 'Le chiavi push non sono configurate sul server (VAPID).' },
+        { message: asT(req.t)('fcr:vapidMissing') },
         { status: 400 },
       )
     }
@@ -159,19 +157,27 @@ export const sendConferenceNoticeEndpoint: Endpoint = {
     const settings = await loadProgrammeAlertSettings(req.payload)
     if (!settings.enabled) {
       return Response.json(
-        { message: 'Gli avvisi sessione/push sono spenti in Avvisi programma.' },
+        { message: asT(req.t)('fcr:sessionAlertsOff') },
         { status: 400 },
       )
     }
     if (!configureVapid(settings.contactEmail)) {
       return Response.json(
-        { message: 'Impostate Push contact email in Globals → Avvisi programma.' },
+        { message: asT(req.t)('fcr:setPushContact') },
         { status: 400 },
       )
     }
 
     const agendaId = relationId(notice.relatedAgendaItem)
     const agendaKey = agendaId != null ? String(agendaId) : null
+    const relatedAgendaIds =
+      agendaId != null
+        ? await collectAgendaSubtreeIds({
+            payload: req.payload,
+            rootId: agendaId,
+            req,
+          })
+        : null
     const origin = getServerSideURL()
     const title = notice.title?.trim() || settings.notificationTitle
     const body = notice.body?.trim() || ''
@@ -195,8 +201,8 @@ export const sendConferenceNoticeEndpoint: Endpoint = {
       for (const doc of result.docs) {
         const items = asItems(doc.items)
         const wantsUpdates = doc.conferenceUpdates !== false
-        const savedRelated = agendaKey
-          ? items.some((item) => String(item.id) === agendaKey)
+        const savedRelated = relatedAgendaIds
+          ? items.some((item) => savedMatchesRelatedAgenda(item, relatedAgendaIds))
           : false
 
         const shouldSend = agendaKey ? wantsUpdates || savedRelated : wantsUpdates

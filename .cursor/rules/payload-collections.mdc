@@ -5,17 +5,17 @@ alwaysApply: true
 
 # FCR Payload conventions
 
-Public site copy is English. Admin dashboard copy is Italian except field names (English `label`). No `localization` / `localized: true`. Follow `.cursor/rules/admin-italian.mdc`.
+Public site copy is English. Admin dashboard chrome is English by default with Italian as a second UI language; field names stay English `label`. No `localization` / `localized: true`. Follow `.cursor/rules/admin-italian.mdc`.
 
 ## Admin groups
 
 Keep the sidebar short for non-expert editors. Prefer hub + hide over one big bucket.
 
-- **Conferenze** (`group: 'Conferenze'`) — only **Conferenze** in the nav. Nested edition content (`conference-days`, `agenda-items`, `appendices`, `abstracts`) stays `admin.hidden: true` and is edited via joins/tabs on the conference.
-- **Persone e organizzazioni** — People, Institutions (cross-edition directories).
-- **Contenuti** — Media, Users (and similar site infrastructure).
-- **Riferimenti** — seeded lookups (`countries`, `italian-regions`, `abstract-statuses`). Keep them visible here, not mixed with edition or directory collections.
-- **Sito** — Conferenza attiva and Archivio conferenze use custom nav links and dashboard cards (`afterNavLinks` / `beforeDashboard`). Dashboard also links **Modifica edizione attiva** straight to the active conference document when set. **Guida per chi pubblica** (`/docs`) is a dashboard banner only; it is not a Payload global and does not sit in Site. Footer stays in Globals as **Piè di pagina**. Do not put globals into Conferenze.
+- **Conferences** (`group` via `adminGroups.conferences`) — only **Conferences** / **Conferenze** in the nav. Nested edition content (`conference-days`, `agenda-items`, `appendices`, `abstracts`) stays `admin.hidden: true` and is edited via joins/tabs on the conference.
+- **People and organisations** / **Persone e organizzazioni** — People, Institutions (cross-edition directories).
+- **Content** / **Contenuti** — Media, Users (and similar site infrastructure).
+- **References** / **Riferimenti** — seeded lookups (`countries`, `italian-regions`, `abstract-statuses`). Keep them visible here, not mixed with edition or directory collections.
+- **Site** / **Sito** — Active conference and Conference archive use custom nav links and dashboard cards (`afterNavLinks` / `beforeDashboard`). Dashboard also links **Edit active edition** / **Modifica edizione attiva** straight to the active conference document when set. **Publishing guide** / **Guida per chi pubblica** (`/docs`) is a dashboard banner only; it is not a Payload global and does not sit in Site. Footer stays in Globals as **Footer** / **Piè di pagina**. Do not put globals into Conferences.
 
 Collection slugs are plural (`conferences`). Global slugs are singular (`footer`).
 
@@ -33,10 +33,10 @@ Full Payload Lexical defaults without checklists (headings, lists, align, indent
 
 ## Admin UX
 
-- Tabs for major sections (Italian labels, e.g. Panoramica, Sede, Scheda pubblica). Field `label`s inside tabs stay English.
+- Tabs for major sections (bilingual labels, e.g. Overview / Panoramica, Venue / Sede, Public listing / Scheda pubblica). Field `label`s inside tabs stay English.
 - Rows + `admin.width` for related small fields (year/logo, colors, city/country).
 - Sidebar for slug, publishedAt, and derived/read-only helpers (e.g. plain `title`).
-- Public listing tab (conferences): one tab for non-expert editors. Group `meta` with the `@payloadcms/plugin-seo` pattern (`OverviewField`, title/image/description, `PreviewField`). Group `geo` for optional AI-citation fields (`summary`, `primaryEntity`, `keyFacts`). No FAQs (no public FAQ UI). Field names stay English; tab/group `label`s and `admin.description` are Italian. Emit JSON-LD `Event`/`Place` on public pages from venue + days + geo; `dateModified` comes from document `updatedAt`. Do not duplicate venue or listing fields.
+- Public listing tab (conferences): one tab for non-expert editors. Group `meta` with the `@payloadcms/plugin-seo` pattern (`OverviewField`, title/image/description, `PreviewField`). Group `geo` for optional AI-citation fields (`summary`, `primaryEntity`, `keyFacts`). No FAQs (no public FAQ UI). Field names stay English; tab/group `label`s and `admin.description` are bilingual (`copy(en, it)`). Emit JSON-LD `Event`/`Place` on public pages from venue + days + geo; `dateModified` comes from document `updatedAt`. Do not duplicate venue or listing fields.
 - Always add `slug` when the collection is public-facing. Prefer `slugField` with a sensible `slugify` (e.g. year + title). Keep slugs unique; allow manual override.
 
 ## Public conference URLs
@@ -80,4 +80,4 @@ Manual display order is a first-class requirement. Prefer Payload’s built-in `
 
 ## Editor guide
 
-User-facing CMS or public-site features must be documented in the Italian Nextra guide (`content/*.mdx`, `/docs`). Follow `.cursor/rules/editor-docs.mdc`.
+User-facing CMS or public-site features must be documented in the bilingual Nextra guide (`content/en/*.mdx` and `content/it/*.mdx`, `/docs`). Follow `.cursor/rules/editor-docs.mdc`.

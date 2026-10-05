@@ -7,6 +7,7 @@ import {
   revalidatePublicDirectories,
   revalidatePublicDirectoriesDelete,
 } from '@/utilities/revalidatePublicCache'
+import { adminGroups, copy } from '@/i18n/copy'
 
 const ITALY_NAME = 'Italy'
 
@@ -51,8 +52,8 @@ const clearRegionUnlessItaly: CollectionBeforeValidateHook = async ({ data, req 
 export const Institutions: CollectionConfig<'institutions'> = {
   slug: 'institutions',
   labels: {
-    singular: 'Ente',
-    plural: 'Enti',
+    singular: copy('Institution', 'Ente'),
+    plural: copy('Institutions', 'Enti'),
   },
   orderable: true,
   access: {
@@ -62,10 +63,10 @@ export const Institutions: CollectionConfig<'institutions'> = {
     update: authenticated,
   },
   admin: {
-    group: 'Persone e organizzazioni',
+    group: adminGroups.people,
     useAsTitle: 'name',
     defaultColumns: ['name', 'country', 'region', 'updatedAt'],
-    description: 'Istituti di ricerca e laboratori.',
+    description: copy('Research institutes and labs.', 'Istituti di ricerca e laboratori.'),
   },
   fields: [
     {
@@ -89,7 +90,10 @@ export const Institutions: CollectionConfig<'institutions'> = {
       index: true,
       label: 'Region',
       admin: {
-        description: 'Disponibile solo se Country è Italy.',
+        description: copy(
+          'Available only when Country is Italy.',
+          'Disponibile solo se Country è Italy.',
+        ),
         components: {
           Field: '@/collections/Institutions/ItalianRegionField#ItalianRegionField',
         },

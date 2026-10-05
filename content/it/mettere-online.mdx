@@ -45,17 +45,20 @@ Quella edizione:
 
 ### Archiviare le edizioni passate
 
-**Archivio conferenze** (sempre in **Sito**). Da lì decidete quali edizioni pubblicate (non quella attiva) sono visibili in `/archive/…`.
+**Archivio conferenze** (sempre in **Sito**). In alto, **Enable public archive** accende o spegne l’archivio pubblico **per tutto il sito**. Si salva appena spuntate (non serve **Salva**).
+
+- **Acceso:** funzionano `/archive` (l’elenco) e `/archive/{slug}` (ogni edizione). **Archive** compare nel menu del sito se almeno un’edizione è spuntata sotto.
+- **Spento:** quegli indirizzi mostrano una pagina 404 e **Archive** sparisce dal menu. Le spunte sulle singole edizioni restano, così potete riaccendere le rotte in seguito.
+
+Poi decidete quali edizioni pubblicate (non quella attiva) comparire in elenco. Una riga spuntata è pubblica su `/archive/` più lo **Slug** di quella conferenza.
 
 L’edizione attiva **non** sta in archivio: se qualcuno apre il vecchio link archivio, viene mandato alla home.
 
-Se **almeno una** edizione è in archivio pubblico, sul sito compare **Archive** nel menu in alto (stesso posto di Programme e Venue): è l’elenco delle edizioni passate. Se non ce n’è nessuna, il pulsante **non** si vede.
-
-Da una pagina archivio si torna all’edizione in home in un tap: **logo** in alto a sinistra, oppure **Current edition** nel menu (accanto ad Archive; sul telefono, dentro il menu a tre linee). Il titolo dell’edizione in header resta sulla pagina aperta.
+Da `/archive` (l’elenco) il menu ha **Current edition** e **Archive**, senza Programme / Venue / Appendix: quelle sezioni non esistono sull’elenco. Sulla pagina di un’edizione passata (`/archive/` + slug) Programme / Venue / Appendix restano, e riguardano **quel** programma. Una fascia sotto la testata ricorda che non è l’edizione in home e offre **Open current edition**. Il **logo** apre sempre la home.
 
 ### Scheda per Google e i social
 
-Lingua **Scheda pubblica** della conferenza. I testi di aiuto lì sono in italiano; i nomi dei campi restano in inglese.
+Lingua **Scheda pubblica** della conferenza. I testi di aiuto seguono la lingua del pannello; i nomi dei campi restano in inglese.
 
 - **Result title**, **Short listing text**, **Preview image** — titolo, due frasi, immagine quando si inoltra il link
 - **Facts for AI answers** — facoltativo, per nomi e fatti brevi. Non ripetete città e date già in **Sede** e **Giorni**

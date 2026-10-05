@@ -1,0 +1,86 @@
+---
+title: Common problems
+description: Frequent errors when creating or updating an edition.
+---
+
+import { Callout } from 'nextra/components'
+
+# Common problems
+
+## I cannot find days or programme in the menu
+
+That is expected. Open **Conferences**, then the edition, then **Days**. Sessions are inside the day.
+
+## The home site is empty or shows another edition
+
+Check **Active conference**: it must point to the right **Published** edition.
+
+## I published the conference but I do not see the programme
+
+Also publish **days** and **sessions**. Drafts stay invisible to the public.
+
+## I cannot create a second day on the same date
+
+Each edition allows **one day document per date**. Open the one that already exists.
+
+## There is no bookmark on a session in the programme
+
+It may be a branch with **Child items**, or a session with linked **abstracts**. Participants save leaves: child talks, or each abstract. See [Days and programme](/en/docs/giorni-e-programma).
+
+## Session time rejected
+
+The time must fall between start and end of the **day**. Widen the day’s window or fix the session.
+
+## I cannot create a second appendix
+
+Open the appendix already linked to that edition.
+
+## The slug / link looks odd
+
+It is generated from **Year** + **Title** (**Slug** field, right column). Fix it **before** sending invitations. Then publish.
+
+In the **archive** the address is `/archive/` plus that slug. The list is `/archive`. If you change the slug after sharing a link, the old page no longer opens. See [Create an edition](/en/docs/nuova-edizione).
+
+## The map is wrong
+
+You may have swapped **Longitude** and **Latitude**. See [Venue and map](/en/docs/sede).
+
+## The abstract does not link to the session
+
+The session must belong to a day **of the same conference**. Do not mix editions.
+
+## I do not see the session’s abstracts in the programme
+
+Check that each abstract is **Published** and linked to that session (**Agenda items** on the abstract, or **Abstracts** list on the session). Then refresh the public page. See [Abstracts](/en/docs/abstract).
+
+## The abstract link does not open the card
+
+Check that the abstract (and the edition) is **Published**. The address uses **Code** after `?abstract=`. If the code changed after you sent the link, update the link. See [Abstracts](/en/docs/abstract).
+
+## Send push is rejected or does not start
+
+You need the edition **Published** and set as **Active conference**. Also check **Globals** → **Programme alerts** (alerts on and **Push contact email** filled). Each notice can be sent **once**: create a new document in **Notices**.
+
+## I do not see Archive in the site menu
+
+You need **Enable public archive** on in **Conference archive**, and **at least one edition** ticked (published, not the active one). If the switch is off, `/archive` and `/archive/…` also return 404. See [Publish and archive](/en/docs/mettere-online).
+
+## From an archive edition I cannot find the home conference
+
+**Current edition** appears in the menu only on the `/archive` list. On a past edition page use the **Archived edition** bar (**Open current edition**) or the **logo** at the top left. The title next to the logo stays on the edition you are viewing.
+
+## I do not see the notice banner on the site
+
+You need the edition **Published** and **Show site banner** on. If **Banner from** is in the future the banner is not there yet; if **Banner until** has already passed it is gone. Empty dates = visible immediately, with no expiry. The push does not show the banner by itself. See [Notices during the conference](/en/docs/avvisi-conferenza).
+
+## Cookie Policy or Privacy Policy is empty on the site
+
+Open **Globals** → **Footer**, tabs **Cookie Policy** and **Privacy Policy**. Fill **Content** (and the summary / controller fields). After a first install the default English text is loaded on boot only if those bodies are still empty.
+
+## I am afraid I deleted something
+
+Many documents keep **versions**. Before deleting, try editing or putting it back to draft. For deleted items, ask whoever administers the site.
+
+<Callout type="info">
+  If you are stuck (red screen, cannot save), copy the error message and send it to whoever runs the system, saying **which edition** you were editing.
+</Callout>

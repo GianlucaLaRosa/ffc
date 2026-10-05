@@ -9,6 +9,17 @@ export function joinDocs<T>(join: { docs?: (number | T)[] } | null | undefined):
   return join.docs.filter((doc): doc is T => typeof doc === 'object' && doc !== null)
 }
 
+export function joinDocIds(
+  join: { docs?: (number | string | { id?: number | string })[] } | null | undefined,
+): string[] {
+  if (!join?.docs) return []
+  return join.docs.flatMap((doc) => {
+    if (typeof doc === 'object' && doc && doc.id != null) return [String(doc.id)]
+    if (typeof doc === 'number' || typeof doc === 'string') return [String(doc)]
+    return []
+  })
+}
+
 export function mediaUrl(media: number | Media | null | undefined): string | null {
   if (!media || typeof media !== 'object') return null
   if (typeof media.url === 'string' && media.url) return media.url

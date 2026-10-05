@@ -1,13 +1,13 @@
 ---
-description: Admin dashboard copy is Italian; field names stay English
+description: Admin chrome is bilingual; field names stay English
 alwaysApply: true
 ---
 
-# Admin language (Italian editors)
+# Admin language (English default, Italian optional)
 
-The **public site** stays English. The **Payload admin** is for Italian editors.
+The **public site** stays English. The **Payload admin** UI is English by default, with **Italiano** as a second language.
 
-Do **not** enable Payload `localization` / `localized: true`. Admin language is copy + `i18n`, not locales.
+Do **not** enable Payload `localization` / `localized: true`. Admin language is copy + `i18n`, not content locales.
 
 ## English (unchanged)
 
@@ -15,21 +15,21 @@ Do **not** enable Payload `localization` / `localized: true`. Admin language is 
 - Select option labels that match stored values: `Info`, `Change`, `Urgent`, `Primary Investigator`.
 - Block type labels in the picker (`Accordion`, `Content`) when they name the block slug.
 
-Editors match the English name to the field. The Italian handbook quotes those names as they appear.
+Editors match the English name to the field. The handbook quotes those names as they appear.
 
-## Italian (everything else in `/admin`)
+## Bilingual chrome (`copy(en, it)` / `t('fcr:…')`)
 
-- Payload chrome: `i18n.fallbackLanguage: 'it'` and `supportedLanguages: { it }` only (import `it` from `payload/i18n/it`).
-- Collection/global `labels`, `admin.group`, tab labels, `admin.description`.
-- Custom admin components, toasts, confirms, validation messages shown in the panel.
-- Dashboard cards and custom nav (`Site`, **Conferenza attiva**, **Archivio conferenze**, guida).
+- Payload chrome: `i18n.fallbackLanguage: 'en'` and `supportedLanguages: { en, it }` (import `en` and `it` from `payload/i18n`).
+- Collection/global `labels`, `admin.group`, tab labels, `admin.description` as `{ en, it }` via `@/i18n/copy`.
+- Custom admin components, toasts, confirms, validation messages: `req.t('fcr:…')` or `useTranslation()`.
+- Dashboard cards and custom nav (`Site` / **Sito**, **Active conference** / **Conferenza attiva**, **Conference archive** / **Archivio conferenze**, publishing guide).
 
 ```ts
-// ✅ field name English, help Italian
-{ name: 'year', label: 'Year', admin: { description: 'Anno dell’edizione. Più edizioni nello stesso anno sono ammesse.' } }
+// ✅ field name English, help bilingual
+{ name: 'year', label: 'Year', admin: { description: copy('Edition year. Several editions in the same year are allowed.', 'Anno dell’edizione. Più edizioni nello stesso anno sono ammesse.') } }
 
 // ❌ do not translate the field name
 { name: 'year', label: 'Anno', admin: { description: 'Edition year.' } }
 ```
 
-When a custom component mentions a field, keep the **English field label** inside the Italian sentence (`Show site banner`, `Send push`).
+When a custom component mentions a field, keep the **English field label** inside the sentence (`Show site banner`, `Send push`).

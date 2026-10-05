@@ -2,7 +2,7 @@
  * Historical demo seed for the previous backoffice schema.
  * It is not compatible with FCR collections (conference-days, drafts, appendices, …).
  *
- * Reference data (countries, italian-regions, abstract-statuses) is seeded in Payload onInit.
+ * Reference data (countries, italian-regions, abstract-statuses, footer policies) is seeded in Payload onInit.
  * Create editions, days, agenda, people, and appendix content in /admin.
  */
 console.error(

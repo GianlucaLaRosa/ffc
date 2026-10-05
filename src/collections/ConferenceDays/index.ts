@@ -7,6 +7,8 @@ import {
   revalidateEditionByConference,
   revalidateEditionByConferenceDelete,
 } from '@/utilities/revalidatePublicCache'
+import { adminGroups, copy } from '@/i18n/copy'
+import { asT } from '@/i18n/asT'
 
 const toRelationId = (value: unknown): number | string | null => {
   if (value == null) return null
@@ -77,7 +79,7 @@ const ensureUniqueDatePerConference: CollectionBeforeValidateHook = async ({
       collection: 'conference-days',
       errors: [
         {
-          message: 'Questa conferenza ha già un giorno in questa data.',
+          message: asT(req.t)('fcr:uniqueDay'),
           path: 'date',
         },
       ],
@@ -91,8 +93,8 @@ const ensureUniqueDatePerConference: CollectionBeforeValidateHook = async ({
 export const ConferenceDays: CollectionConfig<'conference-days'> = {
   slug: 'conference-days',
   labels: {
-    singular: 'Giorno',
-    plural: 'Giorni',
+    singular: copy('Day', 'Giorno'),
+    plural: copy('Days', 'Giorni'),
   },
   access: {
     create: authenticated,
@@ -102,7 +104,7 @@ export const ConferenceDays: CollectionConfig<'conference-days'> = {
   },
   admin: {
     hidden: true,
-    group: 'Conferenze',
+    group: adminGroups.conferences,
     useAsTitle: 'date',
     defaultColumns: ['conference', 'date', 'startTime', 'endTime', 'updatedAt'],
   },
@@ -150,7 +152,10 @@ export const ConferenceDays: CollectionConfig<'conference-days'> = {
           label: 'End time',
           admin: {
             width: '50%',
-            description: 'Può essere prima di Start time se il giorno passa la mezzanotte.',
+            description: copy(
+              'Can be earlier than Start time if the day crosses midnight.',
+              'Può essere prima di Start time se il giorno passa la mezzanotte.',
+            ),
             date: {
               pickerAppearance: 'timeOnly',
               displayFormat: 'HH:mm',
@@ -176,8 +181,10 @@ export const ConferenceDays: CollectionConfig<'conference-days'> = {
       },
       admin: {
         defaultColumns: ['title', 'startTime', 'endTime', 'isKeynote', '_status'],
-        description:
+        description: copy(
+          'Top-level sessions of this day. Nested items are managed on the parent. Drag to reorder.',
           'Sessioni di primo livello di questo giorno. Le voci nidificate si gestiscono sul genitore. Trascinate per riordinare.',
+        ),
       },
     },
     {
@@ -188,7 +195,10 @@ export const ConferenceDays: CollectionConfig<'conference-days'> = {
       index: true,
       admin: {
         position: 'sidebar',
-        description: 'Conferenza di appartenenza. Impostata in automatico se create il giorno dalla conferenza.',
+        description: copy(
+          'Owning conference. Set automatically if you create the day from the conference.',
+          'Conferenza di appartenenza. Impostata in automatico se create il giorno dalla conferenza.',
+        ),
       },
     },
   ],

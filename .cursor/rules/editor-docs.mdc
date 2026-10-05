@@ -1,11 +1,11 @@
 ---
-description: Keep the Italian Nextra editor guide in sync with every user-facing feature
+description: Keep the bilingual Nextra editor guide in sync with every user-facing feature
 alwaysApply: true
 ---
 
 # Editor guide (`/docs`)
 
-The Nextra handbook at `/docs` (MDX in `content/`, sidebar in `content/_meta.ts`) is how Italian, non-expert editors learn the product. **Shipping a feature without updating it is incomplete.**
+The Nextra handbook at `/docs` (MDX in `content/en/` and `content/it/`, sidebar in each locale `_meta.ts`) is how editors learn the product. English is the default (`/en/docs`); Italian is at `/it/docs`. `/docs` redirects to the cookie locale or English. **Shipping a feature without updating both locales is incomplete.**
 
 ## When you must update docs
 
@@ -19,13 +19,13 @@ Skip only true internals: refactors, types, tests, styling with no editor/public
 
 ## How to write
 
-- Italian, second person **voi**, short steps. Quote the admin **as it appears**: English **field names** (`Name`, `Year`, `Show site banner`); Italian chrome (`Conferenze`, `Panoramica`, `Salva`, `Crea Nuovo`, `Pubblicato`). Payload buttons come from Italian `i18n` — do not invent English button names.
-- Prefer **editing the existing page** that already covers that flow. Add a new `content/<slug>.mdx` **and** a `content/_meta.ts` entry only when it is a new workflow (new hub, new global, new public surface).
-- Put MDX `import`s immediately after frontmatter. Link related pages. Add a row to `problemi-frequenti.mdx` for new failure modes; add a card on `index.mdx` only for a major new entry point.
+- English pages: second person **you**, short steps. Italian pages: second person **voi**. Quote the admin **as it appears** in that language for chrome (`Conferences` / `Conferenze`, `Overview` / `Panoramica`, `Save` / `Salva`, `Published` / `Pubblicato`). **Field names stay English** (`Name`, `Year`, `Show site banner`) in both locales.
+- Prefer **editing the existing page** that already covers that flow. Add a new `content/en/<slug>.mdx` **and** `content/it/<slug>.mdx` **and** both `_meta.ts` entries only when it is a new workflow.
+- Put MDX `import`s immediately after frontmatter. Link related pages with the locale prefix (`/en/docs/…`, `/it/docs/…`). Add a row to `problemi-frequenti.mdx` (both locales) for new failure modes; add a card on `index.mdx` only for a major new entry point.
 - Do not document secrets, env vars, or how to bypass `/docs` auth. `/docs` is CMS-login only (`requireCmsUser`); do not link it from the public conference UI.
 
 ## Checklist before finishing a feature
 
-1. Editors can follow the new behaviour from `/docs` without asking a developer.
+1. Editors can follow the new behaviour from `/en/docs` and `/it/docs` without asking a developer.
 2. `_meta.ts` order still matches a sensible editorial path (create → fill → publish).
-3. Field names in admin stay English; the rest of the dashboard and this guide stay Italian.
+3. Field names in admin stay English; chrome and this guide are bilingual with English default.

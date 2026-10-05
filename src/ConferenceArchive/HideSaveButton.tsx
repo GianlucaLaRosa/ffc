@@ -1,6 +1,6 @@
 'use client'
 
-/** Archive is toggled in place; the global has no document fields to persist. */
+/** Archive switches save in place via custom endpoints; hide the unused Save bar. */
 export function HideSaveButton() {
   return null
 }

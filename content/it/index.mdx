@@ -9,7 +9,7 @@ import { Cards, Callout } from 'nextra/components'
 
 Questa guida spiega, passo dopo passo, come **creare e gestire una conferenza** dal pannello di amministrazione. È visibile solo a chi ha fatto l’accesso in `/admin` (stesso account).
 
-Non serve conoscere il sito web “da dentro”. Basta un account, un computer e un po’ di pazienza. I **nomi dei campi** restano in **inglese** (`Name`, `Year`): in queste pagine li citiamo così. Menu, linguette e pulsanti sono in **italiano**.
+Non serve conoscere il sito web “da dentro”. Basta un account, un computer e un po’ di pazienza. I **nomi dei campi** restano in **inglese** (`Name`, `Year`): in queste pagine li citiamo così. Menu, linguette e pulsanti seguono la lingua del pannello (**English** di default, oppure **Italiano**).
 
 <Callout type="info">
   Il sito pubblico (programma, abstract, mappa) è una cosa. Il **pannello** (`/admin`) è un’altra: è dove inserite i contenuti. Questa guida parla del pannello.
@@ -18,11 +18,11 @@ Non serve conoscere il sito web “da dentro”. Basta un account, un computer e
 ## Cosa potete fare
 
 <Cards>
-  <Cards.Card title="Entrare e orientarsi" href="/docs/primo-accesso" />
-  <Cards.Card title="Creare una nuova edizione" href="/docs/nuova-edizione" />
-  <Cards.Card title="Compilare il programma" href="/docs/giorni-e-programma" />
-  <Cards.Card title="Mettere tutto online" href="/docs/mettere-online" />
-  <Cards.Card title="Avvisi in tempo reale" href="/docs/avvisi-conferenza" />
+  <Cards.Card title="Entrare e orientarsi" href="/it/docs/primo-accesso" />
+  <Cards.Card title="Creare una nuova edizione" href="/it/docs/nuova-edizione" />
+  <Cards.Card title="Compilare il programma" href="/it/docs/giorni-e-programma" />
+  <Cards.Card title="Mettere tutto online" href="/it/docs/mettere-online" />
+  <Cards.Card title="Avvisi in tempo reale" href="/it/docs/avvisi-conferenza" />
 </Cards>
 
 ## In che ordine conviene lavorare
@@ -37,14 +37,14 @@ Pensate a un’edizione come a un **fascicolo**. Prima create il fascicolo (nome
 6. **Abstract** collegati alle sessioni
 7. **Appendice** (schede extra in fondo alla pagina)
 8. **Pubblicare** e, quando è il momento, impostare l’edizione **attiva** sulla home
-9. Durante l’evento: **Avvisi** per cambi di orario o di sala ([guida](/docs/avvisi-conferenza))
+9. Durante l’evento: **Avvisi** per cambi di orario o di sala ([guida](/it/docs/avvisi-conferenza))
 
 ## Dove finiscono i contenuti
 
 | Cosa inserite | Dove lo vede il pubblico |
 | --- | --- |
 | Edizione **attiva** (**Conferenza attiva**) | Home del sito, indirizzo principale |
-| Edizione in **archivio pubblico** | `/archive/` seguito dal nome breve (slug). Se ce n’è almeno una, compare anche **Archive** nel menu. Da lì si torna in home con il **logo** o con **Current edition** |
+| Edizione in **archivio pubblico** | Elenco in `/archive` (se **Enable public archive** è acceso). Ogni edizione ha `/archive/` + **Slug**. Se ce n’è almeno una, compare **Archive** nel menu. Dall’elenco, **Current edition** (o il **logo**) torna in home; dalla scheda di un’edizione, **Open current edition** nella fascia, o il **logo**. Lo slug si imposta sulla conferenza (colonna destra); vedere [Creare un’edizione](/it/docs/nuova-edizione) |
 | Bozza | Solo chi è collegato al pannello, o l’anteprima |
 
-Se avete un dubbio, aprite [Problemi frequenti](/docs/problemi-frequenti).
+Se avete un dubbio, aprite [Problemi frequenti](/it/docs/problemi-frequenti).

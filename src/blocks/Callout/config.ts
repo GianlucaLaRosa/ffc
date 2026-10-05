@@ -2,6 +2,7 @@ import type { Block } from 'payload'
 
 import { basicLexical } from '@/fields/basicLexical'
 import { columnSizeField } from '@/fields/columnSize'
+import { copy } from '@/i18n/copy'
 
 export const IntroCalloutBlock: Block = {
   slug: 'callout',
@@ -24,7 +25,10 @@ export const IntroCalloutBlock: Block = {
         { label: 'Deadline', value: 'deadline' },
       ],
       admin: {
-        description: 'Usate Deadline per date e scadenze, Important per avvisi da leggere.',
+        description: copy(
+          'Use Deadline for dates and deadlines, Important for notices to read.',
+          'Usate Deadline per date e scadenze, Important per avvisi da leggere.',
+        ),
       },
     },
     {

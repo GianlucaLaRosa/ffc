@@ -1,0 +1,98 @@
+---
+title: Notices during the conference
+description: How to publish a site banner and, if needed, a push notification for time or room changes.
+---
+
+import { Callout, Steps } from 'nextra/components'
+
+# Notices during the conference
+
+When the programme changes (time, room, cancellation) use the edition **Notices** tab. It is different from **Programme alerts** (Globals): those are only automatic reminders of sessions saved in “My programme”.
+
+## What participants see
+
+- **Site banner** — at the top of the edition page, with no install needed
+- **Push** (optional) — lock-screen notification, only for people who already enabled alerts and ticked conference updates
+
+Push works well on desktop and, on iPhone, especially if the site is added to the Home Screen.
+
+## How to create a notice
+
+<Steps>
+### Open the edition
+
+**Conferences** → the current edition → **Notices** tab.
+
+### Create the document
+
+**Create New**. Fill the fields (detail below), then **Save**.
+
+### Save
+
+With **Show site banner** on, and if the dates allow it, the banner appears on the site after save (edition **Published**). You do not need **Send push**.
+
+### Send the push (if needed)
+
+Only on the edition set as **Active conference**. Press **Send push**, confirm. You can send **once** per document: for another message create a new notice.
+</Steps>
+
+<Callout type="warning">
+  Do not use **Send push** for idle tests: it arrives on participants’ phones. To check the text, the site banner is enough.
+</Callout>
+
+## Document fields
+
+**Field names** stay in English, as in the panel.
+
+### Title
+
+Short title (max 40 characters). It appears on the banner and, if you send the push, on the lock screen.
+
+Examples: `Room change`, `Session delayed`, `Keynote cancelled`.
+
+### Body
+
+Plain text only, max 120 characters. It is the actual message, on the banner and in the push. No bold, links, or lists: if you need a link use **Link path**.
+
+### Severity
+
+Banner colour. Values in the list are `Info`, `Change`, `Urgent`. Prefer **Change** for room or time moves.
+
+### Show site banner
+
+If on, visitors see the notice on the edition’s public page (within the dates, if you set them). If off, no banner: you can still prepare the text and, if you want, send only the push.
+
+### Include push when sending
+
+If on, **Send push** also delivers the lock-screen notification. If off, **Send push** sends nothing: only the banner remains, if **Show site banner** is on.
+
+### Related session
+
+Optional. Links a session of **this edition’s programme**.
+
+- The **banner** stays visible to **everyone**
+- The **push** goes to people who saved that session, a talk inside it, **or an abstract of those items** in “My programme”, **and** people subscribed to general conference updates
+
+### Link path
+
+Optional path **on this site**, not a full `https://…` address. It must start with `/`, `?` or `#`.
+
+Empty opens the edition home, or the session in **Related session** if set.
+
+### Banner from and Banner until
+
+Optional. They control **only the banner**, not the push. You can leave both empty.
+
+**Send push** ignores these dates: if you press the button, the notification goes out immediately.
+
+### After send (read only)
+
+After a successful push the panel fills **Push sent at**, **Push delivered**, and **Stale endpoints removed**. For another message create a **new** notice.
+
+## Turn a banner off
+
+Untick **Show site banner** and save, or set **Banner until** to a time already in the past. A push already sent cannot be recalled.
+
+## Technical settings (Globals)
+
+**Globals** → **Programme alerts** remains the master switch for notifications. If alerts are off there, neither session reminders nor notice pushes in **Notices** go out.

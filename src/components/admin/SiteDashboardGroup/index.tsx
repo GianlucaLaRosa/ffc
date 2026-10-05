@@ -4,11 +4,13 @@ import { formatAdminURL } from 'payload/shared'
 import React from 'react'
 
 import './index.scss'
+import { asT } from '@/i18n/asT'
 
 const baseClass = 'collections'
 
-export default async function SiteDashboardGroup({ payload }: ServerProps) {
+export default async function SiteDashboardGroup({ i18n, payload }: ServerProps) {
   const adminRoute = payload.config.routes.admin
+  const t = i18n.t
 
   const active = await payload.findGlobal({
     slug: 'active-conference',
@@ -30,12 +32,12 @@ export default async function SiteDashboardGroup({ payload }: ServerProps) {
       : conference
 
   const activeTitle = conferenceTitle
-    ? `Conferenza attiva · ${conferenceTitle}`
-    : 'Conferenza attiva'
+    ? `${asT(t)('fcr:activeConference')} · ${conferenceTitle}`
+    : asT(t)('fcr:activeConference')
 
   const editionTitle = conferenceTitle
-    ? `Modifica edizione attiva · ${conferenceTitle}`
-    : 'Modifica edizione attiva'
+    ? `${asT(t)('fcr:editActiveEdition')} · ${conferenceTitle}`
+    : asT(t)('fcr:editActiveEdition')
 
   const where: Where = {
     and: [
@@ -59,8 +61,8 @@ export default async function SiteDashboardGroup({ payload }: ServerProps) {
 
   const archiveTitle =
     publicPast.totalDocs > 0
-      ? `Archivio conferenze · ${publicPast.totalDocs} pubbliche`
-      : 'Archivio conferenze'
+      ? `${asT(t)('fcr:conferenceArchive')} · ${asT(t)('fcr:publicCount', { count: publicPast.totalDocs })}`
+      : asT(t)('fcr:conferenceArchive')
 
   const activeHref = formatAdminURL({
     adminRoute,
@@ -95,14 +97,12 @@ export default async function SiteDashboardGroup({ payload }: ServerProps) {
             to="/docs"
             type="success"
           >
-            <strong className="editor-guide-dashboard__title">Guida per chi pubblica</strong>
-            <span className="editor-guide-dashboard__text">
-              Manuale in italiano: creare un’edizione, compilare il programma e pubblicare.
-            </span>
+            <strong className="editor-guide-dashboard__title">{asT(t)('fcr:editorGuideTitle')}</strong>
+            <span className="editor-guide-dashboard__text">{asT(t)('fcr:editorGuideText')}</span>
           </Banner>
         </div>
         <div className={`${baseClass}__group`}>
-          <h2 className={`${baseClass}__label`}>Sito</h2>
+          <h2 className={`${baseClass}__label`}>{asT(t)('fcr:site')}</h2>
           <ul className={`${baseClass}__card-list`}>
             {editionHref ? (
               <li>

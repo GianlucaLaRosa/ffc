@@ -21,6 +21,24 @@
     }
   }
 
+  &__routes {
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    padding: 0.85rem 1rem;
+  }
+
+  &__routes-help {
+    color: var(--theme-elevation-600);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 0;
+    padding-left: 1.75rem;
+  }
+
   &__status {
     color: var(--theme-elevation-600);
     margin: 0;

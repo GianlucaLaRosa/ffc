@@ -23,6 +23,10 @@ Pubblicate anche **giorni** e **sessioni**. Le bozze restano invisibili al pubbl
 
 Ogni edizione ammette **una scheda giorno per data**. Aprite quello già esistente.
 
+## Sul programma non c’è il segnalibro su una sessione
+
+Può essere un ramo con **Child items**, o una sessione con **abstract** collegati. I partecipanti salvano le foglie: i talk figli, oppure ciascun abstract. Vedere [Giorni e programma](/it/docs/giorni-e-programma).
+
 ## Orario della sessione rifiutato
 
 L’orario deve cadere tra inizio e fine del **giorno**. Allargate la fascia del giorno oppure correggete la sessione.
@@ -33,19 +37,25 @@ Aprite l’appendice già collegata a quell’edizione.
 
 ## Lo slug / il link è strano
 
-Si genera da anno + titolo. Correggetelo in colonna destra **prima** di mandare inviti. Poi pubblicate.
+Si genera da **Year** + **Title** (campo **Slug**, colonna destra). Correggetelo **prima** di mandare inviti. Poi pubblicate.
+
+In **archivio** l’indirizzo è `/archive/` seguito da quello slug. L’elenco è `/archive`. Se cambiate lo slug dopo aver condiviso un link, la pagina vecchia non si apre più. Vedere [Creare un’edizione](/it/docs/nuova-edizione).
 
 ## La mappa è sbagliata
 
-Avete forse invertito **Longitude** e **Latitude**. Vedere [Sede e mappa](/docs/sede).
+Avete forse invertito **Longitude** e **Latitude**. Vedere [Sede e mappa](/it/docs/sede).
 
 ## L’abstract non si collega alla sessione
 
 La sessione deve essere di un giorno **della stessa conferenza**. Non mescolate edizioni.
 
+## Nel programma non vedo gli abstract della sessione
+
+Controllate che ogni abstract sia **Pubblicato** e collegato a quella sessione (**Agenda items** sull’abstract, oppure elenco **Abstracts** sulla sessione). Poi aggiornate la pagina pubblica. Vedere [Abstract](/it/docs/abstract).
+
 ## Il link dell’abstract non apre la scheda
 
-Controllate che l’abstract (e l’edizione) sia **Pubblicato**. L’indirizzo usa il **Code** dopo `?abstract=`. Se il codice è cambiato dopo aver inviato il link, aggiornate il link. Vedere [Abstract](/docs/abstract).
+Controllate che l’abstract (e l’edizione) sia **Pubblicato**. L’indirizzo usa il **Code** dopo `?abstract=`. Se il codice è cambiato dopo aver inviato il link, aggiornate il link. Vedere [Abstract](/it/docs/abstract).
 
 ## Invia push rifiutato o non parte
 
@@ -53,15 +63,19 @@ Serve l’edizione **Pubblicato** e impostata come **Conferenza attiva**. Contro
 
 ## Non vedo Archive nel menu del sito
 
-Serve **almeno un’edizione** in **Archivio conferenze** (pubblicata, non quella attiva). Se l’elenco è vuoto, il pulsante **Archive** resta nascosto. Vedere [Pubblicare e archiviare](/docs/mettere-online).
+Serve **Enable public archive** acceso in **Archivio conferenze**, e **almeno un’edizione** spuntata (pubblicata, non quella attiva). Se l’interruttore è spento, anche `/archive` e `/archive/…` danno 404. Vedere [Pubblicare e archiviare](/it/docs/mettere-online).
 
 ## Da un’edizione in archivio non trovo la conferenza in home
 
-**Current edition** compare nel menu solo sulle pagine `/archive/…`. In alternativa, il **logo** in alto a sinistra apre sempre l’edizione attiva. Il titolo accanto al logo non cambia pagina: resta sull’edizione che state guardando.
+**Current edition** compare nel menu solo sull’elenco `/archive`. Sulla scheda di un’edizione passata usate la fascia **Archived edition** (**Open current edition**) oppure il **logo** in alto a sinistra. Il titolo accanto al logo resta sull’edizione che state guardando.
 
 ## Non vedo il banner dell’avviso sul sito
 
-Serve l’edizione **Pubblicato** e **Show site banner** acceso. Se **Banner from** è nel futuro il banner non c’è ancora; se **Banner until** è già passato è sparito. Date vuote = visibile subito, senza scadenza. La push non fa comparire il banner da sola. Vedere [Avvisi durante la conferenza](/docs/avvisi-conferenza).
+Serve l’edizione **Pubblicato** e **Show site banner** acceso. Se **Banner from** è nel futuro il banner non c’è ancora; se **Banner until** è già passato è sparito. Date vuote = visibile subito, senza scadenza. La push non fa comparire il banner da sola. Vedere [Avvisi durante la conferenza](/it/docs/avvisi-conferenza).
+
+## Cookie Policy o Privacy Policy vuote sul sito
+
+Aprite **Globals** → **Piè di pagina**, tab **Cookie Policy** e **Privacy Policy**. Compilate **Content** (e i campi di sintesi / titolare). Dopo la prima installazione il testo inglese di default si carica all’avvio solo se quei corpi sono ancora vuoti.
 
 ## Ho paura di aver cancellato qualcosa
 

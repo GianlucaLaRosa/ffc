@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
+import { copy, adminGroups } from '@/i18n/copy'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -12,11 +13,11 @@ export const Users: CollectionConfig = {
     update: authenticated,
   },
   labels: {
-    singular: 'Utente',
-    plural: 'Utenti',
+    singular: copy('User', 'Utente'),
+    plural: copy('Users', 'Utenti'),
   },
   admin: {
-    group: 'Contenuti',
+    group: adminGroups.content,
     defaultColumns: ['email', 'name'],
     useAsTitle: 'email',
   },

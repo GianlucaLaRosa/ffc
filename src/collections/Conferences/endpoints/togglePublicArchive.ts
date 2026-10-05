@@ -1,4 +1,5 @@
 import type { Endpoint } from 'payload'
+import { asT } from '@/i18n/asT'
 
 type ToggleBody = {
   publicArchive?: boolean
@@ -53,7 +54,7 @@ export const togglePublicArchiveEndpoint: Endpoint = {
 
     if (existing._status !== 'published') {
       return Response.json(
-        { message: 'Solo le conferenze pubblicate possono comparire nell’archivio pubblico.' },
+        { message: asT(req.t)('fcr:archivePublishedOnly') },
         { status: 400 },
       )
     }
@@ -76,7 +77,7 @@ export const togglePublicArchiveEndpoint: Endpoint = {
 
     if (activeId != null && String(activeId) === String(id)) {
       return Response.json(
-        { message: 'La conferenza attiva è in home, non in archivio.' },
+        { message: asT(req.t)('fcr:archiveNotActive') },
         { status: 400 },
       )
     }
@@ -114,7 +115,7 @@ export const togglePublicArchiveEndpoint: Endpoint = {
       const message =
         error && typeof error === 'object' && 'message' in error
           ? String((error as { message?: unknown }).message)
-          : 'Aggiornamento archivio pubblico non riuscito.'
+          : asT(req.t)('fcr:archiveUpdateFailed')
 
       req.payload.logger.error({
         err: error,

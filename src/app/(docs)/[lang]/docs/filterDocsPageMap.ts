@@ -1,7 +1,11 @@
 import type { PageMapItem } from 'nextra'
 
 function isDocsRoute(route: string): boolean {
-  return route === '/docs' || route.startsWith('/docs/')
+  return (
+    route === '/docs' ||
+    route.startsWith('/docs/') ||
+    /^\/(en|it)\/docs(\/|$)/.test(route)
+  )
 }
 
 /** Nextra also indexes App Router pages; keep only the editor handbook. */
@@ -18,7 +22,6 @@ export function filterDocsPageMap(items: PageMapItem[]): PageMapItem[] {
     if ('children' in item && Array.isArray(item.children)) {
       const children = filterDocsPageMap(item.children)
       if (children.length === 0) return []
-      // Flatten the /docs folder so the sidebar is a single list, not “Docs > pages”.
       return children
     }
 

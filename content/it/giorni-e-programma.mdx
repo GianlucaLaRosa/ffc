@@ -34,7 +34,7 @@ Nel giorno, l’elenco **Agenda items** mostra solo le sessioni **principali** (
 
 1. **Title** — titolo formattato della sessione
 2. Il **giorno** è già collegato se partite da qui
-3. **Start time** e **End time** — devono stare **dentro** l’orario del giorno. Appaiono dopo aver scelto il giorno
+3. **Start time** e **End time** — obbligatori, e devono stare **dentro** l’orario del giorno. Appaiono dopo aver scelto il giorno. Senza orario di inizio i promemoria di “My programme” non partono
 4. **Keynote** — spunta se volete evidenziarla graficamente
 5. **Icon** — facoltativa, cercabile per nome
 6. **Description** — note facoltative
@@ -47,14 +47,23 @@ Aprite una sessione principale. L’elenco **Child items** sono i talk o i sotto
 
 Il giorno si eredita dal genitore. Restano validi gli orari della giornata.
 
+Sul sito, i partecipanti salvano in “My programme” **solo le foglie**:
+
+- se una sessione ha **abstract**, il segnalibro sta su ciascun abstract (non sulla sessione)
+- se ha **Child items**, il segnalibro sta sui figli (e così via, in profondità)
+- se non ha né figli né abstract, si può salvare la sessione stessa (es. check-in)
+
+Gli abstract usano l’orario della sessione a cui sono collegati, per i promemoria.
+
 </Steps>
 
 <Callout type="info">
-  Lo stesso **abstract** può essere collegato a più sessioni. Gli abstract si gestiscono anche dalla linguetta **Abstract** della conferenza. Vedere [Abstract](/docs/abstract).
+  Lo stesso **abstract** può essere collegato a più sessioni. Sul sito pubblico, sotto ogni sessione del programma compare l’elenco di **tutti** gli abstract collegati: un clic apre la scheda. Gli abstract si gestiscono anche dalla linguetta **Abstract** della conferenza. Vedere [Abstract](/it/docs/abstract).
 </Callout>
 
 ## Errori tipici
 
 - Due giorni con la **stessa data** sulla stessa edizione: il sistema lo rifiuta.
 - Orario della sessione **fuori** dalla fascia del giorno: compare un errore, allargate il giorno o correggete l’orario.
+- **Start time** o **End time** vuoti: il salvataggio in pannello è rifiutato. Servono anche ai promemoria.
 - Cercare le sessioni nel menu laterale: sono nascoste di proposito. Si entra da **Conferenze → edizione → Giorni → giorno**.

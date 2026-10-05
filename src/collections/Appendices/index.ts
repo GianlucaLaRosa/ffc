@@ -11,6 +11,8 @@ import {
   revalidateEditionByConference,
   revalidateEditionByConferenceDelete,
 } from '@/utilities/revalidatePublicCache'
+import { adminGroups, copy } from '@/i18n/copy'
+import { asT } from '@/i18n/asT'
 
 const validateUniqueConference: RelationshipFieldValidation = async (value, { req, id }) => {
   if (value == null) return true
@@ -31,7 +33,7 @@ const validateUniqueConference: RelationshipFieldValidation = async (value, { re
   })
 
   if (existing.docs.length > 0) {
-    return 'Questa conferenza ha già un’appendice. Modificate quella esistente.'
+    return asT(req.t)('fcr:uniqueAppendix')
   }
 
   return true
@@ -40,8 +42,8 @@ const validateUniqueConference: RelationshipFieldValidation = async (value, { re
 export const Appendices: CollectionConfig<'appendices'> = {
   slug: 'appendices',
   labels: {
-    singular: 'Appendice',
-    plural: 'Appendici',
+    singular: copy('Appendix', 'Appendice'),
+    plural: copy('Appendices', 'Appendici'),
   },
   access: {
     create: authenticated,
@@ -51,11 +53,13 @@ export const Appendices: CollectionConfig<'appendices'> = {
   },
   admin: {
     hidden: true,
-    group: 'Conferenze',
+    group: adminGroups.conferences,
     useAsTitle: 'conference',
     defaultColumns: ['conference', 'updatedAt', '_status'],
-    description:
+    description: copy(
+      'One appendix per edition. Add ordered blocks (text, institution list, …) and drag to reorder.',
       'Un’appendice per edizione. Aggiungete blocchi ordinati (testo, elenco enti, …) e trascinateli per l’ordine.',
+    ),
   },
   fields: [
     {
@@ -75,8 +79,10 @@ export const Appendices: CollectionConfig<'appendices'> = {
         InstitutionsAppendixBlock,
       ],
       admin: {
-        description:
+        description: copy(
+          'Each block needs a Title (tab label). Basic text uses the same Content columns, accordion, and layout as the intro. Drag to reorder tabs.',
           'Ogni blocco ha un Title obbligatorio (etichetta della linguetta). Basic text usa le stesse colonne Content, accordion e layout dell’intro. Trascinate per riordinare le linguette.',
+        ),
       },
     },
     {
@@ -90,8 +96,10 @@ export const Appendices: CollectionConfig<'appendices'> = {
       validate: validateUniqueConference,
       admin: {
         position: 'sidebar',
-        description:
+        description: copy(
+          'Edition this appendix belongs to. Each conference can have only one.',
           'Edizione a cui appartiene questa appendice. Ogni conferenza può averne una sola.',
+        ),
       },
     },
   ],

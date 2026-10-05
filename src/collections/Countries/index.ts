@@ -2,12 +2,13 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
+import { adminGroups, copy } from '@/i18n/copy'
 
 export const Countries: CollectionConfig<'countries'> = {
   slug: 'countries',
   labels: {
-    singular: 'Paese',
-    plural: 'Paesi',
+    singular: copy('Country', 'Paese'),
+    plural: copy('Countries', 'Paesi'),
   },
   access: {
     create: authenticated,
@@ -17,10 +18,13 @@ export const Countries: CollectionConfig<'countries'> = {
   },
   defaultSort: 'name',
   admin: {
-    group: 'Riferimenti',
+    group: adminGroups.references,
     useAsTitle: 'name',
     defaultColumns: ['name', 'updatedAt'],
-    description: 'Paesi del mondo per gli enti. Dati di riferimento (seed).',
+    description: copy(
+      'World countries for institutions. Reference data (seeded).',
+      'Paesi del mondo per gli enti. Dati di riferimento (seed).',
+    ),
   },
   fields: [
     {
