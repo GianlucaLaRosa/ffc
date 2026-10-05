@@ -42,6 +42,7 @@ In `.env`, `NEXT_PUBLIC_SERVER_URL` deve coincidere con l’URL del dev server (
 | `pnpm payload generate:types` | Rigenera `src/payload-types.ts` dopo cambi di schema |
 | `pnpm payload generate:importmap` | Rigenera l’import map admin |
 | `pnpm ci` | `migrate` + `build` |
+| `pnpm seed` | Edizione 2025 da brochure (salta se già presente) |
 
 ### Docker (app intera)
 
