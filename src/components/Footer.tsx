@@ -35,7 +35,7 @@ function OrgLink({
 
 export function Footer({ editionYear = 2026, footer }: FooterProps) {
   return (
-    <footer className="border-t border-line bg-surface py-10 text-xs text-fg-subtle">
+    <footer className="border-t border-line bg-surface py-10 pb-[max(2.5rem,env(safe-area-inset-bottom))] text-xs text-fg-subtle">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {(footer?.structure?.label || footer?.delegation?.label) && (
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">

@@ -76,11 +76,11 @@ export function AbstractModal({
       }}
     >
       <div
-        className="relative w-full max-w-4xl h-full sm:h-[88vh] bg-surface rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        className="relative w-full max-w-4xl h-[100dvh] sm:h-[88vh] max-h-[100dvh] bg-surface rounded-none sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 pt-[env(safe-area-inset-top)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-subtle/90 backdrop-blur shrink-0">
-          <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="flex items-center justify-between gap-2 px-4 sm:px-6 py-3 sm:py-4 border-b border-line bg-subtle/90 backdrop-blur shrink-0">
+          <div className="flex items-center gap-2.5 flex-wrap min-w-0">
             {abstract.code && (
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-soft text-brand-soft-fg border border-brand-border">
                 {abstract.code}
@@ -102,12 +102,12 @@ export function AbstractModal({
             ))}
           </div>
 
-          <div className="flex items-center gap-1 -mr-2">
-            <CopyOverlayLink className="p-2 text-fg-subtle hover:text-fg-muted hover:bg-line/60 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand" />
+          <div className="flex items-center gap-1 -mr-1 shrink-0">
+            <CopyOverlayLink className="inline-flex size-11 sm:size-9 items-center justify-center text-fg-subtle hover:text-fg-muted hover:bg-line/60 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand" />
             <button
               type="button"
               onClick={onClose}
-              className="p-2 text-fg-subtle hover:text-fg-muted hover:bg-line/60 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+              className="inline-flex size-11 sm:size-9 items-center justify-center text-fg-subtle hover:text-fg-muted hover:bg-line/60 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
               aria-label="Close abstract details modal"
             >
               <X className="w-6 h-6" />
@@ -115,7 +115,7 @@ export function AbstractModal({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-6 sm:px-8 space-y-8">
+        <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-8 sm:py-6 space-y-8">
           <div>
             <h1
               id="abstract-modal-title"
@@ -186,15 +186,16 @@ export function AbstractModal({
                   return (
                     <li
                       key={row.person.id}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-subtle border border-line/80 text-xs font-medium text-fg"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-subtle border border-line/80 text-xs font-medium text-fg max-w-full"
                     >
-                      <span>{personName(row.person)}</span>
-                      <span className="text-fg-subtle">
+                      <span className="min-w-0">{personName(row.person)}</span>
+                      <span className="text-fg-subtle shrink-0">
                         {AUTHOR_ROLE_LABEL[row.role] || row.role}
                       </span>
                       {instName && (
-                        <span className="text-fg-subtle flex items-center gap-0.5">
-                          • <Building2 className="w-3 h-3 inline" /> {instName}
+                        <span className="text-fg-subtle flex items-center gap-0.5 min-w-0">
+                          • <Building2 className="w-3 h-3 inline shrink-0" />{' '}
+                          <span className="truncate">{instName}</span>
                         </span>
                       )}
                     </li>
@@ -209,7 +210,7 @@ export function AbstractModal({
               {contentSections.map((sec, i) => (
                 <section
                   key={sec.id || i}
-                  className="p-5 rounded-xl bg-subtle/70 border border-line/80"
+                  className="p-4 sm:p-5 rounded-xl bg-subtle/70 border border-line/80"
                 >
                   {sec.title && (
                     <h3 className="text-sm font-bold uppercase tracking-wider text-fg mb-2.5 pb-2 border-b border-line">
@@ -232,7 +233,7 @@ export function AbstractModal({
               {appendices.map((row, i) => (
                 <section
                   key={row.id || i}
-                  className="p-5 rounded-xl border border-line bg-surface"
+                  className="p-4 sm:p-5 rounded-xl border border-line bg-surface"
                 >
                   {row.title && (
                     <h3 className="text-sm font-bold text-fg mb-2">{row.title}</h3>
@@ -266,7 +267,7 @@ export function AbstractModal({
                 <img
                   src={previewSlide.url}
                   alt={previewSlide.alt}
-                  className="w-full h-52 object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+                  className="w-full h-40 sm:h-52 object-cover transition-transform duration-200 group-hover:scale-[1.02]"
                 />
                 {previewSlide.caption ? (
                   <span className="block p-3 text-xs text-fg-muted bg-surface border-t border-line italic">
@@ -278,11 +279,11 @@ export function AbstractModal({
           ) : null}
         </div>
 
-        <div className="px-6 py-3.5 border-t border-line bg-subtle flex justify-end shrink-0">
+        <div className="px-4 sm:px-6 py-3.5 border-t border-line bg-subtle flex justify-stretch sm:justify-end shrink-0 pb-[max(0.875rem,env(safe-area-inset-bottom))]">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-lg bg-fg text-page text-sm font-medium hover:opacity-90 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-brand"
+            className="w-full sm:w-auto min-h-11 px-5 py-2 rounded-lg bg-fg text-page text-sm font-medium hover:opacity-90 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-brand"
           >
             Close
           </button>

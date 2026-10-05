@@ -82,7 +82,7 @@ export function ProgrammeSection({ days }: ProgrammeSectionProps) {
   const formatTime = (dateStr?: string | null) => formatConferenceTime(dateStr)
 
   return (
-    <section id="programme" className="scroll-mt-10 md:scroll-mt-20 py-12 sm:py-16">
+    <section id="programme" className="scroll-mt-24 sm:scroll-mt-28 py-10 sm:py-16">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-line gap-4">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-brand-soft-fg">
@@ -110,10 +110,10 @@ export function ProgrammeSection({ days }: ProgrammeSectionProps) {
                 onClick={() => toggleDay(String(day.id))}
                 aria-expanded={isDayOpen}
                 aria-controls={`day-content-${day.id}`}
-                className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-subtle/80 transition-colors focus:outline-none focus:ring-2 focus:ring-brand/50"
+                className="w-full px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-3 text-left hover:bg-subtle/80 transition-colors focus:outline-none focus:ring-2 focus:ring-brand/50 min-h-11"
               >
-                <div className="flex items-center gap-4">
-                  <div>
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="min-w-0">
                     <h3 className="text-lg sm:text-xl font-bold text-fg leading-tight">
                       {formattedDayDate}
                     </h3>
@@ -123,7 +123,7 @@ export function ProgrammeSection({ days }: ProgrammeSectionProps) {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 shrink-0">
                   <span className="text-xs text-fg-subtle font-medium hidden sm:inline-block">
                     {rootItems.length} {rootItems.length === 1 ? 'session' : 'sessions'}
                   </span>
@@ -217,7 +217,7 @@ function AgendaItemCard({
     <div
       id={`agenda-item-${item.id}`}
       onClick={hasAbstract && primaryAbstract ? () => openAbstractModal(primaryAbstract) : undefined}
-      className={`relative rounded-xl transition-all duration-200 border scroll-mt-28 ${
+      className={`relative rounded-xl transition-all duration-200 border scroll-mt-32 ${
         live
           ? 'bg-brand-soft/70 border-brand ring-2 ring-brand/30 shadow-sm'
           : soon
@@ -230,8 +230,8 @@ function AgendaItemCard({
       } ${hasAbstract ? 'cursor-pointer hover:border-brand hover:shadow-md' : ''}`}
     >
       <div className="p-4 sm:p-5">
-        <div className="flex items-center justify-between gap-2 mb-2.5">
-          <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-start sm:items-center justify-between gap-2 mb-2.5">
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
             {timeDisplay && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-subtle text-fg-muted">
                 <Clock className="w-3 h-3 text-fg-subtle" />
@@ -259,14 +259,14 @@ function AgendaItemCard({
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             {hasAbstract && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-soft text-brand-soft-fg">
+              <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-soft text-brand-soft-fg">
                 View Abstract &rarr;
               </span>
             )}
             <SaveAgendaButton item={item} />
-            <div className="w-7 h-7 rounded-lg bg-brand-soft border border-brand-border flex items-center justify-center text-brand">
+            <div className="hidden sm:flex w-7 h-7 rounded-lg bg-brand-soft border border-brand-border items-center justify-center text-brand">
               <SessionIcon name={item.icon} className="w-4 h-4" />
             </div>
           </div>
@@ -292,9 +292,9 @@ function AgendaItemCard({
                   e.stopPropagation()
                   openAbstractModal(abs)
                 }}
-                className="w-full flex items-center justify-between text-xs text-fg-subtle hover:text-brand-soft-fg"
+                className="w-full flex items-center justify-between gap-2 min-h-11 text-xs text-fg-subtle hover:text-brand-soft-fg"
               >
-                <span className="font-semibold text-brand-soft-fg">
+                <span className="font-semibold text-brand-soft-fg truncate">
                   {abs.code || abs.plainTitle || 'Scientific Abstract'}
                 </span>
                 {abstractStatusLabel(abs.status) && (
@@ -314,7 +314,7 @@ function AgendaItemCard({
               onClick={(e) => onToggleChildren(String(item.id), e)}
               aria-expanded={isExpanded}
               aria-label={`Toggle ${children.length} Session Items`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-subtle hover:bg-line text-fg transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+              className="inline-flex items-center gap-1.5 px-3 py-2.5 min-h-11 rounded-lg text-xs font-semibold bg-subtle hover:bg-line text-fg transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
             >
               <span>
                 {isExpanded

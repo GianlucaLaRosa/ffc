@@ -4,6 +4,7 @@ import type { SerializedBlockNode, SerializedLinkNode } from '@payloadcms/richte
 import {
   LinkJSXConverter,
   RichText as PayloadRichText,
+  type JSXConverterArgs,
   type JSXConvertersFunction,
 } from '@payloadcms/richtext-lexical/react'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
@@ -108,39 +109,137 @@ function UploadFigure({
   )
 }
 
-const jsxConverters: JSXConvertersFunction = ({ defaultConverters }) => ({
-  ...defaultConverters,
-  ...LinkJSXConverter({ internalDocToHref }),
-  heading: (args) => {
-    const tag = args.node.tag
-    const safeTag = tag === 'h3' || tag === 'h4' || tag === 'h5' || tag === 'h6' ? tag : 'h3'
-    const node = { ...args.node, tag: safeTag }
-    if (typeof defaultConverters.heading === 'function') {
-      return defaultConverters.heading({ ...args, node })
-    }
-    return null
-  },
-  text: (args) => {
-    const converted =
-      typeof defaultConverters.text === 'function' ? defaultConverters.text(args) : args.node.text
-    return applyTextState(args.node as { $?: Record<string, string> }, converted)
-  },
-  upload: ({ node }) => {
-    if (typeof node.value !== 'object' || node.value == null) return null
+function inlineChildren(args: Pick<JSXConverterArgs, 'node' | 'nodesToJSX'>) {
+  return args.nodesToJSX({ nodes: args.node.children ?? [] })
+}
+
+/** Payload's checklist converter uses uuid() which mismatches SSR vs client. */
+function listItemConverter(args: JSXConverterArgs) {
+  const { childIndex, node, nodesToJSX, parent } = args
+  const children = node.children ?? []
+  const hasSubLists = children.some((child: { type?: string }) => child.type === 'list')
+  const content = nodesToJSX({ nodes: children })
+
+  if (parent && 'listType' in parent && parent.listType === 'check') {
+    const checkboxId = `rt-check-${childIndex}-${String(node.value ?? 'item')}`
     return (
-      <UploadFigure
-        value={node.value as Media}
-        extraAlt={typeof node.fields?.alt === 'string' ? node.fields.alt : null}
-        extraCaption={node.fields?.caption as Media['caption']}
-      />
+      <li
+        aria-checked={node.checked ? 'true' : 'false'}
+        className={`list-item-checkbox${node.checked ? ' list-item-checkbox-checked' : ' list-item-checkbox-unchecked'}${hasSubLists ? ' nestedListItem' : ''}`}
+        role="checkbox"
+        style={{ listStyleType: 'none' }}
+        tabIndex={-1}
+        value={node.value}
+      >
+        {hasSubLists ? (
+          content
+        ) : (
+          <>
+            <input checked={Boolean(node.checked)} id={checkboxId} readOnly type="checkbox" />
+            <label htmlFor={checkboxId}>{content}</label>
+            <br />
+          </>
+        )}
+      </li>
     )
-  },
-  blocks: {
-    mediaBlock: ({ node }: { node: SerializedBlockNode<MediaBlock> }) => (
-      <MediaBlockFigure fields={node.fields} />
-    ),
-  },
-})
+  }
+
+  return (
+    <li
+      className={hasSubLists ? 'nestedListItem' : ''}
+      style={hasSubLists ? { listStyleType: 'none' } : undefined}
+      value={node.value}
+    >
+      {content}
+    </li>
+  )
+}
+
+function createConverters(inline: boolean): JSXConvertersFunction {
+  return ({ defaultConverters }) => ({
+    ...defaultConverters,
+    ...LinkJSXConverter({ internalDocToHref }),
+    heading: (args) => {
+      if (inline) {
+        const children = inlineChildren(args)
+        if (!children?.length) return null
+        return <span>{children}</span>
+      }
+      const tag = args.node.tag
+      const safeTag = tag === 'h3' || tag === 'h4' || tag === 'h5' || tag === 'h6' ? tag : 'h3'
+      const node = { ...args.node, tag: safeTag }
+      if (typeof defaultConverters.heading === 'function') {
+        return defaultConverters.heading({ ...args, node })
+      }
+      return null
+    },
+    paragraph: (args) => {
+      if (inline) {
+        const children = inlineChildren(args)
+        if (!children?.length) return null
+        return <span>{children}</span>
+      }
+      if (typeof defaultConverters.paragraph === 'function') {
+        return defaultConverters.paragraph(args)
+      }
+      return null
+    },
+    quote: (args) => {
+      if (inline) {
+        const children = inlineChildren(args)
+        if (!children?.length) return null
+        return <span>{children}</span>
+      }
+      if (typeof defaultConverters.quote === 'function') {
+        return defaultConverters.quote(args)
+      }
+      return null
+    },
+    list: (args) => {
+      if (inline) {
+        const children = inlineChildren(args)
+        if (!children?.length) return null
+        return <span>{children}</span>
+      }
+      if (typeof defaultConverters.list === 'function') {
+        return defaultConverters.list(args)
+      }
+      return null
+    },
+    listitem: (args) => {
+      if (inline) {
+        const children = inlineChildren(args)
+        if (!children?.length) return null
+        return <span>{children} </span>
+      }
+      return listItemConverter(args)
+    },
+    horizontalRule: inline ? () => null : defaultConverters.horizontalRule,
+    text: (args) => {
+      const converted =
+        typeof defaultConverters.text === 'function' ? defaultConverters.text(args) : args.node.text
+      return applyTextState(args.node as { $?: Record<string, string> }, converted)
+    },
+    upload: ({ node }) => {
+      if (inline) return null
+      if (typeof node.value !== 'object' || node.value == null) return null
+      return (
+        <UploadFigure
+          value={node.value as Media}
+          extraAlt={typeof node.fields?.alt === 'string' ? node.fields.alt : null}
+          extraCaption={node.fields?.caption as Media['caption']}
+        />
+      )
+    },
+    blocks: {
+      mediaBlock: ({ node }: { node: SerializedBlockNode<MediaBlock> }) =>
+        inline ? null : <MediaBlockFigure fields={node.fields} />,
+    },
+  })
+}
+
+const jsxConverters = createConverters(false)
+const inlineJsxConverters = createConverters(true)
 
 export interface RichTextProps {
   content: unknown
@@ -155,12 +254,21 @@ export function RichText({ content, className = '', disableContainer = false }: 
   }
   if (typeof content !== 'object' || !('root' in content)) return null
 
-  return (
+  const inline = className.includes('rich-text-inline')
+  const skipContainer = disableContainer || inline
+
+  const rendered = (
     <PayloadRichText
       data={content as DefaultTypedEditorState}
-      converters={jsxConverters}
-      disableContainer={disableContainer}
-      className={cn('rich-text', className)}
+      converters={inline ? inlineJsxConverters : jsxConverters}
+      disableContainer={skipContainer}
+      className={skipContainer ? undefined : cn('rich-text', className)}
     />
   )
+
+  if (inline) {
+    return <span className={className}>{rendered}</span>
+  }
+
+  return rendered
 }

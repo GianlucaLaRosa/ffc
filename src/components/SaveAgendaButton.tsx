@@ -27,7 +27,7 @@ export function SaveAgendaButton({ item }: { item: AgendaItem }) {
       aria-label={label}
       title={label}
       disabled={!isReady}
-      className={`inline-flex size-7 items-center justify-center rounded-lg border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+      className={`inline-flex size-11 sm:size-7 items-center justify-center rounded-lg border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
         saved
           ? 'bg-brand-soft border-brand-border text-brand-soft-fg'
           : partial

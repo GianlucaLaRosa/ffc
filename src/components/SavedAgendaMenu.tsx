@@ -47,32 +47,38 @@ export function SavedAgendaMenu() {
     }
   }, [open])
 
+  const savedCount = isReady ? items.length : 0
+  const hasSaved = savedCount > 0
   const hasAlert = Boolean(currentSaved || upcomingSaved)
+  const buttonLabel = programmeButtonLabel({
+    savedCount,
+    isReady,
+    live: Boolean(currentSaved),
+    soon: Boolean(upcomingSaved) && !currentSaved,
+  })
 
   return (
     <div ref={rootRef} className="relative">
       <button
         type="button"
-        aria-label="My programme"
+        aria-label={buttonLabel}
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((prev) => !prev)}
-        className={`relative inline-flex size-9 items-center justify-center rounded-lg text-fg-muted hover:bg-subtle hover:text-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
-          hasAlert ? 'text-brand-soft-fg' : ''
+        className={`relative inline-flex size-11 md:size-9 items-center justify-center rounded-lg hover:bg-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+          hasSaved ? 'text-brand-soft-fg hover:text-brand-soft-fg' : 'text-fg-muted hover:text-fg'
         }`}
       >
-        {isReady && items.length > 0 ? (
+        {hasSaved ? (
           <BookmarkCheck className="size-4" aria-hidden />
         ) : (
           <Bookmark className="size-4" aria-hidden />
         )}
-        {isReady && items.length > 0 ? (
-          <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-brand text-brand-fg text-[10px] font-bold leading-4 text-center">
-            {items.length}
-          </span>
-        ) : null}
         {hasAlert ? (
-          <span className="absolute -bottom-0.5 -right-0.5 size-2 rounded-full bg-accent ring-2 ring-surface" />
+          <span
+            className="absolute top-1.5 right-1.5 md:top-1 md:right-1 size-2 rounded-full bg-accent ring-2 ring-surface"
+            aria-hidden
+          />
         ) : null}
       </button>
 
@@ -81,24 +87,28 @@ export function SavedAgendaMenu() {
           id={panelId}
           role="dialog"
           aria-label="My programme"
-          className="absolute right-0 top-full mt-2 w-[min(22rem,calc(100vw-2rem))] max-h-[min(28rem,70vh)] overflow-hidden rounded-2xl border border-line bg-surface shadow-lg z-50 max-md:fixed max-md:left-4 max-md:right-4 max-md:w-auto max-md:top-[4.25rem]"
+          className="absolute right-0 top-full mt-2 w-[min(22rem,calc(100vw-2rem))] max-h-[min(28rem,70dvh)] overflow-hidden rounded-2xl border border-line bg-surface shadow-lg z-50 max-md:fixed max-md:left-4 max-md:right-4 max-md:w-auto max-md:top-[calc(4.25rem+env(safe-area-inset-top))]"
         >
           <div className="px-4 py-3 border-b border-line flex items-center justify-between gap-2">
             <div>
               <p className="text-sm font-bold text-fg">My programme</p>
-              <p className="text-xs text-fg-subtle">Saved sessions, in time order</p>
+              <p className="text-xs text-fg-subtle">
+                {hasSaved
+                  ? `${savedCount} ${savedCount === 1 ? 'saved session' : 'saved sessions'}, in time order`
+                  : 'Saved sessions, in time order'}
+              </p>
             </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close my programme"
-              className="inline-flex size-8 items-center justify-center rounded-lg text-fg-muted hover:bg-subtle"
+              className="inline-flex size-11 items-center justify-center rounded-lg text-fg-muted hover:bg-subtle"
             >
               <X className="size-4" aria-hidden />
             </button>
           </div>
 
-          <div className="overflow-y-auto max-h-[min(22rem,60vh)] p-2">
+          <div className="overflow-y-auto max-h-[min(22rem,55dvh)] p-2">
             {notificationsAvailable ? (
               <div className="px-2 pb-2 mb-2 border-b border-line space-y-2">
                 {iPhoneInstallHint ? (
@@ -195,7 +205,7 @@ export function SavedAgendaMenu() {
                             type="button"
                             onClick={() => removeItem(item.id)}
                             aria-label={`Remove ${item.title} from my programme`}
-                            className="shrink-0 inline-flex size-8 items-center justify-center rounded-lg text-fg-subtle hover:bg-surface hover:text-fg"
+                            className="shrink-0 inline-flex size-11 items-center justify-center rounded-lg text-fg-subtle hover:bg-surface hover:text-fg"
                           >
                             <X className="size-3.5" aria-hidden />
                           </button>
@@ -243,7 +253,7 @@ export function UpcomingSessionBanner() {
           type="button"
           onClick={() => setDismissedId(item.id)}
           aria-label="Dismiss upcoming session alert"
-          className="shrink-0 inline-flex size-8 items-center justify-center rounded-lg text-accent-soft-fg hover:bg-accent/15"
+          className="shrink-0 inline-flex size-11 items-center justify-center rounded-lg text-accent-soft-fg hover:bg-accent/15"
         >
           <X className="size-4" aria-hidden />
         </button>
@@ -257,4 +267,24 @@ function formatSavedTime(startTime?: string | null, endTime?: string | null): st
   const end = formatConferenceTime(endTime)
   if (start && end) return `${start} – ${end}`
   return start
+}
+
+function programmeButtonLabel({
+  savedCount,
+  isReady,
+  live,
+  soon,
+}: {
+  savedCount: number
+  isReady: boolean
+  live: boolean
+  soon: boolean
+}): string {
+  if (!isReady || savedCount === 0) return 'My programme'
+
+  const count =
+    savedCount === 1 ? '1 saved session' : `${savedCount} saved sessions`
+  if (live) return `My programme, ${count}, a saved session is live`
+  if (soon) return `My programme, ${count}, a saved session is starting soon`
+  return `My programme, ${count}`
 }

@@ -24,7 +24,7 @@ export function VenueSection({ conference }: VenueSectionProps) {
   return (
     <section
       id="venue"
-      className="scroll-mt-10 md:scroll-mt-20 py-12 sm:py-16 border-t border-line"
+      className="scroll-mt-24 sm:scroll-mt-28 py-10 sm:py-16 border-t border-line"
     >
       <div className="mb-8 pb-4 border-b border-line">
         <span className="text-xs font-bold uppercase tracking-wider text-brand-soft-fg">
@@ -36,7 +36,7 @@ export function VenueSection({ conference }: VenueSectionProps) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        <div className="lg:col-span-1 rounded-2xl bg-surface border border-line/90 p-6 shadow-xs space-y-5">
+        <div className="lg:col-span-1 rounded-2xl bg-surface border border-line/90 p-5 sm:p-6 shadow-xs space-y-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-brand-soft text-brand-soft-fg flex items-center justify-center shrink-0">
               <MapPin className="w-5 h-5" />
@@ -65,7 +65,7 @@ export function VenueSection({ conference }: VenueSectionProps) {
               href={mapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-brand-fg text-sm font-semibold transition-colors shadow-xs focus:outline-none focus:ring-2 focus:ring-brand"
+              className="inline-flex items-center justify-center gap-2 w-full min-h-11 px-4 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-brand-fg text-sm font-semibold transition-colors shadow-xs focus:outline-none focus:ring-2 focus:ring-brand"
               aria-label="Open location in Google Maps (opens in new tab)"
             >
               <span>Get Directions in Maps</span>
@@ -74,7 +74,7 @@ export function VenueSection({ conference }: VenueSectionProps) {
           )}
         </div>
 
-        <div className="lg:col-span-2 rounded-2xl bg-surface border border-line/90 p-6 sm:p-8 shadow-xs">
+        <div className="lg:col-span-2 rounded-2xl bg-surface border border-line/90 p-5 sm:p-8 shadow-xs">
           <h3 className="text-lg font-bold text-fg mb-4 pb-2 border-b border-line">
             Directions, Transport & Delegate Services
           </h3>

@@ -60,7 +60,7 @@ export function PhotoCarouselOverlay({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[60] flex flex-col bg-fg/92 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex flex-col bg-fg/92 backdrop-blur-sm pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
       role="dialog"
       aria-modal="true"
       aria-labelledby="photo-carousel-title"
@@ -77,11 +77,11 @@ export function PhotoCarouselOverlay({
           {safeIndex + 1} / {slides.length}
         </p>
         <div className="flex items-center gap-1">
-          <CopyOverlayLink className="p-2 rounded-full text-page/80 hover:text-page hover:bg-page/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand" />
+          <CopyOverlayLink className="inline-flex size-11 items-center justify-center rounded-full text-page/80 hover:text-page hover:bg-page/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand" />
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full text-page/80 hover:text-page hover:bg-page/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+            className="inline-flex size-11 items-center justify-center rounded-full text-page/80 hover:text-page hover:bg-page/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
             aria-label="Close photo gallery"
           >
             <X className="w-6 h-6" />
@@ -90,7 +90,7 @@ export function PhotoCarouselOverlay({
       </div>
 
       <div
-        className="relative flex-1 flex items-center justify-center px-12 py-2 min-h-0"
+        className="relative flex-1 flex items-center justify-center px-4 sm:px-12 py-2 min-h-0"
         onClick={(event) => event.stopPropagation()}
         onTouchStart={(event) => {
           touchStartX.current = event.changedTouches[0]?.clientX ?? null
@@ -109,7 +109,7 @@ export function PhotoCarouselOverlay({
           <button
             type="button"
             onClick={() => goTo(-1)}
-            className="absolute left-2 sm:left-4 p-2 rounded-full bg-page/10 text-page hover:bg-page/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+            className="absolute left-1 sm:left-4 inline-flex size-11 items-center justify-center rounded-full bg-page/10 text-page hover:bg-page/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
             aria-label="Previous photo"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -127,7 +127,7 @@ export function PhotoCarouselOverlay({
           <button
             type="button"
             onClick={() => goTo(1)}
-            className="absolute right-2 sm:right-4 p-2 rounded-full bg-page/10 text-page hover:bg-page/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+            className="absolute right-1 sm:right-4 inline-flex size-11 items-center justify-center rounded-full bg-page/10 text-page hover:bg-page/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
             aria-label="Next photo"
           >
             <ChevronRight className="w-6 h-6" />

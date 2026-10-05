@@ -1,21 +1,49 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { RichText } from './RichText'
 import { ThemeToggle } from './ThemeToggle'
 import { SavedAgendaMenu } from './SavedAgendaMenu'
 import { InstallPwaButton } from './InstallPwaButton'
-import { Calendar, MapPin, BookOpen } from 'lucide-react'
+import { Calendar, MapPin, BookOpen, Home } from 'lucide-react'
 import { mediaUrl } from '@/utilities/conferenceUi'
+import { ArchiveNav } from '@/components/ArchiveNav'
+import type { ArchivedEditionLink } from '@/utilities/getConferenceEdition'
+
+const navLinkClassName =
+  'px-3.5 py-2 rounded-lg text-sm font-semibold text-fg-muted hover:text-brand-soft-fg hover:bg-brand-soft/70 transition-colors flex items-center gap-2'
+const mobileNavLinkClassName =
+  'flex items-center gap-3 px-4 py-3 min-h-11 rounded-lg text-sm font-semibold text-fg hover:bg-brand-soft hover:text-brand-soft-fg'
+
+function CurrentEditionLink({ variant }: { variant: 'desktop' | 'mobile' }) {
+  return (
+    <Link href="/" className={variant === 'mobile' ? mobileNavLinkClassName : navLinkClassName}>
+      <Home className="w-4 h-4 text-brand" aria-hidden />
+      <span>Current edition</span>
+    </Link>
+  )
+}
 
 export interface HeaderProps {
   editionName: any
   editionYear?: number | null
   logo?: any
+  archivedEditions?: ArchivedEditionLink[]
+  currentSlug?: string | null
+  isArchived?: boolean
 }
 
-export function Header({ editionName, editionYear, logo }: HeaderProps) {
+export function Header({
+  editionName,
+  editionYear,
+  logo,
+  archivedEditions = [],
+  currentSlug,
+  isArchived = false,
+}: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const logoSrc = mediaUrl(logo) || '/logo.png'
 
   const navLinks = [
     { label: 'Programme', href: '#programme', icon: Calendar },
@@ -32,44 +60,49 @@ export function Header({ editionName, editionYear, logo }: HeaderProps) {
     }
   }
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
-    <header className="sticky top-0 z-40 bg-surface/95 backdrop-blur-md border-b border-line/80 shadow-xs transition-all">
+    <header className="sticky top-0 z-40 bg-surface/95 backdrop-blur-md border-b border-line/80 shadow-xs transition-all pt-[env(safe-area-inset-top)]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault()
-              window.scrollTo({ top: 0, behavior: 'smooth' })
-            }}
-            className="flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-brand rounded-lg p-1"
-          >
-            {mediaUrl(logo) ? (
-              // eslint-disable-next-line @next/next/no-img-element
+        <div className="flex items-center justify-between gap-2 h-16 sm:h-20">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <Link
+              href="/"
+              aria-label="Current edition"
+              onClick={(e) => {
+                if (!isArchived) {
+                  e.preventDefault()
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }
+                setMobileMenuOpen(false)
+              }}
+              className="shrink-0 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-brand"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={mediaUrl(logo) || ''}
-                alt="FFC Ricerca Logo"
-                className="h-10 sm:h-11 w-auto object-contain rounded"
+                src={logoSrc}
+                alt=""
+                className="h-9 sm:h-11 w-auto object-contain rounded"
               />
-            ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src="/logo.png"
-                alt="FFC Ricerca Logo"
-                className="h-10 sm:h-11 w-auto object-contain rounded"
-              />
-            )}
-            <div className="leading-tight">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-soft-fg block">
+            </Link>
+            <button
+              type="button"
+              onClick={scrollToTop}
+              className="leading-tight min-w-0 rounded-lg p-1 text-left focus:outline-none focus:ring-2 focus:ring-brand"
+            >
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-brand-soft-fg hidden sm:block">
                 Scientific Event {editionYear || ''}
               </span>
-              <div className="text-sm sm:text-base font-extrabold text-fg line-clamp-1">
+              <span className="block text-sm sm:text-base font-extrabold text-fg line-clamp-1">
                 <RichText content={editionName} disableContainer className="rich-text-inline" />
-              </div>
-            </div>
-          </a>
+              </span>
+            </button>
+          </div>
 
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-0.5 sm:gap-2 shrink-0">
             <nav className="hidden md:flex items-center gap-1 sm:gap-2" aria-label="Main Navigation">
               {navLinks.map((link) => {
                 const Icon = link.icon
@@ -78,25 +111,32 @@ export function Header({ editionName, editionYear, logo }: HeaderProps) {
                     key={link.href}
                     href={link.href}
                     onClick={(e) => handleScroll(e, link.href)}
-                    className="px-3.5 py-2 rounded-lg text-sm font-semibold text-fg-muted hover:text-brand-soft-fg hover:bg-brand-soft/70 transition-colors flex items-center gap-2"
+                    className={navLinkClassName}
                   >
                     <Icon className="w-4 h-4 text-brand" />
                     <span>{link.label}</span>
                   </a>
                 )
               })}
+              {isArchived ? <CurrentEditionLink variant="desktop" /> : null}
+              <ArchiveNav
+                editions={archivedEditions}
+                currentSlug={currentSlug}
+                variant="desktop"
+              />
             </nav>
             <SavedAgendaMenu />
-            <InstallPwaButton />
+            <div className="hidden md:block">
+              <InstallPwaButton />
+            </div>
             <ThemeToggle className="hidden md:inline-flex ml-1" />
-            <div className="flex md:hidden items-center gap-1">
-              <ThemeToggle />
+            <div className="flex md:hidden items-center">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-expanded={mobileMenuOpen}
                 aria-label="Toggle navigation menu"
-                className="p-2 rounded-lg text-fg-muted hover:bg-subtle focus:outline-none focus:ring-2 focus:ring-brand"
+                className="inline-flex size-11 items-center justify-center rounded-lg text-fg-muted hover:bg-subtle focus:outline-none focus:ring-2 focus:ring-brand"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   {mobileMenuOpen ? (
@@ -131,13 +171,21 @@ export function Header({ editionName, editionYear, logo }: HeaderProps) {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleScroll(e, link.href)}
-                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-fg hover:bg-brand-soft hover:text-brand-soft-fg"
+                  className={mobileNavLinkClassName}
                 >
                   <Icon className="w-4 h-4 text-brand" />
                   <span>{link.label}</span>
                 </a>
               )
             })}
+            {isArchived ? <CurrentEditionLink variant="mobile" /> : null}
+            <ArchiveNav
+              editions={archivedEditions}
+              currentSlug={currentSlug}
+              variant="mobile"
+              onNavigate={() => setMobileMenuOpen(false)}
+            />
+            <ThemeToggle variant="row" />
             <InstallPwaButton variant="row" />
           </div>
         </div>

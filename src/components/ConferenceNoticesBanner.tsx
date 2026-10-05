@@ -125,7 +125,7 @@ export function ConferenceNoticesBanner({
                   })
                 }}
                 aria-label={`Dismiss notice ${notice.title}`}
-                className="shrink-0 inline-flex size-8 items-center justify-center rounded-lg opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
+                className="shrink-0 inline-flex size-11 items-center justify-center rounded-lg opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
               >
                 <X className="size-4" aria-hidden />
               </button>

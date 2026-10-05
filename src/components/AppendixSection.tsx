@@ -42,7 +42,7 @@ export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
   const [activeTab, setActiveTab] = useState<TabId>('abstracts')
 
   const tabClass = (id: TabId) =>
-    `px-4 py-2.5 text-sm font-semibold rounded-t-xl border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
+    `px-4 py-3 min-h-11 text-sm font-semibold rounded-t-xl border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
       activeTab === id
         ? 'border-brand text-brand-soft-fg bg-brand-soft/50'
         : 'border-transparent text-fg-subtle hover:text-fg hover:bg-subtle'
@@ -51,7 +51,7 @@ export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
   return (
     <section
       id="appendix"
-      className="scroll-mt-10 md:scroll-mt-20 py-12 sm:py-16 border-t border-line"
+      className="scroll-mt-24 sm:scroll-mt-28 py-10 sm:py-16 border-t border-line"
     >
       <div className="mb-8 pb-4 border-b border-line">
         <span className="text-xs font-bold uppercase tracking-wider text-brand-soft-fg">
@@ -63,7 +63,7 @@ export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
       </div>
 
       <div
-        className="flex border-b border-line gap-2 overflow-x-auto pb-1 mb-8"
+        className="flex border-b border-line gap-2 overflow-x-auto overscroll-x-contain pb-1 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0"
         role="tablist"
       >
         <button
@@ -123,14 +123,15 @@ export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
                     </h4>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-line flex items-center justify-between text-xs text-fg-subtle">
+                  <div className="mt-4 pt-3 border-t border-line flex items-center justify-between gap-2 text-xs text-fg-subtle">
                     <span>
                       {Array.isArray(abs.authors)
                         ? `${abs.authors.length} Authors`
                         : 'Authors linked'}
                     </span>
-                    <span className="text-brand font-semibold inline-flex items-center gap-1">
-                      Read Full Details <ExternalLink className="w-3 h-3" />
+                    <span className="text-brand font-semibold inline-flex items-center gap-1 shrink-0">
+                      Read <span className="hidden sm:inline">Full Details</span>{' '}
+                      <ExternalLink className="w-3 h-3" />
                     </span>
                   </div>
                 </div>

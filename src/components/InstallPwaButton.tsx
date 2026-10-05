@@ -46,8 +46,8 @@ export function InstallPwaButton({
 
   const buttonClass =
     variant === 'row'
-      ? 'flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-fg hover:bg-brand-soft hover:text-brand-soft-fg w-full text-left'
-      : 'inline-flex size-9 items-center justify-center rounded-lg text-fg-muted hover:bg-subtle hover:text-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand'
+      ? 'flex items-center gap-3 px-4 py-3 min-h-11 rounded-lg text-sm font-semibold text-fg hover:bg-brand-soft hover:text-brand-soft-fg w-full text-left'
+      : 'inline-flex size-11 md:size-9 items-center justify-center rounded-lg text-fg-muted hover:bg-subtle hover:text-fg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand'
 
   return (
     <div ref={rootRef} className={variant === 'row' ? 'w-full' : 'relative'}>
@@ -68,7 +68,7 @@ export function InstallPwaButton({
           id={panelId}
           role="dialog"
           aria-label="Install on iPhone"
-          className="absolute right-0 top-full mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-line bg-surface shadow-lg z-50 p-4 text-left max-md:fixed max-md:left-4 max-md:right-4 max-md:w-auto max-md:top-[4.25rem]"
+          className="absolute right-0 top-full mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-line bg-surface shadow-lg z-50 p-4 text-left max-md:fixed max-md:left-4 max-md:right-4 max-md:w-auto max-md:top-[calc(4.25rem+env(safe-area-inset-top))]"
         >
           <p className="text-sm font-semibold text-fg">Install this app</p>
           <p className="mt-2 text-sm text-fg-muted leading-relaxed">

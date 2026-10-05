@@ -27,6 +27,12 @@ export type ConferenceEditionData = {
   programmeAlerts: Pick<ProgrammeAlertSettings, 'enabled' | 'leadMinutes' | 'notificationTitle'>
 }
 
+export type ArchivedEditionLink = {
+  slug: string
+  title: string
+  year: number | null
+}
+
 async function fetchActiveConferenceId(): Promise<{
   id: number | string | null
   slug: string | null
@@ -222,6 +228,45 @@ async function fetchConferenceLogo(conferenceId: number | string): Promise<Media
   }
 }
 
+async function fetchArchivedConferences(): Promise<ArchivedEditionLink[]> {
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.find({
+    collection: 'conferences',
+    where: {
+      and: [{ _status: { equals: 'published' } }, { publicArchive: { equals: true } }],
+    },
+    sort: '-year',
+    depth: 0,
+    draft: false,
+    limit: 100,
+    pagination: false,
+    select: {
+      title: true,
+      slug: true,
+      year: true,
+    },
+  })
+
+  const editions = result.docs.flatMap((doc) => {
+    if (typeof doc.slug !== 'string' || !doc.slug) return []
+    return [
+      {
+        slug: doc.slug,
+        title: typeof doc.title === 'string' && doc.title ? doc.title : doc.slug,
+        year: typeof doc.year === 'number' ? doc.year : null,
+      } satisfies ArchivedEditionLink,
+    ]
+  })
+
+  editions.sort((a, b) => {
+    const yearDiff = (b.year ?? 0) - (a.year ?? 0)
+    if (yearDiff !== 0) return yearDiff
+    return a.title.localeCompare(b.title)
+  })
+
+  return editions
+}
+
 async function fetchPublishedConferenceBySlug(slug: string): Promise<Conference | null> {
   const payload = await getPayload({ config: configPromise })
   const result = await payload.find({
@@ -288,4 +333,10 @@ export const findPublishedConferenceBySlug = cache((slug: string) =>
       tags: [CACHE_TAGS.archive, conferenceSlugTag(slug)],
     },
   )(),
+)
+
+export const getArchivedConferences = cache(() =>
+  unstable_cache(fetchArchivedConferences, ['getArchivedConferences'], {
+    tags: [CACHE_TAGS.archive, CACHE_TAGS.active],
+  })(),
 )
