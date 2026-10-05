@@ -22,7 +22,7 @@ Editors match the English name to the field. The handbook quotes those names as 
 - Payload chrome: `i18n.fallbackLanguage: 'en'` and `supportedLanguages: { en, it }` (import `en` and `it` from `payload/i18n`).
 - Collection/global `labels`, `admin.group`, tab labels, `admin.description` as `{ en, it }` via `@/i18n/copy`.
 - Custom admin components, toasts, confirms, validation messages: `req.t('fcr:…')` or `useTranslation()`.
-- Dashboard cards and custom nav (`Site` / **Sito**, **Active conference** / **Conferenza attiva**, **Conference archive** / **Archivio conferenze**, publishing guide).
+- Dashboard cards and custom nav (`Site` / **Sito**, **Active conference** / **Conferenza attiva**, **Conference archive** / **Archivio conferenze**, ungrouped **Edit active edition** / **Modifica edizione attiva**, publishing guide).
 
 ```ts
 // ✅ field name English, help bilingual

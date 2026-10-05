@@ -1,9 +1,11 @@
 import type { ServerProps, Where } from 'payload'
 import { Banner, Card } from '@payloadcms/ui'
+import { Pencil } from 'lucide-react'
 import { formatAdminURL } from 'payload/shared'
 import React from 'react'
 
 import './index.scss'
+import '../EditActiveEditionNavLink/index.scss'
 import { asT } from '@/i18n/asT'
 
 const baseClass = 'collections'
@@ -34,10 +36,6 @@ export default async function SiteDashboardGroup({ i18n, payload }: ServerProps)
   const activeTitle = conferenceTitle
     ? `${asT(t)('fcr:activeConference')} · ${conferenceTitle}`
     : asT(t)('fcr:activeConference')
-
-  const editionTitle = conferenceTitle
-    ? `${asT(t)('fcr:editActiveEdition')} · ${conferenceTitle}`
-    : asT(t)('fcr:editActiveEdition')
 
   const where: Where = {
     and: [
@@ -101,20 +99,28 @@ export default async function SiteDashboardGroup({ i18n, payload }: ServerProps)
             <span className="editor-guide-dashboard__text">{asT(t)('fcr:editorGuideText')}</span>
           </Banner>
         </div>
+        {editionHref ? (
+          <div className="edit-active-edition edit-active-edition--dashboard">
+            <a
+              className="edit-active-edition__link"
+              href={editionHref}
+              id="card-edit-active-edition"
+            >
+              <span aria-hidden className="edit-active-edition__icon">
+                <Pencil size={16} strokeWidth={2.25} />
+              </span>
+              <span className="edit-active-edition__copy">
+                <span className="edit-active-edition__label">{asT(t)('fcr:editActiveEdition')}</span>
+                {conferenceTitle ? (
+                  <span className="edit-active-edition__title">{conferenceTitle}</span>
+                ) : null}
+              </span>
+            </a>
+          </div>
+        ) : null}
         <div className={`${baseClass}__group`}>
           <h2 className={`${baseClass}__label`}>{asT(t)('fcr:site')}</h2>
           <ul className={`${baseClass}__card-list`}>
-            {editionHref ? (
-              <li>
-                <Card
-                  buttonAriaLabel={editionTitle}
-                  href={editionHref}
-                  id="card-edit-active-edition"
-                  title={editionTitle}
-                  titleAs="h3"
-                />
-              </li>
-            ) : null}
             <li>
               <Card
                 buttonAriaLabel={activeTitle}

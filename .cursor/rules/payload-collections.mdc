@@ -15,7 +15,7 @@ Keep the sidebar short for non-expert editors. Prefer hub + hide over one big bu
 - **People and organisations** / **Persone e organizzazioni** — People, Institutions (cross-edition directories).
 - **Content** / **Contenuti** — Media, Users (and similar site infrastructure).
 - **References** / **Riferimenti** — seeded lookups (`countries`, `italian-regions`, `abstract-statuses`). Keep them visible here, not mixed with edition or directory collections.
-- **Site** / **Sito** — Active conference and Conference archive use custom nav links and dashboard cards (`afterNavLinks` / `beforeDashboard`). Dashboard also links **Edit active edition** / **Modifica edizione attiva** straight to the active conference document when set. **Publishing guide** / **Guida per chi pubblica** (`/docs`) is a dashboard banner only; it is not a Payload global and does not sit in Site. Footer stays in Globals as **Footer** / **Piè di pagina**. Do not put globals into Conferences.
+- **Site** / **Sito** — Active conference and Conference archive use custom nav links and dashboard cards (`afterNavLinks` / `beforeDashboard`). **Edit active edition** / **Modifica edizione attiva** sits ungrouped at the top of the nav (`beforeNavLinks`) and dashboard, with a pencil control, when an active conference is set. **Publishing guide** / **Guida per chi pubblica** (`/docs`) is a dashboard banner only; it is not a Payload global and does not sit in Site. Footer stays in Globals as **Footer** / **Piè di pagina**. Do not put globals into Conferences.
 
 Collection slugs are plural (`conferences`). Global slugs are singular (`footer`).
 

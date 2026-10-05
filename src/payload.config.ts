@@ -71,6 +71,7 @@ export default buildConfig({
         Logo: '@/components/admin/graphics/Logo',
       },
       beforeLogin: ['@/components/BeforeLogin'],
+      beforeNavLinks: ['@/components/admin/EditActiveEditionNavLink'],
       afterNavLinks: ['@/components/admin/SiteNavGroup'],
       beforeDashboard: ['@/components/admin/SiteDashboardGroup'],
     },
