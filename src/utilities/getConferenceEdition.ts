@@ -11,12 +11,17 @@ import {
   settingsFromGlobal,
   type ProgrammeAlertSettings,
 } from '@/utilities/programmeAlertSettings'
+import {
+  isConferenceNoticeVisible,
+  type PublicConferenceNotice,
+} from '@/utilities/conferenceNotices'
 
 export type ConferenceEditionData = {
   conference: Conference
   days: ConferenceDay[]
   abstracts: Abstract[]
   appendix: Appendix | null
+  notices: PublicConferenceNotice[]
   footer: FooterGlobal | null
   activeSlug: string | null
   programmeAlerts: Pick<ProgrammeAlertSettings, 'enabled' | 'leadMinutes' | 'notificationTitle'>
@@ -114,11 +119,46 @@ async function fetchConferenceEdition(conferenceId: number | string): Promise<Co
     programmeAlerts = DEFAULT_PROGRAMME_ALERT_SETTINGS
   }
 
+  const noticesRes = await payload.find({
+    collection: 'conference-notices',
+    where: {
+      and: [
+        { conference: { equals: conference.id } },
+        { showOnSite: { equals: true } },
+      ],
+    },
+    sort: '_conference-notices_notices_order',
+    depth: 0,
+    limit: 20,
+    pagination: false,
+  })
+
+  const now = new Date()
+  const notices: PublicConferenceNotice[] = noticesRes.docs
+    .map((doc) => {
+      const related = relationId(doc.relatedAgendaItem)
+      return {
+        id: doc.id,
+        title: typeof doc.title === 'string' ? doc.title : '',
+        body: typeof doc.body === 'string' ? doc.body : '',
+        severity:
+          doc.severity === 'urgent' || doc.severity === 'info' || doc.severity === 'change'
+            ? doc.severity
+            : 'change',
+        linkPath: typeof doc.linkPath === 'string' ? doc.linkPath : null,
+        relatedAgendaItemId: related != null ? String(related) : null,
+        startsAt: typeof doc.startsAt === 'string' ? doc.startsAt : null,
+        expiresAt: typeof doc.expiresAt === 'string' ? doc.expiresAt : null,
+      } satisfies PublicConferenceNotice
+    })
+    .filter((notice) => notice.title && notice.body && isConferenceNoticeVisible(notice, now))
+
   return {
     conference,
     days: daysRes.docs as ConferenceDay[],
     abstracts,
     appendix: appendixDocs[0] ?? null,
+    notices,
     footer,
     activeSlug,
     programmeAlerts: {

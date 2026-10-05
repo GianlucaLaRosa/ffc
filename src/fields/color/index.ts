@@ -24,10 +24,10 @@ export const colorField = ({
   defaultValue,
   validate: (value) => {
     if (!value) {
-      return required ? 'This field is required.' : true
+      return required ? 'Questo campo è obbligatorio.' : true
     }
     if (!hexColorPattern.test(value)) {
-      return 'Enter a valid hex color (e.g. #3b82f6).'
+      return 'Inserite un colore esadecimale valido (es. #3b82f6).'
     }
     return true
   },

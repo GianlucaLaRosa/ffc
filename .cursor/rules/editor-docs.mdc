@@ -19,7 +19,7 @@ Skip only true internals: refactors, types, tests, styling with no editor/public
 
 ## How to write
 
-- Italian, second person **voi**, short steps. Quote **English admin labels** as they appear (`Conferences`, `Draft`, `Days`).
+- Italian, second person **voi**, short steps. Quote the admin **as it appears**: English **field names** (`Name`, `Year`, `Show site banner`); Italian chrome (`Conferenze`, `Panoramica`, `Salva`, `Crea Nuovo`, `Pubblicato`). Payload buttons come from Italian `i18n` — do not invent English button names.
 - Prefer **editing the existing page** that already covers that flow. Add a new `content/<slug>.mdx` **and** a `content/_meta.ts` entry only when it is a new workflow (new hub, new global, new public surface).
 - Put MDX `import`s immediately after frontmatter. Link related pages. Add a row to `problemi-frequenti.mdx` for new failure modes; add a card on `index.mdx` only for a major new entry point.
 - Do not document secrets, env vars, or how to bypass `/docs` auth. `/docs` is CMS-login only (`requireCmsUser`); do not link it from the public conference UI.
@@ -28,4 +28,4 @@ Skip only true internals: refactors, types, tests, styling with no editor/public
 
 1. Editors can follow the new behaviour from `/docs` without asking a developer.
 2. `_meta.ts` order still matches a sensible editorial path (create → fill → publish).
-3. Admin copy stays English; the guide stays Italian.
+3. Field names in admin stay English; the rest of the dashboard and this guide stay Italian.

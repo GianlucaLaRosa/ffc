@@ -128,7 +128,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       name: 'appearance',
       type: 'select',
       admin: {
-        description: 'Choose how the link should be rendered.',
+        description: 'Come mostrare il link.',
       },
       defaultValue: 'default',
       options: appearanceOptionsToUse,

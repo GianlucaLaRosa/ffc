@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { RichText } from './RichText'
 import { X, Building2, User, Sparkles } from './IconRenderer'
+import { CopyOverlayLink } from './CopyOverlayLink'
 import { PhotoCarouselOverlay } from './PhotoCarouselOverlay'
 import type { Abstract } from '@/payload-types'
 import {
@@ -17,24 +18,26 @@ import {
 
 export interface AbstractModalProps {
   abstract: Abstract | null
+  photoIndex: number | null
   isOpen: boolean
   onClose: () => void
+  onOpenPhoto: (index0: number) => void
+  onPhotoIndexChange: (index0: number) => void
 }
 
-export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps) {
-  const [carouselOpen, setCarouselOpen] = useState(false)
-
-  useEffect(() => {
-    if (!isOpen) setCarouselOpen(false)
-  }, [isOpen, abstract?.id])
+export function AbstractModal({
+  abstract,
+  photoIndex,
+  isOpen,
+  onClose,
+  onOpenPhoto,
+  onPhotoIndexChange,
+}: AbstractModalProps) {
+  const carouselOpen = photoIndex != null
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape' || !isOpen) return
-      if (carouselOpen) {
-        setCarouselOpen(false)
-        return
-      }
+      if (e.key !== 'Escape' || !isOpen || carouselOpen) return
       onClose()
     }
 
@@ -99,14 +102,17 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
             ))}
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-2 -mr-2 text-fg-subtle hover:text-fg-muted hover:bg-line/60 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-            aria-label="Close abstract details modal"
-          >
-            <X className="w-6 h-6" />
-          </button>
+          <div className="flex items-center gap-1 -mr-2">
+            <CopyOverlayLink className="p-2 text-fg-subtle hover:text-fg-muted hover:bg-line/60 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand" />
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2 text-fg-subtle hover:text-fg-muted hover:bg-line/60 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+              aria-label="Close abstract details modal"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-6 sm:px-8 space-y-8">
@@ -248,7 +254,7 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
               </h2>
               <button
                 type="button"
-                onClick={() => setCarouselOpen(true)}
+                onClick={() => onOpenPhoto(0)}
                 className="group w-full overflow-hidden rounded-xl border border-line bg-subtle text-left focus:outline-none focus:ring-2 focus:ring-brand"
                 aria-label={
                   gallerySlides.length > 1
@@ -283,7 +289,12 @@ export function AbstractModal({ abstract, isOpen, onClose }: AbstractModalProps)
         </div>
       </div>
       {carouselOpen ? (
-        <PhotoCarouselOverlay slides={gallerySlides} onClose={() => setCarouselOpen(false)} />
+        <PhotoCarouselOverlay
+          slides={gallerySlides}
+          index={photoIndex ?? 0}
+          onIndexChange={onPhotoIndexChange}
+          onClose={onClose}
+        />
       ) : null}
     </div>
   )

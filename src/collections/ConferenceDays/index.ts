@@ -77,7 +77,7 @@ const ensureUniqueDatePerConference: CollectionBeforeValidateHook = async ({
       collection: 'conference-days',
       errors: [
         {
-          message: 'This conference already has a day on this date.',
+          message: 'Questa conferenza ha già un giorno in questa data.',
           path: 'date',
         },
       ],
@@ -91,8 +91,8 @@ const ensureUniqueDatePerConference: CollectionBeforeValidateHook = async ({
 export const ConferenceDays: CollectionConfig<'conference-days'> = {
   slug: 'conference-days',
   labels: {
-    singular: 'Conference day',
-    plural: 'Conference days',
+    singular: 'Giorno',
+    plural: 'Giorni',
   },
   access: {
     create: authenticated,
@@ -102,7 +102,7 @@ export const ConferenceDays: CollectionConfig<'conference-days'> = {
   },
   admin: {
     hidden: true,
-    group: 'Conferences',
+    group: 'Conferenze',
     useAsTitle: 'date',
     defaultColumns: ['conference', 'date', 'startTime', 'endTime', 'updatedAt'],
   },
@@ -150,7 +150,7 @@ export const ConferenceDays: CollectionConfig<'conference-days'> = {
           label: 'End time',
           admin: {
             width: '50%',
-            description: 'May be earlier than start time for overnight days.',
+            description: 'Può essere prima di Start time se il giorno passa la mezzanotte.',
             date: {
               pickerAppearance: 'timeOnly',
               displayFormat: 'HH:mm',
@@ -177,7 +177,7 @@ export const ConferenceDays: CollectionConfig<'conference-days'> = {
       admin: {
         defaultColumns: ['title', 'startTime', 'endTime', 'isKeynote', '_status'],
         description:
-          'Top-level sessions for this day. Nested items are managed on each parent. Drag to reorder.',
+          'Sessioni di primo livello di questo giorno. Le voci nidificate si gestiscono sul genitore. Trascinate per riordinare.',
       },
     },
     {
@@ -188,7 +188,7 @@ export const ConferenceDays: CollectionConfig<'conference-days'> = {
       index: true,
       admin: {
         position: 'sidebar',
-        description: 'Parent conference. Set automatically when created from a conference.',
+        description: 'Conferenza di appartenenza. Impostata in automatico se create il giorno dalla conferenza.',
       },
     },
   ],

@@ -7,9 +7,9 @@ import { Callout } from 'nextra/components'
 
 # Abstract
 
-Ogni abstract appartiene a **un’edizione**. Preferite crearli dalla linguetta **Abstracts** della conferenza: restano in ordine trascinabile e già collegati all’edizione.
+Ogni abstract appartiene a **un’edizione**. Preferite crearli dalla linguetta **Abstract** della conferenza: restano in ordine trascinabile e già collegati all’edizione.
 
-## Campi principali (Overview)
+## Campi principali (Panoramica)
 
 - **Title** — titolo formattato. A destra compare il titolo in testo semplice, generato da solo.
 - **Code** — sigla di lavoro (es. un codice progetto). Non deve essere unica.
@@ -34,3 +34,13 @@ Le sessioni devono appartenere a giorni di **questa** conferenza. Se il sistema 
 <Callout>
   Pubblicate sia l’abstract sia la sessione (e il giorno) se volete vederli sul sito pubblico. Una sessione pubblicata con abstract ancora in bozza non mostra quel testo al pubblico.
 </Callout>
+
+## Link pubblico della scheda
+
+Sul sito, ogni abstract aperto ha un indirizzo proprio, così si può copiare e l’indietro del browser chiude la scheda (non la pagina).
+
+- Home (edizione attiva): `/?abstract=` seguito dal **Code** (es. `/?abstract=FFC123`)
+- Archivio: `/archive/` + slug + `?abstract=` e lo stesso codice
+- Se l’abstract ha foto, la galleria aggiunge `&photo=1` (numero della foto, partendo da 1)
+
+Il pulsante con l’icona del link, in alto a destra nella scheda, copia l’indirizzo. Se due abstract hanno lo stesso **Code**, il sito apre il primo che trova: in quel caso cambiate il codice o usate l’id numerico.

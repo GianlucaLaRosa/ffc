@@ -30,12 +30,12 @@ export default async function SiteDashboardGroup({ payload }: ServerProps) {
       : conference
 
   const activeTitle = conferenceTitle
-    ? `Active conference · ${conferenceTitle}`
-    : 'Active conference'
+    ? `Conferenza attiva · ${conferenceTitle}`
+    : 'Conferenza attiva'
 
   const editionTitle = conferenceTitle
-    ? `Edit active edition · ${conferenceTitle}`
-    : 'Edit active edition'
+    ? `Modifica edizione attiva · ${conferenceTitle}`
+    : 'Modifica edizione attiva'
 
   const where: Where = {
     and: [
@@ -59,8 +59,8 @@ export default async function SiteDashboardGroup({ payload }: ServerProps) {
 
   const archiveTitle =
     publicPast.totalDocs > 0
-      ? `Conference archive · ${publicPast.totalDocs} public`
-      : 'Conference archive'
+      ? `Archivio conferenze · ${publicPast.totalDocs} pubbliche`
+      : 'Archivio conferenze'
 
   const activeHref = formatAdminURL({
     adminRoute,
@@ -95,19 +95,19 @@ export default async function SiteDashboardGroup({ payload }: ServerProps) {
             to="/docs"
             type="success"
           >
-            <strong className="editor-guide-dashboard__title">Editor guide</strong>
+            <strong className="editor-guide-dashboard__title">Guida per chi pubblica</strong>
             <span className="editor-guide-dashboard__text">
-              Italian handbook for this admin: create an edition, fill the programme, and publish.
+              Manuale in italiano: creare un’edizione, compilare il programma e pubblicare.
             </span>
           </Banner>
         </div>
         <div className={`${baseClass}__group`}>
-          <h2 className={`${baseClass}__label`}>Site</h2>
+          <h2 className={`${baseClass}__label`}>Sito</h2>
           <ul className={`${baseClass}__card-list`}>
             {editionHref ? (
               <li>
                 <Card
-                  buttonAriaLabel={`Edit ${editionTitle}`}
+                  buttonAriaLabel={editionTitle}
                   href={editionHref}
                   id="card-edit-active-edition"
                   title={editionTitle}
@@ -117,7 +117,7 @@ export default async function SiteDashboardGroup({ payload }: ServerProps) {
             ) : null}
             <li>
               <Card
-                buttonAriaLabel={`Edit ${activeTitle}`}
+                buttonAriaLabel={activeTitle}
                 href={activeHref}
                 id="card-active-conference"
                 title={activeTitle}
@@ -126,7 +126,7 @@ export default async function SiteDashboardGroup({ payload }: ServerProps) {
             </li>
             <li>
               <Card
-                buttonAriaLabel={`Edit ${archiveTitle}`}
+                buttonAriaLabel={archiveTitle}
                 href={archiveHref}
                 id="card-conference-archive"
                 title={archiveTitle}

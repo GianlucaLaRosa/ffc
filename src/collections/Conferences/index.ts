@@ -54,6 +54,10 @@ const slugifyValue = (value: string): string =>
 
 export const Conferences: CollectionConfig<'conferences'> = {
   slug: 'conferences',
+  labels: {
+    singular: 'Conferenza',
+    plural: 'Conferenze',
+  },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -67,11 +71,11 @@ export const Conferences: CollectionConfig<'conferences'> = {
     publicArchive: true,
   },
   admin: {
-    group: 'Conferences',
+    group: 'Conferenze',
     useAsTitle: 'title',
     defaultColumns: ['title', 'year', 'publicArchive', 'city', 'updatedAt'],
     description:
-      'Conference editions. Open an edition to manage days, abstracts, and appendix.',
+      'Edizioni della conferenza. Aprite un’edizione per gestire giorni, abstract e appendice.',
     livePreview: {
       url: ({ data }) =>
         generateConferenceIntroPreviewPath({
@@ -92,12 +96,12 @@ export const Conferences: CollectionConfig<'conferences'> = {
       editor: basicLexical,
       label: 'Name',
       admin: {
-        description: 'Formatted conference name. Plain title and slug are derived from this.',
+        description: 'Nome formattato della conferenza. Title e slug si ricavano da questo testo.',
       },
       validate: (value) => {
-        if (!value) return 'Name is required.'
+        if (!value) return 'Name è obbligatorio.'
         const plaintext = toPlainTitle(value as LexicalJSON)
-        if (!plaintext) return 'Name must include text.'
+        if (!plaintext) return 'Name deve contenere del testo.'
         return true
       },
     },
@@ -105,7 +109,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
       type: 'tabs',
       tabs: [
         {
-          label: 'Overview',
+          label: 'Panoramica',
           fields: [
             {
               type: 'row',
@@ -118,7 +122,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
                   max: 2100,
                   admin: {
                     width: '30%',
-                    description: 'Edition year. Multiple editions per year are allowed.',
+                    description: 'Anno dell’edizione. Più edizioni nello stesso anno sono ammesse.',
                   },
                 },
                 {
@@ -127,7 +131,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
                   relationTo: 'media',
                   admin: mediaFolderUploadAdmin(CONFERENCE_LOGOS_FOLDER_NAME, {
                     width: '70%',
-                    description: `Used in the header and as the browser tab icon. Stored in the Media folder "${CONFERENCE_LOGOS_FOLDER_NAME}".`,
+                    description: `Usato nell’intestazione e come icona della scheda del browser. Cartella Media «${CONFERENCE_LOGOS_FOLDER_NAME}».`,
                   }),
                 },
               ],
@@ -143,7 +147,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
                   admin: {
                     width: '50%',
                     description:
-                      'Used for buttons, links, and section accents. Adapted automatically for light and dark mode.',
+                      'Pulsanti, link e accenti delle sezioni. Si adatta da solo a tema chiaro e scuro.',
                   },
                 }),
                 colorField({
@@ -154,7 +158,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
                   admin: {
                     width: '50%',
                     description:
-                      'Used for keynotes, badges, and secondary highlights. Adapted automatically for light and dark mode.',
+                      'Keynote, badge e evidenziazioni secondarie. Si adatta da solo a tema chiaro e scuro.',
                   },
                 }),
               ],
@@ -166,7 +170,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
           fields: [introLayoutField()],
         },
         {
-          label: 'Days',
+          label: 'Giorni',
           fields: [
             {
               name: 'days',
@@ -177,13 +181,13 @@ export const Conferences: CollectionConfig<'conferences'> = {
               defaultSort: 'date',
               admin: {
                 defaultColumns: ['date', 'startTime', 'endTime', '_status'],
-                description: 'Sorted by date (earliest first). One day per calendar date.',
+                description: 'Ordinati per data (la più vicina per prima). Un giorno per data di calendario.',
               },
             },
           ],
         },
         {
-          label: 'Abstracts',
+          label: 'Abstract',
           fields: [
             {
               name: 'abstracts',
@@ -196,13 +200,13 @@ export const Conferences: CollectionConfig<'conferences'> = {
               admin: {
                 defaultColumns: ['plainTitle', 'code', 'status', '_status'],
                 description:
-                  'Scientific abstracts for this conference edition only. Link them to agenda items from the abstract or from each session.',
+                  'Abstract scientifici di questa edizione. Collegateli alle sessioni dall’abstract o dalla sessione.',
               },
             },
           ],
         },
         {
-          label: 'Appendix',
+          label: 'Appendice',
           fields: [
             {
               name: 'appendices',
@@ -213,13 +217,34 @@ export const Conferences: CollectionConfig<'conferences'> = {
               admin: {
                 defaultColumns: ['_status', 'updatedAt'],
                 description:
-                  'At most one appendix for this conference. Open it to add blocks and drag to reorder them.',
+                  'Al massimo un’appendice per conferenza. Apritela per aggiungere blocchi e trascinarli per l’ordine.',
               },
             },
           ],
         },
         {
-          label: 'Venue',
+          label: 'Avvisi',
+          description:
+            'Avvisi in tempo reale (cambio orario, sala, ecc.). Il banner sul sito compare salvando con Show site banner. La push va inviata con Invia push (solo edizione in Conferenza attiva).',
+          fields: [
+            {
+              name: 'notices',
+              type: 'join',
+              collection: 'conference-notices',
+              on: 'conference',
+              label: 'Conference notices',
+              orderable: true,
+              defaultSort: '_conference-notices_notices_order',
+              admin: {
+                defaultColumns: ['title', 'severity', 'showOnSite', 'sentAt', 'updatedAt'],
+                description:
+                  'Avvisi brevi in testo semplice. Trascinate per l’ordine del banner. Create un nuovo avviso per ogni push: non si può reinviare.',
+              },
+            },
+          ],
+        },
+        {
+          label: 'Sede',
           fields: [
             {
               type: 'row',
@@ -256,7 +281,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
                   admin: {
                     width: '50%',
                     step: 0.000001,
-                    description: 'X coordinate (e.g. 13.8046 for Trieste).',
+                    description: 'Coordinata X (es. 13.8046 per Trieste).',
                   },
                 },
                 {
@@ -268,7 +293,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
                   admin: {
                     width: '50%',
                     step: 0.000001,
-                    description: 'Y coordinate (e.g. 45.6495 for Trieste).',
+                    description: 'Coordinata Y (es. 45.6495 per Trieste).',
                   },
                 },
               ],
@@ -279,13 +304,13 @@ export const Conferences: CollectionConfig<'conferences'> = {
               editor: basicLexical,
               label: 'Location notes',
               admin: {
-                description: 'Optional venue details (e.g. hall, entrance, access notes).',
+                description: 'Dettagli facoltativi (sala, ingresso, accessibilità).',
               },
             },
           ],
         },
         {
-          label: 'Public listing',
+          label: 'Scheda pubblica',
           description:
             'Come viene descritta questa edizione quando qualcuno la trova su Google, quando si condivide il link, o quando un assistente AI risponde a una domanda. Scrivi in modo semplice. Se non sei sicuro, lascia il campo vuoto: il sito userà nome della conferenza, sede e date.',
           fields: [
@@ -471,7 +496,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Auto-generated plain-text title from Name (used in lists, slug, and the public listing).',
+        description: 'Title in testo semplice ricavato da Name (elenchi, slug e scheda pubblica).',
       },
     },
     {
@@ -480,7 +505,7 @@ export const Conferences: CollectionConfig<'conferences'> = {
       admin: {
         position: 'sidebar',
         description:
-          'First time this edition went live on the site. Kept stable for SEO; not the event dates (those come from Days).',
+          'Prima messa online di questa edizione. Resta stabile per la SEO; non sono le date dell’evento (quelle stanno in Days).',
       },
     },
     {

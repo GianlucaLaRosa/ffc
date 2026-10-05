@@ -5,6 +5,10 @@ import { authenticated } from '../../access/authenticated'
 
 export const ItalianRegions: CollectionConfig<'italian-regions'> = {
   slug: 'italian-regions',
+  labels: {
+    singular: 'Regione italiana',
+    plural: 'Regioni italiane',
+  },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -13,10 +17,10 @@ export const ItalianRegions: CollectionConfig<'italian-regions'> = {
   },
   defaultSort: 'name',
   admin: {
-    group: 'Reference',
+    group: 'Riferimenti',
     useAsTitle: 'name',
     defaultColumns: ['name', 'updatedAt'],
-    description: 'Italian regions for institution addresses. Seeded reference data.',
+    description: 'Regioni italiane per gli indirizzi degli enti. Dati di riferimento (seed).',
   },
   fields: [
     {

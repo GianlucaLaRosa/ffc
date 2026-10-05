@@ -7,7 +7,7 @@ import { revalidateActiveConference } from './hooks/revalidateActiveConference'
 
 export const ActiveConference: GlobalConfig = {
   slug: 'active-conference',
-  label: 'Active conference',
+  label: 'Conferenza attiva',
   access: {
     read: anyone,
     update: authenticated,
@@ -25,7 +25,7 @@ export const ActiveConference: GlobalConfig = {
       required: true,
       admin: {
         description:
-          'Published edition at the site root (/). Required. That edition is removed from the public archive automatically.',
+          'Edizione pubblicata in home (/). Obbligatoria. Quell’edizione viene tolta automaticamente dall’archivio pubblico.',
       },
       filterOptions: {
         _status: {

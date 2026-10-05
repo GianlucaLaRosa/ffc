@@ -5,6 +5,10 @@ import { authenticated } from '../../access/authenticated'
 
 export const Countries: CollectionConfig<'countries'> = {
   slug: 'countries',
+  labels: {
+    singular: 'Paese',
+    plural: 'Paesi',
+  },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -13,10 +17,10 @@ export const Countries: CollectionConfig<'countries'> = {
   },
   defaultSort: 'name',
   admin: {
-    group: 'Reference',
+    group: 'Riferimenti',
     useAsTitle: 'name',
     defaultColumns: ['name', 'updatedAt'],
-    description: 'World countries for institutions. Seeded reference data.',
+    description: 'Paesi del mondo per gli enti. Dati di riferimento (seed).',
   },
   fields: [
     {

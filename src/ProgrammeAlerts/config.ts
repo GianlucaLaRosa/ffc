@@ -6,14 +6,14 @@ import { revalidateProgrammeAlerts } from '@/utilities/revalidatePublicCache'
 
 export const ProgrammeAlerts: GlobalConfig = {
   slug: 'programme-alerts',
-  label: 'Programme alerts',
+  label: 'Avvisi programma',
   access: {
     read: anyone,
     update: authenticated,
   },
   admin: {
     description:
-      'Session reminders for My programme. Push keys stay in environment variables; this screen is for editors.',
+      'Promemoria delle sessioni per My programme e impostazioni tecniche della push (usate anche dagli avvisi in Notices). Le chiavi restano nelle variabili d’ambiente; questa schermata è per chi pubblica.',
   },
   fields: [
     {
@@ -23,7 +23,7 @@ export const ProgrammeAlerts: GlobalConfig = {
       defaultValue: true,
       admin: {
         description:
-          'When off, the public site hides “Enable session alerts” and the minute cron sends nothing.',
+          'Se è spento, il sito nasconde “Enable session alerts” e il cron al minuto non invia nulla.',
       },
     },
     {
@@ -32,12 +32,12 @@ export const ProgrammeAlerts: GlobalConfig = {
       label: 'Push contact email',
       admin: {
         description:
-          'Technical contact for Web Push providers (VAPID). Not shown to attendees. Required while alerts are on.',
+          'Contatto tecnico per i provider Web Push (VAPID). Non visibile ai partecipanti. Obbligatorio mentre gli avvisi sono accesi.',
       },
       validate: (value, { data }) => {
         const enabled = Boolean(data && typeof data === 'object' && 'enabled' in data && data.enabled)
         if (enabled && (value == null || String(value).trim() === '')) {
-          return 'Required when session alerts are enabled'
+          return 'Obbligatorio quando Enable session alerts è acceso'
         }
         return true
       },
@@ -54,7 +54,7 @@ export const ProgrammeAlerts: GlobalConfig = {
           max: 30,
           admin: {
             width: '50%',
-            description: 'Warn this many minutes before a saved session.',
+            description: 'Avvisare tanti minuti prima di una sessione salvata.',
             step: 1,
           },
         },
@@ -65,7 +65,7 @@ export const ProgrammeAlerts: GlobalConfig = {
           defaultValue: 'FFC Conference',
           admin: {
             width: '50%',
-            description: 'Short name on lock-screen notifications.',
+            description: 'Nome breve sulle notifiche a schermo bloccato.',
           },
         },
       ],

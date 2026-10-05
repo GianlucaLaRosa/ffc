@@ -35,6 +35,20 @@ import {
   type NotificationPermissionState,
 } from '@/utilities/programmeNotifications'
 
+function conferenceUpdatesStorageKey(conferenceId: number | string): string {
+  return `ffc-conference-updates:${conferenceId}`
+}
+
+function readConferenceUpdates(conferenceId: number | string): boolean {
+  try {
+    const raw = window.localStorage.getItem(conferenceUpdatesStorageKey(conferenceId))
+    if (raw == null) return true
+    return raw !== '0'
+  } catch {
+    return true
+  }
+}
+
 type SavedAgendaContextValue = {
   items: SavedAgendaItem[]
   now: Date
@@ -48,6 +62,7 @@ type SavedAgendaContextValue = {
   iPhoneInstallHint: boolean
   alertsEnabled: boolean
   leadMinutes: number
+  conferenceUpdates: boolean
   isSaved: (item: AgendaItem) => boolean
   isPartiallySaved: (item: AgendaItem) => boolean
   toggleItem: (item: AgendaItem) => void
@@ -55,6 +70,7 @@ type SavedAgendaContextValue = {
   focusItem: (id: string) => void
   clearFocus: () => void
   enableNotifications: () => Promise<NotificationPermissionState>
+  setConferenceUpdates: (enabled: boolean) => Promise<void>
 }
 
 const SavedAgendaContext = createContext<SavedAgendaContextValue | null>(null)
@@ -91,9 +107,11 @@ export function SavedAgendaProvider({
     useState<NotificationPermissionState>('unsupported')
   const [notificationsAvailable, setNotificationsAvailable] = useState(false)
   const [iPhoneInstallHint, setIPhoneInstallHint] = useState(false)
+  const [conferenceUpdates, setConferenceUpdatesState] = useState(true)
 
   useEffect(() => {
     setItems(parseSavedAgendaStore(window.localStorage.getItem(storageKey)))
+    setConferenceUpdatesState(readConferenceUpdates(conferenceId))
     setIsReady(true)
     setNotificationState(notificationPermission())
     setNotificationsAvailable(alertsEnabled && notificationsSupported())
@@ -101,7 +119,7 @@ export function SavedAgendaProvider({
     const params = new URLSearchParams(window.location.search)
     const agenda = params.get('agenda')
     if (agenda) setFocusedItemId(agenda)
-  }, [alertsEnabled, storageKey])
+  }, [alertsEnabled, conferenceId, storageKey])
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -191,7 +209,7 @@ export function SavedAgendaProvider({
   }, [])
 
   const syncPush = useCallback(
-    async (nextItems: SavedAgendaItem[]) => {
+    async (nextItems: SavedAgendaItem[], updatesEnabled = conferenceUpdates) => {
       if (notificationPermission() !== 'granted') return
       const registration = await registerProgrammeServiceWorker()
       if (!registration) return
@@ -202,9 +220,10 @@ export function SavedAgendaProvider({
         conferenceId,
         canonicalPath,
         items: nextItems,
+        conferenceUpdates: updatesEnabled,
       })
     },
-    [canonicalPath, conferenceId],
+    [canonicalPath, conferenceId, conferenceUpdates],
   )
 
   const enableNotifications = useCallback(async () => {
@@ -213,10 +232,13 @@ export function SavedAgendaProvider({
     const permission = await requestProgrammeNotificationPermission()
     setNotificationState(permission)
     if (permission === 'granted') {
-      await syncPush(items)
+      const updates = true
+      setConferenceUpdatesState(updates)
+      window.localStorage.setItem(conferenceUpdatesStorageKey(conferenceId), '1')
+      await syncPush(items, updates)
       await showProgrammeNotification({
         title: notificationTitle,
-        body: `You will get a system notification ${leadMinutes} minutes before saved sessions.`,
+        body: `Alerts on: session reminders and conference updates.`,
         tag: 'ffc-alerts-enabled',
         url: `${window.location.origin}${canonicalPath}`,
         agendaId: '',
@@ -224,12 +246,30 @@ export function SavedAgendaProvider({
       })
     }
     return permission
-  }, [alertsEnabled, canonicalPath, items, leadMinutes, notificationTitle, syncPush])
+  }, [
+    alertsEnabled,
+    canonicalPath,
+    conferenceId,
+    items,
+    notificationTitle,
+    syncPush,
+  ])
+
+  const setConferenceUpdates = useCallback(
+    async (enabled: boolean) => {
+      setConferenceUpdatesState(enabled)
+      window.localStorage.setItem(conferenceUpdatesStorageKey(conferenceId), enabled ? '1' : '0')
+      if (notificationPermission() === 'granted') {
+        await syncPush(items, enabled)
+      }
+    },
+    [conferenceId, items, syncPush],
+  )
 
   useEffect(() => {
     if (!alertsEnabled || !isReady || notificationState !== 'granted') return
-    void syncPush(items)
-  }, [alertsEnabled, isReady, items, notificationState, syncPush])
+    void syncPush(items, conferenceUpdates)
+  }, [alertsEnabled, conferenceUpdates, isReady, items, notificationState, syncPush])
 
   useEffect(() => {
     if (!alertsEnabled || !isReady || notificationState !== 'granted') return
@@ -282,6 +322,7 @@ export function SavedAgendaProvider({
       iPhoneInstallHint,
       alertsEnabled,
       leadMinutes,
+      conferenceUpdates,
       isSaved,
       isPartiallySaved,
       toggleItem,
@@ -289,6 +330,7 @@ export function SavedAgendaProvider({
       focusItem,
       clearFocus,
       enableNotifications,
+      setConferenceUpdates,
     }),
     [
       items,
@@ -303,6 +345,7 @@ export function SavedAgendaProvider({
       iPhoneInstallHint,
       alertsEnabled,
       leadMinutes,
+      conferenceUpdates,
       isSaved,
       isPartiallySaved,
       toggleItem,
@@ -310,6 +353,7 @@ export function SavedAgendaProvider({
       focusItem,
       clearFocus,
       enableNotifications,
+      setConferenceUpdates,
     ],
   )
 

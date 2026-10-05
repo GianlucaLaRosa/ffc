@@ -50,6 +50,10 @@ const clearRegionUnlessItaly: CollectionBeforeValidateHook = async ({ data, req 
 
 export const Institutions: CollectionConfig<'institutions'> = {
   slug: 'institutions',
+  labels: {
+    singular: 'Ente',
+    plural: 'Enti',
+  },
   orderable: true,
   access: {
     create: authenticated,
@@ -58,10 +62,10 @@ export const Institutions: CollectionConfig<'institutions'> = {
     update: authenticated,
   },
   admin: {
-    group: 'People & orgs',
+    group: 'Persone e organizzazioni',
     useAsTitle: 'name',
     defaultColumns: ['name', 'country', 'region', 'updatedAt'],
-    description: 'Research institutes and laboratories.',
+    description: 'Istituti di ricerca e laboratori.',
   },
   fields: [
     {
@@ -85,7 +89,7 @@ export const Institutions: CollectionConfig<'institutions'> = {
       index: true,
       label: 'Region',
       admin: {
-        description: 'Only available when the country is Italy.',
+        description: 'Disponibile solo se Country è Italy.',
         components: {
           Field: '@/collections/Institutions/ItalianRegionField#ItalianRegionField',
         },

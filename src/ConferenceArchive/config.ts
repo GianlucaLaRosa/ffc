@@ -5,7 +5,7 @@ import { anyone } from '@/access/anyone'
 
 export const ConferenceArchive: GlobalConfig = {
   slug: 'conference-archive',
-  label: 'Conference archive',
+  label: 'Archivio conferenze',
   access: {
     read: anyone,
     update: authenticated,

@@ -61,6 +61,7 @@ export async function POST(request: Request): Promise<Response> {
     conferenceId?: number | string
     canonicalPath?: string
     items?: SavedAgendaItem[]
+    conferenceUpdates?: boolean
   }
   try {
     body = await request.json()
@@ -96,6 +97,7 @@ export async function POST(request: Request): Promise<Response> {
     conference: conferenceId,
     canonicalPath: body.canonicalPath || '/',
     items: asItems(body.items),
+    conferenceUpdates: body.conferenceUpdates !== false,
   }
 
   if (existing.docs[0]) {

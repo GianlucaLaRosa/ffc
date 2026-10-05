@@ -52,7 +52,7 @@ export const DurationField = (props: DurationFieldProps) => {
         <p style={{ fontSize: 14, margin: '0 0 4px' }}>
           {minutes == null ? (
             <span style={{ color: 'var(--theme-elevation-500)' }}>
-              Appears when both start and end time are set
+              Compare quando Start time e End time sono entrambi impostati
             </span>
           ) : (
             <>

@@ -8,5 +8,5 @@ type Props = {
 }
 
 export function SiteNavGroupClient({ children }: Props) {
-  return <NavGroup label="Site">{children}</NavGroup>
+  return <NavGroup label="Sito">{children}</NavGroup>
 }

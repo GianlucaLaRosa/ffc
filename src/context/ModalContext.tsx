@@ -1,18 +1,42 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { AbstractModal } from '@/components/AbstractModal'
+import { abstractGallerySlides } from '@/utilities/conferenceUi'
+import {
+  abstractOverlayId,
+  clampPhotoIndex,
+  overlayWasPushed,
+  pushOverlay,
+  readOverlayQuery,
+  replaceOverlay,
+  type OverlayQuery,
+} from '@/utilities/overlayUrl'
+import type { Abstract } from '@/payload-types'
 
 interface ModalContextType {
-  selectedAbstract: any | null
-  openAbstractModal: (abstract: any) => void
-  closeModal: () => void
+  selectedAbstract: Abstract | null
+  photoIndex: number | null
+  openAbstractModal: (abstract: Abstract) => void
+  openPhotoOverlay: (index0: number) => void
+  setPhotoOverlayIndex: (index0: number) => void
+  closeTopOverlay: () => void
 }
 
 const ModalContext = createContext<ModalContextType>({
   selectedAbstract: null,
+  photoIndex: null,
   openAbstractModal: () => {},
-  closeModal: () => {},
+  openPhotoOverlay: () => {},
+  setPhotoOverlayIndex: () => {},
+  closeTopOverlay: () => {},
 })
 
 export function useModal() {
@@ -22,18 +46,19 @@ export function useModal() {
 /**
  * Finds an abstract by code (exact or normalized) or by id fallback.
  */
-export function findMatchingAbstract(abstracts: any[], param: string | null | undefined): any | null {
+export function findMatchingAbstract(
+  abstracts: Abstract[],
+  param: string | null | undefined,
+): Abstract | null {
   if (!param || !Array.isArray(abstracts)) return null
   const cleanParam = decodeURIComponent(param).trim().toLowerCase()
   if (!cleanParam) return null
 
-  // 1. Exact match by code (case-insensitive)
   const byCode = abstracts.find(
-    (a) => a?.code && String(a.code).trim().toLowerCase() === cleanParam
+    (a) => a?.code && String(a.code).trim().toLowerCase() === cleanParam,
   )
   if (byCode) return byCode
 
-  // 2. Normalized match by code (strip spaces, hyphens, underscores)
   const normParam = cleanParam.replace(/[\s\-_]+/g, '')
   const byNormalizedCode = abstracts.find((a) => {
     if (!a?.code) return false
@@ -42,7 +67,6 @@ export function findMatchingAbstract(abstracts: any[], param: string | null | un
   })
   if (byNormalizedCode) return byNormalizedCode
 
-  // 3. Fallback: match by ID
   const byId = abstracts.find((a) => a?.id && String(a.id).trim().toLowerCase() === cleanParam)
   if (byId) return byId
 
@@ -54,130 +78,149 @@ export function ModalProvider({
   allAbstracts = [],
 }: {
   children: React.ReactNode
-  allAbstracts?: any[]
+  allAbstracts?: Abstract[]
 }) {
-  const [selectedAbstract, setSelectedAbstract] = useState<any | null>(null)
-  const abstractsRef = useRef<any[]>(allAbstracts)
+  const [selectedAbstract, setSelectedAbstract] = useState<Abstract | null>(null)
+  const [photoIndex, setPhotoIndex] = useState<number | null>(null)
+  const abstractsRef = useRef<Abstract[]>(allAbstracts)
+  const selectedRef = useRef<Abstract | null>(null)
 
-  // Keep ref updated if prop changes
   useEffect(() => {
     abstractsRef.current = allAbstracts
   }, [allAbstracts])
 
-  // Open abstract and update browser history URL with ?abstract=<code|id>
-  const openAbstractModal = useCallback((abstract: any) => {
-    if (!abstract) return
-    const codeOrId = abstract.code ? String(abstract.code).trim() : String(abstract.id)
-
-    const url = new URL(window.location.href)
-    url.searchParams.set('abstract', codeOrId)
-
-    window.history.pushState(
-      { modal: 'abstract', id: abstract.id, codeOrId },
-      '',
-      url.toString()
-    )
-
-    setSelectedAbstract(abstract)
-  }, [])
-
-  // Close modal and revert history/URL
-  const closeModal = useCallback(() => {
-    setSelectedAbstract(null)
-
-    const params = new URLSearchParams(window.location.search)
-    if (params.has('abstract')) {
-      if (window.history.state?.modal === 'abstract') {
-        window.history.back()
-      } else {
-        const cleanUrl = new URL(window.location.href)
-        cleanUrl.searchParams.delete('abstract')
-        window.history.replaceState({ modal: null }, '', cleanUrl.toString())
-      }
-    }
-  }, [])
-
-  // Handle mobile and desktop browser back/forward buttons
   useEffect(() => {
-    const handlePopState = (e: PopStateEvent) => {
-      const params = new URLSearchParams(window.location.search)
-      const abstractParam = params.get('abstract')
+    selectedRef.current = selectedAbstract
+  }, [selectedAbstract])
 
-      if (!abstractParam) {
-        setSelectedAbstract(null)
-      } else {
-        const match = findMatchingAbstract(abstractsRef.current, abstractParam)
-        if (match) {
-          setSelectedAbstract(match)
-        } else {
-          // Fallback fetch if not present in memory
-          fetchAbstractByQuery(abstractParam).then((res) => {
-            if (res) setSelectedAbstract(res)
-          })
-        }
-      }
+  const applyQuery = useCallback(async (query: OverlayQuery) => {
+    if (!query.abstract) {
+      setSelectedAbstract(null)
+      setPhotoIndex(null)
+      return
     }
 
+    let match = findMatchingAbstract(abstractsRef.current, query.abstract)
+    if (!match) {
+      match = await fetchAbstractByQuery(query.abstract)
+    }
+    if (!match) {
+      setSelectedAbstract(null)
+      setPhotoIndex(null)
+      return
+    }
+
+    setSelectedAbstract(match)
+    const slides = abstractGallerySlides(match)
+    const photo1 = clampPhotoIndex(query.photo, slides.length)
+    setPhotoIndex(photo1 == null ? null : photo1 - 1)
+
+    if (query.photo != null && photo1 !== query.photo) {
+      replaceOverlay({ abstract: abstractOverlayId(match), photo: photo1 })
+    }
+  }, [])
+
+  const openAbstractModal = useCallback((abstract: Abstract) => {
+    if (!abstract) return
+    const codeOrId = abstractOverlayId(abstract)
+    const current = readOverlayQuery()
+    if (current.abstract === codeOrId && current.photo == null) {
+      setSelectedAbstract(abstract)
+      setPhotoIndex(null)
+      return
+    }
+    pushOverlay({ abstract: codeOrId, photo: null })
+    setSelectedAbstract(abstract)
+    setPhotoIndex(null)
+  }, [])
+
+  const openPhotoOverlay = useCallback((index0: number) => {
+    const abstract = selectedRef.current
+    if (!abstract) return
+    const slides = abstractGallerySlides(abstract)
+    if (slides.length === 0) return
+    const next0 = ((index0 % slides.length) + slides.length) % slides.length
+    const current = readOverlayQuery()
+    const nextQuery = { abstract: abstractOverlayId(abstract), photo: next0 + 1 }
+    if (current.photo == null) {
+      pushOverlay(nextQuery)
+    } else {
+      replaceOverlay(nextQuery)
+    }
+    setPhotoIndex(next0)
+  }, [])
+
+  const setPhotoOverlayIndex = useCallback((index0: number) => {
+    const abstract = selectedRef.current
+    if (!abstract) return
+    const slides = abstractGallerySlides(abstract)
+    if (slides.length === 0) return
+    const next0 = ((index0 % slides.length) + slides.length) % slides.length
+    replaceOverlay({ abstract: abstractOverlayId(abstract), photo: next0 + 1 })
+    setPhotoIndex(next0)
+  }, [])
+
+  const closeTopOverlay = useCallback(() => {
+    const current = readOverlayQuery()
+    if (!current.abstract && current.photo == null) {
+      setSelectedAbstract(null)
+      setPhotoIndex(null)
+      return
+    }
+
+    if (overlayWasPushed()) {
+      window.history.back()
+      return
+    }
+
+    const next: OverlayQuery = current.photo
+      ? { abstract: current.abstract, photo: null }
+      : { abstract: null, photo: null }
+    replaceOverlay(next)
+    void applyQuery(next)
+  }, [applyQuery])
+
+  useEffect(() => {
+    const handlePopState = () => {
+      void applyQuery(readOverlayQuery())
+    }
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
-  }, [])
+  }, [applyQuery])
 
-  // Initial load check: if URL already has ?abstract=... on page load
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const abstractParam = params.get('abstract')
-    if (!abstractParam) return
-
-    const loadInitialAbstract = async () => {
-      let match = findMatchingAbstract(abstractsRef.current, abstractParam)
-
-      if (!match) {
-        match = await fetchAbstractByQuery(abstractParam)
-      }
-
-      if (match) {
-        // Set up history stack: base page without query, then push modal query
-        // so that pressing mobile Back closes the modal and stays on page
-        const cleanUrl = new URL(window.location.href)
-        cleanUrl.searchParams.delete('abstract')
-        window.history.replaceState({ modal: null }, '', cleanUrl.toString())
-
-        const currentUrl = new URL(window.location.href)
-        currentUrl.searchParams.set('abstract', abstractParam)
-        window.history.pushState(
-          { modal: 'abstract', id: match.id, codeOrId: abstractParam },
-          '',
-          currentUrl.toString()
-        )
-
-        setSelectedAbstract(match)
-      }
-    }
-
-    loadInitialAbstract()
-  }, [])
+    void applyQuery(readOverlayQuery())
+  }, [applyQuery])
 
   return (
-    <ModalContext.Provider value={{ selectedAbstract, openAbstractModal, closeModal }}>
+    <ModalContext.Provider
+      value={{
+        selectedAbstract,
+        photoIndex,
+        openAbstractModal,
+        openPhotoOverlay,
+        setPhotoOverlayIndex,
+        closeTopOverlay,
+      }}
+    >
       {children}
       <AbstractModal
         abstract={selectedAbstract}
+        photoIndex={photoIndex}
         isOpen={Boolean(selectedAbstract)}
-        onClose={closeModal}
+        onClose={closeTopOverlay}
+        onOpenPhoto={openPhotoOverlay}
+        onPhotoIndexChange={setPhotoOverlayIndex}
       />
     </ModalContext.Provider>
   )
 }
 
-/**
- * Fetch abstract from Payload REST API if not found in initial bundle
- */
-async function fetchAbstractByQuery(param: string): Promise<any | null> {
+async function fetchAbstractByQuery(param: string): Promise<Abstract | null> {
   try {
     const cleanParam = decodeURIComponent(param).trim()
-    // 1. Try code query
     const res = await fetch(
-      `/api/abstracts?where[code][equals]=${encodeURIComponent(cleanParam)}&depth=4`
+      `/api/abstracts?where[code][equals]=${encodeURIComponent(cleanParam)}&depth=4`,
     )
     if (res.ok) {
       const data = await res.json()
@@ -186,7 +229,6 @@ async function fetchAbstractByQuery(param: string): Promise<any | null> {
       }
     }
 
-    // 2. Try ID query
     const resId = await fetch(`/api/abstracts/${encodeURIComponent(cleanParam)}?depth=4`)
     if (resId.ok) {
       const doc = await resId.json()

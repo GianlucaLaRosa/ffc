@@ -31,7 +31,7 @@ const validateUniqueConference: RelationshipFieldValidation = async (value, { re
   })
 
   if (existing.docs.length > 0) {
-    return 'This conference already has an appendix. Edit the existing one instead.'
+    return 'Questa conferenza ha già un’appendice. Modificate quella esistente.'
   }
 
   return true
@@ -39,6 +39,10 @@ const validateUniqueConference: RelationshipFieldValidation = async (value, { re
 
 export const Appendices: CollectionConfig<'appendices'> = {
   slug: 'appendices',
+  labels: {
+    singular: 'Appendice',
+    plural: 'Appendici',
+  },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -47,11 +51,11 @@ export const Appendices: CollectionConfig<'appendices'> = {
   },
   admin: {
     hidden: true,
-    group: 'Conferences',
+    group: 'Conferenze',
     useAsTitle: 'conference',
     defaultColumns: ['conference', 'updatedAt', '_status'],
     description:
-      'One appendix per conference edition. Add ordered blocks (basic text, institutions list, …) and drag to reorder.',
+      'Un’appendice per edizione. Aggiungete blocchi ordinati (testo, elenco enti, …) e trascinateli per l’ordine.',
   },
   fields: [
     {
@@ -72,7 +76,7 @@ export const Appendices: CollectionConfig<'appendices'> = {
       ],
       admin: {
         description:
-          'Each block has a required title (tab label). Basic text uses the same Content columns, accordion, and layout blocks as the conference intro. Drag to reorder tabs.',
+          'Ogni blocco ha un Title obbligatorio (etichetta della linguetta). Basic text usa le stesse colonne Content, accordion e layout dell’intro. Trascinate per riordinare le linguette.',
       },
     },
     {
@@ -87,7 +91,7 @@ export const Appendices: CollectionConfig<'appendices'> = {
       admin: {
         position: 'sidebar',
         description:
-          'Conference edition this appendix belongs to. Each conference may have only one appendix.',
+          'Edizione a cui appartiene questa appendice. Ogni conferenza può averne una sola.',
       },
     },
   ],

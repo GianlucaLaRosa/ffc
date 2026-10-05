@@ -17,9 +17,11 @@ export function SavedAgendaMenu() {
     notificationsAvailable,
     iPhoneInstallHint,
     leadMinutes,
+    conferenceUpdates,
     removeItem,
     focusItem,
     enableNotifications,
+    setConferenceUpdates,
   } = useSavedAgenda()
   const [open, setOpen] = useState(false)
   const panelId = useId()
@@ -98,16 +100,29 @@ export function SavedAgendaMenu() {
 
           <div className="overflow-y-auto max-h-[min(22rem,60vh)] p-2">
             {notificationsAvailable ? (
-              <div className="px-2 pb-2 mb-2 border-b border-line">
+              <div className="px-2 pb-2 mb-2 border-b border-line space-y-2">
                 {iPhoneInstallHint ? (
                   <p className="text-xs text-fg-subtle px-1 py-2">
                     On iPhone, add this site to the Home Screen to receive lock-screen alerts.
                   </p>
                 ) : null}
                 {notificationState === 'granted' ? (
-                  <p className="text-xs font-medium text-brand-soft-fg px-1 py-2">
-                    System alerts are on for saved sessions.
-                  </p>
+                  <>
+                    <p className="text-xs font-medium text-brand-soft-fg px-1 pt-2">
+                      System alerts are on for saved sessions.
+                    </p>
+                    <label className="flex items-start gap-2 px-1 py-1 text-xs text-fg-muted cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="mt-0.5"
+                        checked={conferenceUpdates}
+                        onChange={(event) => void setConferenceUpdates(event.target.checked)}
+                      />
+                      <span>
+                        Also receive conference updates (room or time changes).
+                      </span>
+                    </label>
+                  </>
                 ) : notificationState === 'denied' ? (
                   <p className="text-xs text-fg-subtle px-1 py-2">
                     Notifications are blocked in the browser settings.
@@ -119,7 +134,7 @@ export function SavedAgendaMenu() {
                     className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-brand-soft px-3 py-2 text-xs font-semibold text-brand-soft-fg hover:bg-brand-soft/80"
                   >
                     <Bell className="size-3.5" aria-hidden />
-                    Enable session alerts
+                    Enable alerts
                   </button>
                 )}
               </div>
@@ -211,7 +226,7 @@ export function UpcomingSessionBanner() {
     <div
       role="status"
       aria-live="polite"
-      className="sticky top-16 sm:top-20 z-30 border-b border-accent-border bg-accent-soft"
+      className="border-b border-accent-border bg-accent-soft"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center gap-3">
         <p className="flex-1 text-sm text-accent-soft-fg">

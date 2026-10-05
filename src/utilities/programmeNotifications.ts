@@ -83,6 +83,7 @@ export async function syncProgrammePushSubscription(input: {
   conferenceId: number | string
   canonicalPath: string
   items: SavedAgendaItem[]
+  conferenceUpdates?: boolean
 }): Promise<void> {
   try {
     await fetch('/api/programme-alerts', {
@@ -93,6 +94,7 @@ export async function syncProgrammePushSubscription(input: {
         conferenceId: input.conferenceId,
         canonicalPath: input.canonicalPath,
         items: input.items,
+        conferenceUpdates: input.conferenceUpdates !== false,
       }),
     })
   } catch (error) {
@@ -106,7 +108,7 @@ export async function showProgrammeNotification(payload: {
   tag: string
   url: string
   agendaId: string
-  kind: ProgrammeAlertKind
+  kind: ProgrammeAlertKind | 'notice'
 }): Promise<void> {
   const registration = await navigator.serviceWorker.getRegistration(PROGRAMME_SW_PATH)
   if (registration) {

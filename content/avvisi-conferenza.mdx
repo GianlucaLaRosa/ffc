@@ -1,0 +1,66 @@
+---
+title: Avvisi durante la conferenza
+description: Come pubblicare un banner sul sito e, se serve, una notifica push per cambi di orario o di sala.
+---
+
+import { Callout, Steps } from 'nextra/components'
+
+# Avvisi durante la conferenza
+
+Quando cambia il programma (orario, sala, annullamento) usate la tab **Avvisi** dell’edizione. È diverso da **Avvisi programma** (Globals): quelli sono solo i promemoria automatici delle sessioni salvate in “My programme”.
+
+## Cosa vedono i partecipanti
+
+- **Banner sul sito** — in alto sulla pagina dell’edizione, senza bisogno di installare nulla
+- **Push** (opzionale) — notifica sulla schermata di blocco, solo per chi ha già attivato gli avvisi e ha spuntato gli aggiornamenti della conferenza
+
+La push funziona bene su desktop e, su iPhone, soprattutto se il sito è aggiunto alla Home Screen.
+
+## Come creare un avviso
+
+<Steps>
+### Aprite l’edizione
+
+**Conferenze** → l’edizione in corso → tab **Avvisi**.
+
+### Create la scheda
+
+**Crea Nuovo**. Compilate:
+
+- **Title** — max 40 caratteri (es. “Room change”)
+- **Body** — max 120 caratteri, solo testo (es. “Keynote moves to Aula Magna, 15:30”)
+- **Severity** — `Info`, `Change` (consigliato per spostamenti) o `Urgent`
+- **Show site banner** — lasciatelo acceso per il banner pubblico
+- **Include push when sending** — accendetelo solo se volete anche la notifica push
+- **Related session** (opzionale) — collega una sessione del programma; la push va a chi l’ha salvata (e a chi riceve gli aggiornamenti generali)
+- **Link path** (opzionale) — es. `#programme` o `?agenda=…`
+- **Banner from / until** (opzionale) — finestre di visibilità del banner
+
+### Salvate
+
+Con **Show site banner** attivo, il banner compare sul sito dopo il salvataggio (edizione **Pubblicato**).
+
+### Inviate la push (se serve)
+
+Solo sull’edizione impostata come **Conferenza attiva**. Premere **Invia push**, confermare. Si può inviare **una sola volta** per scheda: per un altro messaggio create un nuovo avviso.
+</Steps>
+
+<Callout type="warning">
+  Non usate **Invia push** per prove inutili: arriva sui telefoni dei partecipanti. Per verificare il testo basta il banner sul sito.
+</Callout>
+
+## Spegnere un banner
+
+Togliete la spunta a **Show site banner** e salvate, oppure impostate **Banner until** a un orario già passato. La push già inviata non si può ritirare.
+
+## Impostazioni tecniche (Globals)
+
+**Globals** → **Avvisi programma** resta l’interruttore generale delle notifiche (chiavi push, email di contatto, titolo corto). Se lì gli avvisi sono spenti, non parte né il reminder di sessione né la push degli avvisi in **Avvisi**.
+
+## Differenza rapida
+
+| | **Avvisi** (tab edizione) | **Avvisi programma** (Globals) |
+| --- | --- | --- |
+| Chi lo scrive | Voi, a mano | Nessuno (automatico) |
+| Quando parte | Al salvataggio (banner) / **Invia push** | Pochi minuti prima della sessione salvata |
+| Testo | Title + Body | Titolo fisso + nome sessione |

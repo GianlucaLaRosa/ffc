@@ -14,10 +14,14 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: {
     default: 'Guida alle conferenze',
-    template: '%s · Guida FCR',
+    template: '%s · Guida FFC Ricerca',
   },
   description:
     'Come creare e gestire le edizioni della conferenza FFC Ricerca dal pannello di amministrazione.',
+  icons: {
+    icon: [{ url: '/brand/ffc-ricerca-32.png', type: 'image/png' }],
+    apple: [{ url: '/brand/ffc-ricerca.png', type: 'image/png' }],
+  },
   robots: {
     index: false,
     follow: false,
@@ -26,7 +30,18 @@ export const metadata: Metadata = {
 
 const navbar = (
   <Navbar
-    logo={<span style={{ fontWeight: 700 }}>Guida FCR</span>}
+    logo={
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem' }}>
+        <img
+          alt=""
+          height={28}
+          src="/brand/ffc-ricerca-32.png"
+          style={{ borderRadius: 4 }}
+          width={28}
+        />
+        <span style={{ fontWeight: 700 }}>Guida FFC Ricerca</span>
+      </span>
+    }
     logoLink="/docs"
   />
 )

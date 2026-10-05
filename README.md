@@ -8,7 +8,7 @@ Sito pubblico e CMS per le edizioni della conferenza FFC Ricerca: programma, abs
 | --- | --- |
 | `/` | Edizione attiva (`Globals` → **Active conference**) |
 | `/archive/{slug}` | Edizioni passate con **Public archive** |
-| `/admin` | Pannello Payload (inglese) |
+| `/admin` | Pannello Payload (marchio FFC Ricerca; chrome in italiano) |
 | `/docs` | Guida editor in italiano (stesso login di `/admin`) |
 
 Le voci di programma, abstract e appendice si editano **dall’edizione**, non come voci di menu separate. Il piè di pagina pubblico (`Footer`) ha solo i link **Structure** e **Delegation**; Cookie Policy e Privacy Policy sono fisse.
@@ -53,8 +53,8 @@ Vedi `.env.example`. Oltre a database, secret Payload e URL pubblico:
 
 - **`PREVIEW_SECRET`** — anteprima intro da admin (iframe / draft)
 - **`BLOB_READ_WRITE_TOKEN`** — media su Vercel Blob in produzione; in locale gli upload restano su disco
-- **`NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`** — push lock-screen (opzionale). Email di contatto: `Globals` → **Programme alerts**
-- **`CRON_SECRET`** — solo se uno scheduler esterno chiama `GET /api/programme-alerts`
+- **`NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`** — push lock-screen (reminder di sessione e avvisi **Notices**). Email di contatto: `Globals` → **Programme alerts**
+- **`CRON_SECRET`** — solo se uno scheduler esterno chiama `GET /api/programme-alerts` (reminder automatici; gli avvisi **Notices** partono al click su **Send push**)
 
 Non committare `.env`. In produzione usa un `PAYLOAD_SECRET` casuale e una connection string Neon (o equivalente), non quella Docker.
 

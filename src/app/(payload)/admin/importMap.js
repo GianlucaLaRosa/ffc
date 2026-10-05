@@ -39,6 +39,9 @@ import { ContentColumnRowLabel as ContentColumnRowLabel_58a9b131a9d62d3bf7433e2c
 import { AccordionItemRowLabel as AccordionItemRowLabel_c6421880c1d3ef7e7624668c16d3abb6 } from '@/blocks/Accordion/ItemRowLabel'
 import { AgendaTimeField as AgendaTimeField_90b6d441be4b4d4ae834d4a780782899 } from '@/collections/AgendaItems/AgendaTimeField'
 import { DurationField as DurationField_de5f263c7625cff51097337c92399ea3 } from '@/collections/AgendaItems/DurationField'
+import { LimitedTextField as LimitedTextField_31452222fe503fa9fa4dbbb32ebe3ed3 } from '@/collections/ConferenceNotices/LimitedPlainTextField'
+import { LimitedTextareaField as LimitedTextareaField_31452222fe503fa9fa4dbbb32ebe3ed3 } from '@/collections/ConferenceNotices/LimitedPlainTextField'
+import { SendNoticeField as SendNoticeField_acee876318df864a96017cc3f964edd4 } from '@/collections/ConferenceNotices/SendNoticeField'
 import { ColorField as ColorField_fefe83621f3815412b5c63d5648284ce } from '@/fields/color/ColorField'
 import { OverviewComponent as OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { SeoMetaTitle as SeoMetaTitle_1a34e707c6fc001972da091647d36f6a } from '@/collections/Conferences/SeoMetaTitle'
@@ -51,6 +54,8 @@ import { ItalianRegionField as ItalianRegionField_911633a6e2cd90336dec82efeb0711
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { ArchiveManager as ArchiveManager_ef1fe07b57724ad1795fd159b5d1d135 } from '@/ConferenceArchive/ArchiveManager'
 import { HideSaveButton as HideSaveButton_ef371c344293090e1e3a1ac29cff0287 } from '@/ConferenceArchive/HideSaveButton'
+import { default as default_34253356f327048e5e1d0c8dd6259985 } from '@/components/admin/graphics/Icon'
+import { default as default_7290b7198794a8ea161f702320c1cd8a } from '@/components/admin/graphics/Logo'
 import { default as default_7ba51369afa5aae415f395464dc37455 } from '@/components/admin/SiteNavGroup'
 import { default as default_0c045e0ba02d15d8949a38b7cc0b6273 } from '@/components/admin/SiteDashboardGroup'
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
@@ -99,6 +104,9 @@ export const importMap = {
   "@/blocks/Accordion/ItemRowLabel#AccordionItemRowLabel": AccordionItemRowLabel_c6421880c1d3ef7e7624668c16d3abb6,
   "@/collections/AgendaItems/AgendaTimeField#AgendaTimeField": AgendaTimeField_90b6d441be4b4d4ae834d4a780782899,
   "@/collections/AgendaItems/DurationField#DurationField": DurationField_de5f263c7625cff51097337c92399ea3,
+  "@/collections/ConferenceNotices/LimitedPlainTextField#LimitedTextField": LimitedTextField_31452222fe503fa9fa4dbbb32ebe3ed3,
+  "@/collections/ConferenceNotices/LimitedPlainTextField#LimitedTextareaField": LimitedTextareaField_31452222fe503fa9fa4dbbb32ebe3ed3,
+  "@/collections/ConferenceNotices/SendNoticeField#SendNoticeField": SendNoticeField_acee876318df864a96017cc3f964edd4,
   "@/fields/color/ColorField#ColorField": ColorField_fefe83621f3815412b5c63d5648284ce,
   "@payloadcms/plugin-seo/client#OverviewComponent": OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@/collections/Conferences/SeoMetaTitle#SeoMetaTitle": SeoMetaTitle_1a34e707c6fc001972da091647d36f6a,
@@ -111,6 +119,8 @@ export const importMap = {
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
   "@/ConferenceArchive/ArchiveManager#ArchiveManager": ArchiveManager_ef1fe07b57724ad1795fd159b5d1d135,
   "@/ConferenceArchive/HideSaveButton#HideSaveButton": HideSaveButton_ef371c344293090e1e3a1ac29cff0287,
+  "@/components/admin/graphics/Icon#default": default_34253356f327048e5e1d0c8dd6259985,
+  "@/components/admin/graphics/Logo#default": default_7290b7198794a8ea161f702320c1cd8a,
   "@/components/admin/SiteNavGroup#default": default_7ba51369afa5aae415f395464dc37455,
   "@/components/admin/SiteDashboardGroup#default": default_0c045e0ba02d15d8949a38b7cc0b6273,
   "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,

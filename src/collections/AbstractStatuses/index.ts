@@ -5,6 +5,10 @@ import { authenticated } from '../../access/authenticated'
 
 export const AbstractStatuses: CollectionConfig<'abstract-statuses'> = {
   slug: 'abstract-statuses',
+  labels: {
+    singular: 'Stato abstract',
+    plural: 'Stati abstract',
+  },
   orderable: true,
   access: {
     create: authenticated,
@@ -13,10 +17,10 @@ export const AbstractStatuses: CollectionConfig<'abstract-statuses'> = {
     update: authenticated,
   },
   admin: {
-    group: 'Reference',
+    group: 'Riferimenti',
     useAsTitle: 'status',
     defaultColumns: ['status', 'updatedAt'],
-    description: 'Abstract workflow statuses. Seeded; edit only if labels or colors need changing.',
+    description: 'Stati del flusso abstract. Seed; modificare solo se servono etichette o colori diversi.',
   },
   fields: [
     {
@@ -26,7 +30,7 @@ export const AbstractStatuses: CollectionConfig<'abstract-statuses'> = {
       unique: true,
       label: 'Status',
       admin: {
-        description: 'Machine-readable status key (e.g. new, ongoing, concluded).',
+        description: 'Chiave dello stato (es. new, ongoing, concluded).',
       },
     },
     {
@@ -39,7 +43,7 @@ export const AbstractStatuses: CollectionConfig<'abstract-statuses'> = {
       },
       admin: {
         description:
-          'Section titles seeded onto an abstract when this status is selected and Content is empty. Leave empty to seed nothing.',
+          'Titoli di sezione copiati sull’abstract quando selezionate questo Status e Content è vuoto. Lasciate vuoto per non copiare nulla.',
       },
       fields: [
         {

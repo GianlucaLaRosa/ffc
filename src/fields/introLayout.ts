@@ -17,7 +17,7 @@ const LAYOUT_BLOCKS = [
 ]
 
 export const LAYOUT_BLOCKS_ADMIN_DESCRIPTION =
-  'Add Content (one or more text columns with a width, like Pages in the Payload website template), accordions, callouts, buttons, quotes, and separators. Non-Content blocks also have a width. Widths add up on a 12-column row from the large breakpoint up (Full = 12, Two thirds = 8, Half = 6, One third = 4) and wrap. On smaller screens everything is full width and stacks in order.'
+  'Aggiungete Content (una o più colonne di testo con una Width, come nelle Pages del template Payload), accordion, callout, pulsanti, citazioni e separatori. I blocchi diversi da Content hanno anch’essi una Width. Le larghezze si sommano su una riga a 12 colonne dal breakpoint grande in su (Full = 12, Two thirds = 8, Half = 6, One third = 4) e vanno a capo. Sugli schermi piccoli tutto è a larghezza piena e si impila in ordine.'
 
 export const layoutBlocksField = ({
   name,

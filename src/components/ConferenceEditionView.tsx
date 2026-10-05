@@ -11,6 +11,7 @@ import { ModalProvider } from '@/context/ModalContext'
 import { SavedAgendaProvider } from '@/context/SavedAgendaContext'
 import { ConferenceJsonLd } from '@/components/ConferenceSeo'
 import { UpcomingSessionBanner } from '@/components/SavedAgendaMenu'
+import { ConferenceNoticesBanner } from '@/components/ConferenceNoticesBanner'
 import { conferenceJsonLd } from '@/utilities/conferenceJsonLd'
 import type { ConferenceEditionData } from '@/utilities/getConferenceEdition'
 
@@ -21,7 +22,7 @@ export function ConferenceEditionView({
   data: ConferenceEditionData
   canonicalPath: string
 }) {
-  const { conference, days, abstracts, appendix, footer, programmeAlerts } = data
+  const { conference, days, abstracts, appendix, notices, footer, programmeAlerts } = data
 
   return (
     <ModalProvider allAbstracts={abstracts}>
@@ -43,7 +44,10 @@ export function ConferenceEditionView({
             editionYear={conference.year}
             logo={conference.logo}
           />
-          <UpcomingSessionBanner />
+          <div className="sticky top-16 sm:top-20 z-30 flex flex-col">
+            <ConferenceNoticesBanner notices={notices ?? []} canonicalPath={canonicalPath} />
+            <UpcomingSessionBanner />
+          </div>
 
           <HeroSection conference={conference} days={days} />
 

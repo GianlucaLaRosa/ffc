@@ -24,7 +24,7 @@ export const IntroCalloutBlock: Block = {
         { label: 'Deadline', value: 'deadline' },
       ],
       admin: {
-        description: 'Use Deadline for dates and cut-offs, Important for must-read notices.',
+        description: 'Usate Deadline per date e scadenze, Important per avvisi da leggere.',
       },
     },
     {

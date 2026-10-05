@@ -28,7 +28,7 @@ export const ArchiveManager: UIFieldClientComponent = () => {
       const activeRes = await fetch(
         '/api/globals/active-conference?depth=0&select[conference]=true',
       )
-      if (!activeRes.ok) throw new Error('Failed to load active conference')
+      if (!activeRes.ok) throw new Error('Impossibile caricare la conferenza attiva')
 
       const activeData = (await activeRes.json()) as {
         conference?: number | string | { id: number | string } | null
@@ -57,7 +57,7 @@ export const ArchiveManager: UIFieldClientComponent = () => {
       }
 
       const res = await fetch(`/api/conferences?${params.toString()}`)
-      if (!res.ok) throw new Error('Failed to load conferences')
+      if (!res.ok) throw new Error('Impossibile caricare le conferenze')
 
       const data = (await res.json()) as { docs?: ArchiveConference[] }
       const docs = Array.isArray(data.docs) ? [...data.docs] : []
@@ -70,7 +70,7 @@ export const ArchiveManager: UIFieldClientComponent = () => {
 
       setConferences(docs)
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to load archive list')
+      toast.error(error instanceof Error ? error.message : 'Impossibile caricare l’elenco archivio')
       setConferences([])
     } finally {
       setLoading(false)
@@ -112,7 +112,7 @@ export const ArchiveManager: UIFieldClientComponent = () => {
 
       if (!res.ok) {
         const errorData = (await res.json().catch(() => null)) as { message?: string } | null
-        throw new Error(errorData?.message || 'Failed to update public archive')
+        throw new Error(errorData?.message || 'Aggiornamento archivio pubblico non riuscito')
       }
 
       const data = (await res.json()) as { doc?: ArchiveConference }
@@ -128,8 +128,8 @@ export const ArchiveManager: UIFieldClientComponent = () => {
 
       toast.success(
         checked
-          ? `${conference.title ?? 'Conference'} is now public at /archive/${conference.slug}`
-          : `${conference.title ?? 'Conference'} removed from the public archive`,
+          ? `${conference.title ?? 'Conferenza'} è pubblica su /archive/${conference.slug}`
+          : `${conference.title ?? 'Conferenza'} tolta dall’archivio pubblico`,
       )
     } catch (error) {
       setConferences((current) =>
@@ -139,7 +139,7 @@ export const ArchiveManager: UIFieldClientComponent = () => {
             : item,
         ),
       )
-      toast.error(error instanceof Error ? error.message : 'Failed to update public archive')
+      toast.error(error instanceof Error ? error.message : 'Aggiornamento archivio pubblico non riuscito')
     } finally {
       setPending(conference.id, false)
     }
@@ -148,20 +148,20 @@ export const ArchiveManager: UIFieldClientComponent = () => {
   return (
     <div className={baseClass}>
       <div className={`${baseClass}__intro`}>
-        <h2 className={`${baseClass}__title`}>Public archive</h2>
+        <h2 className={`${baseClass}__title`}>Archivio pubblico</h2>
         <p className={`${baseClass}__description`}>
-          Past published editions, except the one on the homepage. A checked row is public at{' '}
-          <code>/archive/{'{slug}'}</code>. Unchecked stays in the CMS only. The active conference
-          is never listed here.
+          Edizioni pubblicate del passato, esclusa quella in home. Una riga spuntata è pubblica su{' '}
+          <code>/archive/{'{slug}'}</code>. Non spuntata resta solo nel CMS. La conferenza attiva
+          non compare qui.
         </p>
       </div>
 
       {loading ? (
-        <p className={`${baseClass}__status`}>Loading conferences…</p>
+        <p className={`${baseClass}__status`}>Caricamento conferenze…</p>
       ) : conferences.length === 0 ? (
         <p className={`${baseClass}__status`}>
-          No published past conferences yet. Create and publish another edition, or change the
-          active conference.
+          Nessuna edizione passata pubblicata. Create e pubblicate un’altra edizione, oppure cambiate la
+          conferenza attiva.
         </p>
       ) : (
         <ul className={`${baseClass}__list`}>

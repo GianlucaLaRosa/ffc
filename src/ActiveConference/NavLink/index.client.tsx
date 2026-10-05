@@ -20,8 +20,8 @@ export function ActiveConferenceNavLinkClient({ adminRoute, conferenceTitle }: P
   })
   const isActive = pathname.startsWith(href) && ['/', undefined].includes(pathname[href.length])
   const label = conferenceTitle
-    ? `Active conference · ${conferenceTitle}`
-    : 'Active conference'
+    ? `Conferenza attiva · ${conferenceTitle}`
+    : 'Conferenza attiva'
 
   const content = (
     <>

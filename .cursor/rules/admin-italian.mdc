@@ -1,0 +1,35 @@
+---
+description: Admin dashboard copy is Italian; field names stay English
+alwaysApply: true
+---
+
+# Admin language (Italian editors)
+
+The **public site** stays English. The **Payload admin** is for Italian editors.
+
+Do **not** enable Payload `localization` / `localized: true`. Admin language is copy + `i18n`, not locales.
+
+## English (unchanged)
+
+- Field `label` (and array/block row labels that name a field): `Name`, `Year`, `Show site banner`, `Title`.
+- Select option labels that match stored values: `Info`, `Change`, `Urgent`, `Primary Investigator`.
+- Block type labels in the picker (`Accordion`, `Content`) when they name the block slug.
+
+Editors match the English name to the field. The Italian handbook quotes those names as they appear.
+
+## Italian (everything else in `/admin`)
+
+- Payload chrome: `i18n.fallbackLanguage: 'it'` and `supportedLanguages: { it }` only (import `it` from `payload/i18n/it`).
+- Collection/global `labels`, `admin.group`, tab labels, `admin.description`.
+- Custom admin components, toasts, confirms, validation messages shown in the panel.
+- Dashboard cards and custom nav (`Site`, **Conferenza attiva**, **Archivio conferenze**, guida).
+
+```ts
+// ✅ field name English, help Italian
+{ name: 'year', label: 'Year', admin: { description: 'Anno dell’edizione. Più edizioni nello stesso anno sono ammesse.' } }
+
+// ❌ do not translate the field name
+{ name: 'year', label: 'Anno', admin: { description: 'Edition year.' } }
+```
+
+When a custom component mentions a field, keep the **English field label** inside the Italian sentence (`Show site banner`, `Send push`).

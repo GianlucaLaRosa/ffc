@@ -17,7 +17,7 @@ export const BasicTextAppendixBlock: Block = {
       required: true,
       label: 'Title',
       admin: {
-        description: 'Tab label on the public appendix.',
+        description: 'Etichetta della linguetta nell’appendice pubblica.',
       },
     },
     appendixTabIconField(),

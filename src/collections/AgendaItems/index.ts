@@ -169,8 +169,8 @@ const timeFieldAdmin = {
 export const AgendaItems: CollectionConfig<'agenda-items'> = {
   slug: 'agenda-items',
   labels: {
-    singular: 'Agenda item',
-    plural: 'Agenda items',
+    singular: 'Voce di programma',
+    plural: 'Voci di programma',
   },
   orderable: true,
   access: {
@@ -181,7 +181,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
   },
   admin: {
     hidden: true,
-    group: 'Conferences',
+    group: 'Conferenze',
     useAsTitle: 'title',
     defaultColumns: ['title', 'day', 'startTime', 'endTime', 'isKeynote', 'updatedAt'],
   },
@@ -200,12 +200,12 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       editor: basicLexical,
       label: 'Title',
       admin: {
-        description: 'Formatted talk or session title. Plain title is derived from this.',
+        description: 'Titolo formattato della sessione. Title in testo semplice si ricava da questo.',
       },
       validate: (value) => {
-        if (!value) return 'Title is required.'
+        if (!value) return 'Title è obbligatorio.'
         const plaintext = toPlainTitle(value as LexicalJSON)
-        if (!plaintext) return 'Title must include text.'
+        if (!plaintext) return 'Title deve contenere del testo.'
         return true
       },
     },
@@ -217,7 +217,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       index: true,
       admin: {
         description:
-          'Select the conference day first. Start and end times are limited to that day’s hours.',
+          'Selezionate prima il giorno. Start time e End time restano nei limiti orari di quel giorno.',
       },
     },
     {
@@ -263,7 +263,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
           defaultValue: false,
           admin: {
             width: '50%',
-            description: 'Highlight this session graphically on the frontend.',
+            description: 'Evidenzia graficamente questa sessione sul sito.',
           },
         },
       ],
@@ -292,7 +292,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       label: 'Icon',
       required: false,
       admin: {
-        description: 'Optional Lucide icon. Search filters the full list; scroll to browse all icons.',
+        description: 'Icona Lucide facoltativa. La ricerca filtra l’elenco; scorrete per vederle tutte.',
       },
     }),
     {
@@ -301,7 +301,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       editor: basicLexical,
       label: 'Description',
       admin: {
-        description: 'Optional notes or session details.',
+        description: 'Note o dettagli facoltativi sulla sessione.',
       },
     },
     {
@@ -314,7 +314,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       defaultSort: '_agenda-items_children_order',
       admin: {
         defaultColumns: ['title', 'startTime', 'endTime', 'isKeynote', '_status'],
-        description: 'Nested talks or sub-sessions. Drag to set order within this item.',
+        description: 'Interventi o sotto-sessioni. Trascinate per l’ordine dentro questa voce.',
       },
     },
     {
@@ -328,7 +328,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       admin: {
         defaultColumns: ['plainTitle', 'code', 'status', '_status'],
         description:
-          'Scientific abstracts under this session. The same abstract can also appear under other agenda items.',
+          'Abstract scientifici sotto questa sessione. Lo stesso abstract può comparire anche in altre voci.',
       },
     },
     {
@@ -337,7 +337,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Auto-generated plain-text title from Title (used in lists).',
+        description: 'Title in testo semplice ricavato da Title (elenchi).',
       },
     },
     {
@@ -349,7 +349,7 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
       admin: {
         position: 'sidebar',
         description:
-          'Optional parent agenda item (same day). Leave empty for top-level sessions.',
+          'Voce genitore facoltativa (stesso giorno). Lasciate vuoto per le sessioni di primo livello.',
       },
     },
   ],

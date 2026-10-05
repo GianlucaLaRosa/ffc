@@ -1,31 +1,34 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { ChevronLeft, ChevronRight, X } from './IconRenderer'
+import { CopyOverlayLink } from './CopyOverlayLink'
 import type { AbstractGallerySlide } from '@/utilities/conferenceUi'
 
 type PhotoCarouselOverlayProps = {
   slides: AbstractGallerySlide[]
-  startIndex?: number
+  index: number
+  onIndexChange: (index: number) => void
   onClose: () => void
 }
 
 export function PhotoCarouselOverlay({
   slides,
-  startIndex = 0,
+  index,
+  onIndexChange,
   onClose,
 }: PhotoCarouselOverlayProps) {
   const lastIndex = Math.max(slides.length - 1, 0)
-  const [index, setIndex] = useState(() => Math.min(Math.max(startIndex, 0), lastIndex))
+  const safeIndex = Math.min(Math.max(index, 0), lastIndex)
   const touchStartX = useRef<number | null>(null)
 
   const goTo = useCallback(
     (delta: number) => {
       if (slides.length === 0) return
-      setIndex((current) => (current + delta + slides.length) % slides.length)
+      onIndexChange((safeIndex + delta + slides.length) % slides.length)
     },
-    [slides.length],
+    [onIndexChange, safeIndex, slides.length],
   )
 
   useEffect(() => {
@@ -52,7 +55,7 @@ export function PhotoCarouselOverlay({
 
   if (slides.length === 0) return null
 
-  const slide = slides[index]
+  const slide = slides[safeIndex]
   if (!slide) return null
 
   return createPortal(
@@ -71,16 +74,19 @@ export function PhotoCarouselOverlay({
         onClick={(event) => event.stopPropagation()}
       >
         <p id="photo-carousel-title" className="text-sm font-medium">
-          {index + 1} / {slides.length}
+          {safeIndex + 1} / {slides.length}
         </p>
-        <button
-          type="button"
-          onClick={onClose}
-          className="p-2 rounded-full text-page/80 hover:text-page hover:bg-page/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-          aria-label="Close photo gallery"
-        >
-          <X className="w-6 h-6" />
-        </button>
+        <div className="flex items-center gap-1">
+          <CopyOverlayLink className="p-2 rounded-full text-page/80 hover:text-page hover:bg-page/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand" />
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-full text-page/80 hover:text-page hover:bg-page/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+            aria-label="Close photo gallery"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
       </div>
 
       <div

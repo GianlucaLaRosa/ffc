@@ -1,0 +1,60 @@
+/* FFC Ricerca — verde del marchio solo come accento (focus, successo, home). */
+:root {
+  --color-success-50: rgb(232, 245, 238);
+  --color-success-100: rgb(209, 236, 221);
+  --color-success-150: rgb(184, 224, 204);
+  --color-success-200: rgb(154, 211, 184);
+  --color-success-250: rgb(124, 198, 163);
+  --color-success-300: rgb(91, 181, 140);
+  --color-success-350: rgb(58, 165, 118);
+  --color-success-400: rgb(26, 150, 100);
+  --color-success-450: rgb(0, 135, 85);
+  --color-success-500: rgb(0, 121, 68);
+  --color-success-550: rgb(0, 108, 60);
+  --color-success-600: rgb(0, 95, 53);
+  --color-success-650: rgb(0, 82, 46);
+  --color-success-700: rgb(0, 70, 39);
+  --color-success-750: rgb(0, 59, 33);
+  --color-success-800: rgb(6, 56, 34);
+  --color-success-850: rgb(8, 48, 30);
+  --color-success-900: rgb(10, 42, 27);
+  --color-success-950: rgb(12, 36, 24);
+}
+
+html[data-theme='dark'] {
+  /* Testo successo su sfondo verde scuro: la scala invertita restava troppo cupa. */
+  --theme-success-600: rgb(196, 232, 214);
+  --theme-success-800: rgb(232, 245, 238);
+}
+
+.ffc-admin-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--base) * 0.6);
+  text-align: center;
+
+  img {
+    display: block;
+    width: 9.25rem;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+
+  &__name {
+    margin: 0;
+    max-width: 16rem;
+    color: var(--theme-elevation-700);
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+}
+
+.ffc-admin-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  object-fit: cover;
+  border-radius: 2px;
+}

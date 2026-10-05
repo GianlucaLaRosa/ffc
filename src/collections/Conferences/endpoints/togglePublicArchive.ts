@@ -53,7 +53,7 @@ export const togglePublicArchiveEndpoint: Endpoint = {
 
     if (existing._status !== 'published') {
       return Response.json(
-        { message: 'Only published conferences can be shown in the public archive.' },
+        { message: 'Solo le conferenze pubblicate possono comparire nell’archivio pubblico.' },
         { status: 400 },
       )
     }
@@ -76,7 +76,7 @@ export const togglePublicArchiveEndpoint: Endpoint = {
 
     if (activeId != null && String(activeId) === String(id)) {
       return Response.json(
-        { message: 'The active conference is shown at the site root, not in the archive.' },
+        { message: 'La conferenza attiva è in home, non in archivio.' },
         { status: 400 },
       )
     }
@@ -114,7 +114,7 @@ export const togglePublicArchiveEndpoint: Endpoint = {
       const message =
         error && typeof error === 'object' && 'message' in error
           ? String((error as { message?: unknown }).message)
-          : 'Failed to update public archive.'
+          : 'Aggiornamento archivio pubblico non riuscito.'
 
       req.payload.logger.error({
         err: error,

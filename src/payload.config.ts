@@ -2,6 +2,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { buildConfig } from 'payload'
+import { it } from 'payload/i18n/it'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
@@ -16,6 +17,7 @@ import { Institutions } from './collections/Institutions'
 import { ItalianRegions } from './collections/ItalianRegions'
 import { Media } from './collections/Media'
 import { People } from './collections/People'
+import { ConferenceNotices } from './collections/ConferenceNotices'
 import { ProgrammePushSubscriptions } from './collections/ProgrammePushSubscriptions'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
@@ -43,7 +45,28 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: {
+    meta: {
+      titleSuffix: ' — FFC Ricerca',
+      description:
+        'Pannello della Fondazione per la Ricerca sulla Fibrosi Cistica - ETS. Gestione delle edizioni della conferenza.',
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          url: '/brand/ffc-ricerca-32.png',
+        },
+        {
+          rel: 'apple-touch-icon',
+          type: 'image/png',
+          url: '/brand/ffc-ricerca.png',
+        },
+      ],
+    },
     components: {
+      graphics: {
+        Icon: '@/components/admin/graphics/Icon',
+        Logo: '@/components/admin/graphics/Logo',
+      },
       beforeLogin: ['@/components/BeforeLogin'],
       afterNavLinks: ['@/components/admin/SiteNavGroup'],
       beforeDashboard: ['@/components/admin/SiteDashboardGroup'],
@@ -55,7 +78,7 @@ export default buildConfig({
     livePreview: {
       breakpoints: [
         {
-          label: 'Mobile',
+          label: 'Cellulare',
           name: 'mobile',
           width: 375,
           height: 667,
@@ -75,6 +98,10 @@ export default buildConfig({
       ],
     },
   },
+  i18n: {
+    fallbackLanguage: 'it',
+    supportedLanguages: { it },
+  },
   editor: defaultLexical,
   db: postgresAdapter({
     pool: {
@@ -91,6 +118,7 @@ export default buildConfig({
     Appendices,
     AgendaItems,
     ConferenceDays,
+    ConferenceNotices,
     Conferences,
     Countries,
     Institutions,

@@ -12,8 +12,12 @@ import { assignFolderOnCreate } from './Media/hooks/assignFolderOnCreate'
 export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
+  labels: {
+    singular: 'Media',
+    plural: 'Media',
+  },
   admin: {
-    group: 'Content',
+    group: 'Contenuti',
     useAsTitle: 'alt',
     defaultColumns: ['filename', 'alt', 'caption', 'updatedAt'],
   },
@@ -81,7 +85,7 @@ export const Media: CollectionConfig = {
         readOnly: true,
         allowCreate: false,
         defaultColumns: ['plainTitle', 'code', 'conference'],
-        description: 'Abstracts that use this image. Edit the link from the abstract, not here.',
+        description: 'Abstract che usano questa immagine. Modificate il collegamento dall’abstract, non da qui.',
       },
     },
     {
@@ -94,7 +98,7 @@ export const Media: CollectionConfig = {
         readOnly: true,
         allowCreate: false,
         defaultColumns: ['fullName', 'institution'],
-        description: 'People whose profile photo is this file. Edit the photo on the person.',
+        description: 'Persone la cui foto profilo è questo file. Modificate la foto sulla persona.',
       },
     },
   ],

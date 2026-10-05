@@ -22,7 +22,7 @@ export const IntroQuoteBlock: Block = {
       type: 'text',
       label: 'Attribution',
       admin: {
-        description: 'Optional speaker, role, or source.',
+        description: 'Relatore, ruolo o fonte, facoltativo.',
       },
     },
   ],

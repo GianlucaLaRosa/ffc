@@ -9,11 +9,11 @@ const httpsUrl: TextFieldValidation = (value) => {
   try {
     const parsed = new URL(String(value))
     if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-      return 'Use an http or https URL'
+      return 'Usate un URL http o https'
     }
     return true
   } catch {
-    return 'Use a valid URL'
+    return 'Usate un URL valido'
   }
 }
 
@@ -27,7 +27,7 @@ const labelRequiredWhenUrl: TextFieldValidation = (value, { siblingData }) => {
       : ''
 
   if (url && (value == null || String(value).trim() === '')) {
-    return 'Label is required when a URL is set'
+    return 'Label è obbligatorio se è impostato URL'
   }
 
   return true
@@ -43,7 +43,7 @@ const orgLinkGroup = (name: 'structure' | 'delegation', label: string): Field =>
       label: 'Icon',
       required: false,
       admin: {
-        description: 'Optional Lucide icon.',
+        description: 'Icona Lucide facoltativa.',
       },
     }),
     {
@@ -63,7 +63,7 @@ const orgLinkGroup = (name: 'structure' | 'delegation', label: string): Field =>
           admin: {
             width: '50%',
             placeholder: 'https://',
-            description: 'External website. Opens in a new tab.',
+            description: 'Sito esterno. Si apre in una nuova scheda.',
           },
           validate: httpsUrl,
         },
@@ -74,6 +74,7 @@ const orgLinkGroup = (name: 'structure' | 'delegation', label: string): Field =>
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
+  label: 'Piè di pagina',
   access: {
     read: () => true,
   },

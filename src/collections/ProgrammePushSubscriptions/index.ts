@@ -6,9 +6,9 @@ export const ProgrammePushSubscriptions: CollectionConfig = {
   slug: 'programme-push-subscriptions',
   admin: {
     hidden: true,
-    group: 'Content',
+    group: 'Contenuti',
     useAsTitle: 'endpoint',
-    description: 'Browser push endpoints for My programme session alerts. Not edited in admin.',
+    description: 'Endpoint push del browser per gli avvisi di My programme. Non si modificano da qui.',
   },
   access: {
     create: () => false,
@@ -49,6 +49,16 @@ export const ProgrammePushSubscriptions: CollectionConfig = {
       name: 'items',
       type: 'json',
       required: true,
+    },
+    {
+      name: 'conferenceUpdates',
+      type: 'checkbox',
+      defaultValue: true,
+      index: true,
+      admin: {
+        description:
+          'Se è vero, questo endpoint riceve anche gli avvisi editoriali (sala/orario), non solo i promemoria di sessione.',
+      },
     },
     {
       name: 'notifiedSoon',

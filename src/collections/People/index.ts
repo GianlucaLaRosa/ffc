@@ -28,6 +28,10 @@ const populateFullName: CollectionBeforeValidateHook = ({ data }) => {
 
 export const People: CollectionConfig<'people'> = {
   slug: 'people',
+  labels: {
+    singular: 'Persona',
+    plural: 'Persone',
+  },
   orderable: true,
   access: {
     create: authenticated,
@@ -36,10 +40,10 @@ export const People: CollectionConfig<'people'> = {
     update: authenticated,
   },
   admin: {
-    group: 'People & orgs',
+    group: 'Persone e organizzazioni',
     useAsTitle: 'fullName',
     defaultColumns: ['fullName', 'institution', 'updatedAt'],
-    description: 'Researchers, authors, speakers, and reviewers.',
+    description: 'Ricercatori, autori, relatori e revisori.',
   },
   fields: [
     {
@@ -73,7 +77,7 @@ export const People: CollectionConfig<'people'> = {
       relationTo: 'media',
       label: 'Photo',
       admin: mediaFolderUploadAdmin(PEOPLE_PHOTOS_FOLDER_NAME, {
-        description: `Optional profile photo. Stored in the Media folder "${PEOPLE_PHOTOS_FOLDER_NAME}".`,
+        description: `Foto profilo facoltativa. Cartella Media «${PEOPLE_PHOTOS_FOLDER_NAME}».`,
       }),
     },
     {
@@ -88,7 +92,7 @@ export const People: CollectionConfig<'people'> = {
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Auto-generated from first and last name.',
+        description: 'Generato da First name e Last name.',
       },
     },
     {

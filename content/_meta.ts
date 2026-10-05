@@ -11,6 +11,7 @@ const meta: MetaRecord = {
   appendice: 'Appendice',
   'persone-e-enti': 'Persone ed enti',
   'mettere-online': 'Pubblicare e archiviare',
+  'avvisi-conferenza': 'Avvisi durante la conferenza',
   sito: 'Piè di pagina e avvisi',
   'problemi-frequenti': 'Problemi frequenti',
 }

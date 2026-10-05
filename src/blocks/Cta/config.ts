@@ -36,7 +36,7 @@ export const IntroCtaBlock: Block = {
       label: 'URL',
       admin: {
         condition: (_, siblingData) => siblingData?.destination === 'custom',
-        description: 'External site, or a page path such as /archive/…',
+        description: 'Sito esterno, o un percorso di pagina come /archive/…',
       },
       validate: (value, { siblingData }) => {
         const data = siblingData as { destination?: string } | undefined

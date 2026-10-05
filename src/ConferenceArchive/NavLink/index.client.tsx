@@ -26,8 +26,8 @@ export function ConferenceArchiveNavLinkClient({
   const isActive = pathname.startsWith(href) && ['/', undefined].includes(pathname[href.length])
   const label =
     totalCount > 0
-      ? `Conference archive · ${enabledCount}/${totalCount} public`
-      : 'Conference archive'
+      ? `Archivio conferenze · ${enabledCount}/${totalCount} pubbliche`
+      : 'Archivio conferenze'
 
   const content = (
     <>

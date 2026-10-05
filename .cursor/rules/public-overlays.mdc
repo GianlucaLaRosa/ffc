@@ -1,0 +1,26 @@
+---
+description: Public conference overlays must be addressable URLs with working browser Back
+alwaysApply: true
+---
+
+# Public overlay URLs
+
+Any **content overlay** on the public conference site (abstract details, photo gallery, and future document overlays) must have its own URL so participants can copy/share the link and so browser **Back** / **Forward** / **Escape** close the top layer correctly.
+
+## Do
+
+- Encode the overlay in **query params** on the current edition path (`/` or `/archive/{slug}`), not a separate route that unmounts the page.
+- Open with `history.pushState`; change in-overlay position (e.g. gallery slide) with `history.replaceState`; never `router.push` / `router.replace` from `next/navigation` for this — those refetch the RSC tree.
+- Keep param names and helpers in `src/utilities/overlayUrl.ts` (`abstract`, `photo`, …). Reuse them; do not invent a second scheme.
+- On first load, **sync UI from the URL**. Do not rewrite history on hydrate.
+- Close: if `history.state.overlay.pushed` (we used `pushState`), `history.back()`; otherwise `replaceState` to drop the top param so a shared link stays on the edition page.
+- Nested overlays are a stack (`?abstract=CODE` then `?abstract=CODE&photo=2`). Back closes the gallery first, then the abstract.
+- Prefer a stable public id in the URL (abstract **Code**, then id). 1-based indices for slides.
+
+## Do not
+
+- Open a shareable overlay with `useState` only.
+- Give URLs to chrome: **My programme**, install hints, toasts, cookie banners.
+- Use hash (`#abstract=`) or parallel `@modal` routes unless the overlay is a real standalone page.
+
+Payload admin screens are exempt (Payload owns those URLs).
