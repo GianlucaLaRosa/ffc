@@ -25,20 +25,11 @@ La push funziona bene su desktop e, su iPhone, soprattutto se il sito è aggiunt
 
 ### Create la scheda
 
-**Crea Nuovo**. Compilate:
-
-- **Title** — max 40 caratteri (es. “Room change”)
-- **Body** — max 120 caratteri, solo testo (es. “Keynote moves to Aula Magna, 15:30”)
-- **Severity** — `Info`, `Change` (consigliato per spostamenti) o `Urgent`
-- **Show site banner** — lasciatelo acceso per il banner pubblico
-- **Include push when sending** — accendetelo solo se volete anche la notifica push
-- **Related session** (opzionale) — collega una sessione del programma; la push va a chi l’ha salvata (e a chi riceve gli aggiornamenti generali)
-- **Link path** (opzionale) — es. `#programme` o `?agenda=…`
-- **Banner from / until** (opzionale) — finestre di visibilità del banner
+**Crea Nuovo**. Compilate i campi (dettaglio sotto), poi **Salva**.
 
 ### Salvate
 
-Con **Show site banner** attivo, il banner compare sul sito dopo il salvataggio (edizione **Pubblicato**).
+Con **Show site banner** attivo, e se le date lo consentono, il banner compare sul sito dopo il salvataggio (edizione **Pubblicato**). Non serve **Invia push**.
 
 ### Inviate la push (se serve)
 
@@ -48,6 +39,97 @@ Solo sull’edizione impostata come **Conferenza attiva**. Premere **Invia push*
 <Callout type="warning">
   Non usate **Invia push** per prove inutili: arriva sui telefoni dei partecipanti. Per verificare il testo basta il banner sul sito.
 </Callout>
+
+## Campi della scheda
+
+I **nomi dei campi** restano in inglese, come in pannello.
+
+### Title
+
+Titolo breve (max 40 caratteri). Compare sul banner e, se mandate la push, sulla schermata di blocco.
+
+Esempi: `Room change`, `Session delayed`, `Keynote cancelled`.
+
+### Body
+
+Solo testo, max 120 caratteri. È il messaggio vero e proprio, sul banner e nella push. Niente grassetto, link o elenchi: se serve un collegamento usate **Link path**.
+
+Esempi:
+
+- `Keynote moves to Aula Magna, 15:30.`
+- `Poster session starts 20 minutes later, same room.`
+- `Coffee break is now in the foyer.`
+
+### Severity
+
+Colore del banner. I valori in elenco sono `Info`, `Change`, `Urgent`.
+
+| Valore | Quando usarlo | Esempio |
+| --- | --- | --- |
+| `Info` | Comunicazione senza urgenza | `Wi‑Fi password is on the badge.` |
+| `Change` | Spostamento di sala o orario (scelta consigliata) | `Workshop B is now in Room 2.` |
+| `Urgent` | Annullamento o problema che richiede attenzione subito | `Afternoon sessions cancelled.` |
+
+### Show site banner
+
+Se è acceso, i visitatori vedono l’avviso sulla pagina pubblica dell’edizione (entro le date, se le avete messe). Se è spento, nessun banner: potete comunque preparare il testo e, se volete, mandare solo la push.
+
+Lasciatelo acceso per un cambio di programma durante l’evento.
+
+### Include push when sending
+
+Se è acceso, il pulsante **Invia push** recapita anche la notifica a schermo bloccato (dispositivi iscritti di questa edizione). Se è spento, **Invia push** non manda nulla: resta solo il banner, se **Show site banner** è acceso.
+
+Accendetelo solo quando il messaggio è definitivo.
+
+### Related session
+
+Facoltativo. Collega una sessione del **programma di questa edizione**.
+
+- Il **banner** resta visibile a **tutti**
+- La **push** arriva a chi ha salvato quella sessione in “My programme”, **e** a chi è iscritto agli aggiornamenti generali della conferenza
+
+Esempio: il keynote cambia aula → scegliete la sessione del keynote, così chi l’aveva in agenda riceve la push.
+
+### Link path
+
+Percorso facoltativo **su questo sito**, non un indirizzo completo `https://…`. Deve iniziare con `/`, `?` o `#`.
+
+| Esempio | Cosa apre |
+| --- | --- |
+| *(vuoto)* | Home dell’edizione, oppure la sessione in **Related session** se è impostata |
+| `#programme` | La sezione programma sulla stessa pagina |
+| `?agenda=123` | La scheda di quella sessione (usate l’id che vedete in pannello) |
+
+### Banner from e Banner until
+
+Facoltativi. Controllano **solo il banner**, non la push. Potete lasciarli entrambi vuoti, compilare solo uno, o tutti e due.
+
+| Cosa compilate | Cosa succede al banner |
+| --- | --- |
+| Entrambi vuoti | Visibile **subito** dopo il salvataggio e resta finché non spegnete **Show site banner** (o non aggiungete una data) |
+| Solo **Banner from** | Nascosto **prima** di quell’orario; dopo resta visibile **senza scadenza** |
+| Solo **Banner until** | Visibile **subito**, nascosto **da quell’orario in poi** (all’istante esatto sparisce) |
+| Tutti e due | Visibile solo **tra** i due orari |
+
+Esempi:
+
+- Cambio aula **adesso**, da togliere a mano più tardi → date vuote, poi togliete **Show site banner**
+- Annuncio che deve comparire **da lunedì 9:00** e restare → solo **Banner from**
+- Avviso per la pausa caffè, via a fine pausa → solo **Banner until** (orario di fine pausa)
+- Messaggio valido **solo durante la plenaria** → **Banner from** inizio plenaria e **Banner until** fine plenaria
+
+**Invia push** ignora queste date: se premete il pulsante, la notifica parte subito, anche se il banner è ancora in attesa di **Banner from**.
+
+### Dopo l’invio (sola lettura)
+
+Dopo una push riuscita il pannello compila da solo:
+
+- **Push sent at** — quando è partita
+- **Push delivered** — dispositivi che l’hanno ricevuta
+- **Stale endpoints removed** — indirizzi push scaduti, puliti in automatico
+
+Non si modificano a mano. Per un altro messaggio create un **nuovo** avviso.
 
 ## Spegnere un banner
 
