@@ -34,6 +34,7 @@ export interface HeaderProps {
   brand?: 'edition' | 'archive'
   showSectionNav?: boolean
   showSavedAgenda?: boolean
+  showArchiveNav?: boolean
 }
 
 export function Header({
@@ -45,6 +46,7 @@ export function Header({
   brand = 'edition',
   showSectionNav = true,
   showSavedAgenda = true,
+  showArchiveNav = true,
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const logoSrc = mediaUrl(logo) || '/logo.png'
@@ -136,7 +138,7 @@ export function Header({
                   })
                 : null}
               {brand === 'archive' ? <CurrentEditionLink variant="desktop" /> : null}
-              <ArchiveNav editions={archivedEditions} variant="desktop" />
+              {showArchiveNav ? <ArchiveNav editions={archivedEditions} variant="desktop" /> : null}
             </nav>
             {showSavedAgenda ? <SavedAgendaMenu /> : null}
             <div className="hidden md:block">
@@ -194,11 +196,13 @@ export function Header({
                 })
               : null}
             {brand === 'archive' ? <CurrentEditionLink variant="mobile" /> : null}
-            <ArchiveNav
-              editions={archivedEditions}
-              variant="mobile"
-              onNavigate={() => setMobileMenuOpen(false)}
-            />
+            {showArchiveNav ? (
+              <ArchiveNav
+                editions={archivedEditions}
+                variant="mobile"
+                onNavigate={() => setMobileMenuOpen(false)}
+              />
+            ) : null}
             <ThemeToggle variant="row" />
             <InstallPwaButton variant="row" />
           </div>

@@ -68,6 +68,21 @@ export function formatConferenceTime(value?: string | null): string {
   return `${parts.hour}:${parts.minute}`
 }
 
+/** Compact weekday + date in Europe/Rome, e.g. "Thu 15 Nov". */
+export function formatConferenceDateShort(value?: string | null): string {
+  if (!value) return ''
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+
+  const parts = partsInConferenceZone(date, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  })
+  if (!parts.weekday || !parts.day || !parts.month) return ''
+  return `${parts.weekday} ${parts.day} ${parts.month}`
+}
+
 export function formatConferenceDayTitle(value: string): string {
   const parts = conferenceParts(value)
   if (!parts) return 'Conference day'

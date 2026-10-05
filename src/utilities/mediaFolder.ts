@@ -1,11 +1,13 @@
 import type { Payload, PayloadRequest } from 'payload'
 
 export const CONFERENCE_LOGOS_FOLDER_NAME = 'Conference logos'
+export const PARTNER_LOGOS_FOLDER_NAME = 'Partner logos'
 export const PEOPLE_PHOTOS_FOLDER_NAME = 'People photos'
 export const ABSTRACT_PICTURES_FOLDER_NAME = 'Abstract pictures'
 
 export const MANAGED_MEDIA_FOLDER_NAMES = [
   CONFERENCE_LOGOS_FOLDER_NAME,
+  PARTNER_LOGOS_FOLDER_NAME,
   PEOPLE_PHOTOS_FOLDER_NAME,
   ABSTRACT_PICTURES_FOLDER_NAME,
 ] as const

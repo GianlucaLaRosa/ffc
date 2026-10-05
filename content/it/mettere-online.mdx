@@ -45,16 +45,16 @@ Quella edizione:
 
 ### Archiviare le edizioni passate
 
-**Archivio conferenze** (sempre in **Sito**). In alto, **Enable public archive** accende o spegne l’archivio pubblico **per tutto il sito**. Si salva appena spuntate (non serve **Salva**).
+**Archivio conferenze** (sempre in **Sito**). In alto, **Enable public archive** mostra o nasconde **Archive** nel menu del sito. Si salva appena spuntate (non serve **Salva**).
 
-- **Acceso:** funzionano `/archive` (l’elenco) e `/archive/{slug}` (ogni edizione). **Archive** compare nel menu del sito se almeno un’edizione è spuntata sotto.
-- **Spento:** quegli indirizzi mostrano una pagina 404 e **Archive** sparisce dal menu. Le spunte sulle singole edizioni restano, così potete riaccendere le rotte in seguito.
+- **Acceso:** **Archive** compare nel menu del sito se almeno un’edizione è spuntata sotto.
+- **Spento:** **Archive** sparisce dal menu. `/archive` (l’elenco) e `/archive/{slug}` (ogni edizione) restano raggiungibili se qualcuno ha il link. Le spunte sulle singole edizioni restano.
 
 Poi decidete quali edizioni pubblicate (non quella attiva) comparire in elenco. Una riga spuntata è pubblica su `/archive/` più lo **Slug** di quella conferenza.
 
 L’edizione attiva **non** sta in archivio: se qualcuno apre il vecchio link archivio, viene mandato alla home.
 
-Da `/archive` (l’elenco) il menu ha **Current edition** e **Archive**, senza Programme / Venue / Appendix: quelle sezioni non esistono sull’elenco. Sulla pagina di un’edizione passata (`/archive/` + slug) Programme / Venue / Appendix restano, e riguardano **quel** programma. Una fascia sotto la testata ricorda che non è l’edizione in home e offre **Open current edition**. Il **logo** apre sempre la home.
+Da `/archive` (l’elenco) il menu ha **Current edition** (e **Archive** se **Enable public archive** è acceso), senza Programme / Venue / Appendix: quelle sezioni non esistono sull’elenco. Sulla pagina di un’edizione passata (`/archive/` + slug) Programme / Venue / Appendix restano, e riguardano **quel** programma. Una fascia sotto la testata ricorda che non è l’edizione in home e offre **Open current edition**. Il **logo** apre sempre la home.
 
 ### Scheda per Google e i social
 

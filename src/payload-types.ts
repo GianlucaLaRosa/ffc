@@ -2105,7 +2105,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
- * Institutional footer links and the public Cookie Policy and Privacy Policy pages.
+ * Institutional footer links, partner logos, credits, and the public Cookie Policy and Privacy Policy pages.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer".
@@ -2140,6 +2140,33 @@ export interface Footer {
      */
     url?: string | null;
   };
+  /**
+   * Upload order is the display order. Media folder “Partner logos”.
+   */
+  partners?:
+    | {
+        image: number | Media;
+        /**
+         * Partner site. Opens in a new tab.
+         */
+        url?: string | null;
+        /**
+         * Short description of the logo for screen readers. If empty, the Media Alt Text is used.
+         */
+        alt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Display order follows this list.
+   */
+  credits?:
+    | {
+        role: string;
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
   cookiePolicy: {
     /**
      * Page heading and footer link label.
@@ -2351,7 +2378,7 @@ export interface ActiveConference {
 export interface ConferenceArchive {
   id: number;
   /**
-   * When on, /archive and /archive/{slug} are public. When off, those URLs return 404 and Archive is hidden in the menu.
+   * When on, Archive appears in the site menu if at least one edition is listed. When off, the menu item is hidden; /archive and /archive/{slug} stay available.
    */
   enablePublicArchive?: boolean | null;
   updatedAt?: string | null;
@@ -2412,6 +2439,21 @@ export interface FooterSelect<T extends boolean = true> {
             };
         label?: T;
         url?: T;
+      };
+  partners?:
+    | T
+    | {
+        image?: T;
+        url?: T;
+        alt?: T;
+        id?: T;
+      };
+  credits?:
+    | T
+    | {
+        role?: T;
+        name?: T;
+        id?: T;
       };
   cookiePolicy?:
     | T

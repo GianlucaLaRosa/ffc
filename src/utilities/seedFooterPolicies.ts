@@ -42,6 +42,8 @@ export async function seedFooterPolicies({ payload }: { payload: Payload }): Pro
       label?: string | null
       url?: string | null
     } | null
+    partners?: unknown
+    credits?: unknown
     cookiePolicy?: { content?: unknown } | null
     privacyPolicy?: { content?: unknown } | null
   }
@@ -67,6 +69,8 @@ export async function seedFooterPolicies({ payload }: { payload: Payload }): Pro
       data: {
         structure: withIconProvider(footer.structure),
         delegation: withIconProvider(footer.delegation),
+        partners: Array.isArray(footer.partners) ? footer.partners : [],
+        credits: Array.isArray(footer.credits) ? footer.credits : [],
         ...(cookieEmpty ? { cookiePolicy: COOKIE_POLICY_SEED } : {}),
         ...(privacyEmpty ? { privacyPolicy: PRIVACY_POLICY_SEED } : {}),
       },

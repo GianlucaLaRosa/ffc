@@ -1,6 +1,5 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import { ArchiveIndexView } from '@/components/ArchiveIndexView'
 import { getServerSideURL } from '@/utilities/getURL'
 import {
@@ -13,9 +12,6 @@ import {
 export const revalidate = 60
 
 export async function generateMetadata(): Promise<Metadata> {
-  if (!(await isPublicArchiveEnabled())) {
-    return { title: 'Conference archive' }
-  }
   const canonical = `${getServerSideURL()}/archive`
   return {
     title: 'Conference archive | FFC Scientific Conference',
@@ -31,13 +27,19 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ArchiveIndexPage() {
-  if (!(await isPublicArchiveEnabled())) notFound()
-
-  const [editions, footer, logo] = await Promise.all([
+  const [editions, footer, logo, showArchiveNav] = await Promise.all([
     getArchivedConferences(),
     getPublicFooter(),
     getActiveConferenceLogo(),
+    isPublicArchiveEnabled(),
   ])
 
-  return <ArchiveIndexView editions={editions} footer={footer} logo={logo} />
+  return (
+    <ArchiveIndexView
+      editions={editions}
+      footer={footer}
+      logo={logo}
+      showArchiveNav={showArchiveNav}
+    />
+  )
 }

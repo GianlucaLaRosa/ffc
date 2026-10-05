@@ -3,7 +3,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
 import { Bell, Bookmark, BookmarkCheck, Clock, X } from 'lucide-react'
 import { useSavedAgenda } from '@/context/SavedAgendaContext'
-import { formatConferenceTime } from '@/utilities/conferenceTime'
+import { formatConferenceDateShort, formatConferenceTime } from '@/utilities/conferenceTime'
 import { isHappeningNow, isStartingSoon } from '@/utilities/savedAgenda'
 
 export function SavedAgendaMenu() {
@@ -262,10 +262,12 @@ export function UpcomingSessionBanner() {
 }
 
 function formatSavedTime(startTime?: string | null, endTime?: string | null): string {
+  const date = formatConferenceDateShort(startTime)
   const start = formatConferenceTime(startTime)
   const end = formatConferenceTime(endTime)
-  if (start && end) return `${start} – ${end}`
-  return start
+  const range = start && end ? `${start} – ${end}` : start
+  if (date && range) return `${date} · ${range}`
+  return date || range
 }
 
 function programmeButtonLabel({

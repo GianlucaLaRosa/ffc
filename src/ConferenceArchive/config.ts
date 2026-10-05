@@ -35,8 +35,8 @@ export const ConferenceArchive: GlobalConfig = {
       admin: {
         hidden: true,
         description: copy(
-          'When on, /archive and /archive/{slug} are public. When off, those URLs return 404 and Archive is hidden in the menu.',
-          'Se acceso, /archive e /archive/{slug} sono pubblici. Se spento, quegli indirizzi danno 404 e Archive sparisce dal menu.',
+          'When on, Archive appears in the site menu if at least one edition is listed. When off, the menu item is hidden; /archive and /archive/{slug} stay available.',
+          'Se acceso, Archive compare nel menu del sito se almeno un’edizione è in elenco. Se spento, la voce di menu sparisce; /archive e /archive/{slug} restano raggiungibili.',
         ),
       },
     },

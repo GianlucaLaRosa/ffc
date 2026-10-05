@@ -45,16 +45,16 @@ That edition:
 
 ### Archive past editions
 
-**Conference archive** (still under **Site**). At the top, **Enable public archive** turns the public archive **on or off for the whole site**. It saves as soon as you tick it (no **Save**).
+**Conference archive** (still under **Site**). At the top, **Enable public archive** shows or hides **Archive** in the site menu. It saves as soon as you tick it (no **Save**).
 
-- **On:** `/archive` (the list) and `/archive/{slug}` (each edition) work. **Archive** appears in the site menu if at least one edition is ticked below.
-- **Off:** those addresses return a 404 page and **Archive** is hidden in the menu. The ticks on individual editions are kept, so you can turn the routes back on later.
+- **On:** **Archive** appears in the site menu if at least one edition is ticked below.
+- **Off:** **Archive** is hidden in the menu. `/archive` (the list) and `/archive/{slug}` (each edition) stay available if someone has the link. The ticks on individual editions are kept.
 
 Then decide which published editions (not the active one) appear in the list. A ticked row is public at `/archive/` plus that conference’s **Slug**.
 
 The active edition is **not** in the archive: if someone opens the old archive link, they are sent home.
 
-From `/archive` (the list) the menu has **Current edition** and **Archive**, without Programme / Venue / Appendix: those sections do not exist on the list. On a past edition page (`/archive/` + slug) Programme / Venue / Appendix stay, and they belong to **that** programme. A bar under the header reminds you this is not the home edition and offers **Open current edition**. The **logo** always opens the home page.
+From `/archive` (the list) the menu has **Current edition** (and **Archive** if **Enable public archive** is on), without Programme / Venue / Appendix: those sections do not exist on the list. On a past edition page (`/archive/` + slug) Programme / Venue / Appendix stay, and they belong to **that** programme. A bar under the header reminds you this is not the home edition and offers **Open current edition**. The **logo** always opens the home page.
 
 ### Card for Google and social
 

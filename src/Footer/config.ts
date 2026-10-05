@@ -5,9 +5,12 @@ import { anyone } from '@/access/anyone'
 import { basicLexical } from '@/fields/basicLexical'
 import { flexibleLexical } from '@/fields/flexibleLexical'
 import { iconField } from '@/fields/icon'
-import { revalidateFooter } from './hooks/revalidateFooter'
+import { mediaFolderUploadAdmin } from '@/fields/mediaFolderUpload'
 import { copy } from '@/i18n/copy'
 import { asT } from '@/i18n/asT'
+import { PARTNER_LOGOS_FOLDER_NAME } from '@/utilities/mediaFolder'
+import { assignPartnerLogosToFolder } from './hooks/assignPartnerLogosToFolder'
+import { revalidateFooter } from './hooks/revalidateFooter'
 
 const httpsUrl: TextFieldValidation = (value, { req }) => {
   if (value == null || value === '') return true
@@ -182,8 +185,8 @@ export const Footer: GlobalConfig = {
   },
   admin: {
     description: copy(
-      'Institutional footer links and the public Cookie Policy and Privacy Policy pages.',
-      'Link istituzionali del piè di pagina e le pagine pubbliche Cookie Policy e Privacy Policy.',
+      'Institutional footer links, partner logos, credits, and the public Cookie Policy and Privacy Policy pages.',
+      'Link istituzionali del piè di pagina, loghi partner, crediti e le pagine pubbliche Cookie Policy e Privacy Policy.',
     ),
   },
   fields: [
@@ -193,6 +196,118 @@ export const Footer: GlobalConfig = {
         {
           label: copy('Links', 'Link'),
           fields: [orgLinkGroup('structure', 'Structure'), orgLinkGroup('delegation', 'Delegation')],
+        },
+        {
+          label: copy('Partners', 'Partner'),
+          description: copy(
+            'Logos in the site footer. Optional URL opens in a new tab.',
+            'Loghi nel piè di pagina del sito. L’URL facoltativo si apre in una nuova scheda.',
+          ),
+          fields: [
+            {
+              name: 'partners',
+              type: 'array',
+              label: 'Partners',
+              labels: {
+                singular: copy('Partner', 'Partner'),
+                plural: copy('Partners', 'Partner'),
+              },
+              admin: {
+                initCollapsed: true,
+                description: copy(
+                  `Upload order is the display order. Media folder “${PARTNER_LOGOS_FOLDER_NAME}”.`,
+                  `L’ordine di caricamento è l’ordine di visualizzazione. Cartella Media «${PARTNER_LOGOS_FOLDER_NAME}».`,
+                ),
+              },
+              fields: [
+                {
+                  name: 'image',
+                  type: 'upload',
+                  label: 'Image',
+                  relationTo: 'media',
+                  required: true,
+                  admin: mediaFolderUploadAdmin(PARTNER_LOGOS_FOLDER_NAME),
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'url',
+                      type: 'text',
+                      label: 'URL',
+                      admin: {
+                        width: '50%',
+                        placeholder: 'https://',
+                        description: copy(
+                          'Partner site. Opens in a new tab.',
+                          'Sito del partner. Si apre in una nuova scheda.',
+                        ),
+                      },
+                      validate: httpsUrl,
+                    },
+                    {
+                      name: 'alt',
+                      type: 'text',
+                      label: 'Alt text',
+                      admin: {
+                        width: '50%',
+                        description: copy(
+                          'Short description of the logo for screen readers. If empty, the Media Alt Text is used.',
+                          'Descrizione breve del logo per i lettori di schermo. Se vuoto, si usa Alt Text del Media.',
+                        ),
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: copy('Credits', 'Crediti'),
+          description: copy(
+            'Roles and names shown in the site footer.',
+            'Ruoli e nomi mostrati nel piè di pagina del sito.',
+          ),
+          fields: [
+            {
+              name: 'credits',
+              type: 'array',
+              label: 'Credits',
+              labels: {
+                singular: copy('Credit', 'Credito'),
+                plural: copy('Credits', 'Crediti'),
+              },
+              admin: {
+                initCollapsed: true,
+                description: copy(
+                  'Display order follows this list.',
+                  'L’ordine di visualizzazione segue questo elenco.',
+                ),
+              },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'role',
+                      type: 'text',
+                      label: 'Role',
+                      required: true,
+                      admin: { width: '40%' },
+                    },
+                    {
+                      name: 'name',
+                      type: 'text',
+                      label: 'Name',
+                      required: true,
+                      admin: { width: '60%' },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
         },
         {
           label: copy('Cookie Policy', 'Cookie Policy'),
@@ -373,6 +488,6 @@ export const Footer: GlobalConfig = {
     },
   ],
   hooks: {
-    afterChange: [revalidateFooter],
+    afterChange: [assignPartnerLogosToFolder, revalidateFooter],
   },
 }

@@ -35,6 +35,7 @@ import {
   CONFERENCE_LOGOS_FOLDER_NAME,
   ensureMediaFolder,
   mediaIdFromUpload,
+  PARTNER_LOGOS_FOLDER_NAME,
   PEOPLE_PHOTOS_FOLDER_NAME,
 } from './utilities/mediaFolder'
 import { seedAbstractStatuses } from './utilities/seedAbstractStatuses'
@@ -166,6 +167,10 @@ export default buildConfig({
       folderName: ABSTRACT_PICTURES_FOLDER_NAME,
       payload,
     })
+    await ensureMediaFolder({
+      folderName: PARTNER_LOGOS_FOLDER_NAME,
+      payload,
+    })
     await seedAbstractStatuses({ payload })
     await seedItalianRegions({ payload })
     await seedCountries({ payload })
@@ -230,6 +235,23 @@ export default buildConfig({
         label: 'people photo',
         mediaId: mediaIdFromUpload(person.photo),
       })
+    }
+
+    try {
+      const footer = await payload.findGlobal({
+        slug: 'footer',
+        depth: 0,
+      })
+      const partnerRows = Array.isArray(footer.partners) ? footer.partners : []
+      for (const row of partnerRows) {
+        await moveUploadToFolder({
+          folderName: PARTNER_LOGOS_FOLDER_NAME,
+          label: 'partner logo',
+          mediaId: mediaIdFromUpload((row as { image?: unknown } | null | undefined)?.image),
+        })
+      }
+    } catch (err) {
+      payload.logger.error({ err, msg: 'Failed to assign partner logos to Media folder' })
     }
 
     const { docs: abstracts } = await payload.find({

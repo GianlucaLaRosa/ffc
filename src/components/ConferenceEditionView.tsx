@@ -13,7 +13,11 @@ import { ConferenceJsonLd } from '@/components/ConferenceSeo'
 import { UpcomingSessionBanner } from '@/components/SavedAgendaMenu'
 import { ConferenceNoticesBanner } from '@/components/ConferenceNoticesBanner'
 import { conferenceJsonLd } from '@/utilities/conferenceJsonLd'
-import { getArchivedConferences, type ConferenceEditionData } from '@/utilities/getConferenceEdition'
+import {
+  getArchivedConferences,
+  isPublicArchiveEnabled,
+  type ConferenceEditionData,
+} from '@/utilities/getConferenceEdition'
 import { ArchivedEditionBanner } from '@/components/ArchivedEditionBanner'
 
 export async function ConferenceEditionView({
@@ -24,7 +28,10 @@ export async function ConferenceEditionView({
   canonicalPath: string
 }) {
   const { conference, days, abstracts, appendix, notices, footer, programmeAlerts } = data
-  const archivedEditions = await getArchivedConferences()
+  const [archivedEditions, showArchiveNav] = await Promise.all([
+    getArchivedConferences(),
+    isPublicArchiveEnabled(),
+  ])
 
   const isArchived = canonicalPath.startsWith('/archive')
 
@@ -48,6 +55,7 @@ export async function ConferenceEditionView({
             editionYear={conference.year}
             logo={conference.logo}
             archivedEditions={archivedEditions}
+            showArchiveNav={showArchiveNav}
             isArchived={isArchived}
           />
           <div className="sticky top-[calc(4rem+env(safe-area-inset-top))] sm:top-[calc(5rem+env(safe-area-inset-top))] z-30 flex flex-col">
@@ -60,7 +68,7 @@ export async function ConferenceEditionView({
 
           <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16">
             <IntroSection conference={conference} />
-            <ProgrammeSection days={days} />
+            <ProgrammeSection days={days} isArchived={isArchived} />
             <VenueSection conference={conference} />
             <AppendixSection abstracts={abstracts} appendix={appendix} />
           </main>

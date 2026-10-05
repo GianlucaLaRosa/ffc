@@ -9,6 +9,7 @@ import { useSavedAgenda } from '@/context/SavedAgendaContext'
 import type { AgendaItem, ConferenceDay } from '@/payload-types'
 import {
   abstractStatusLabel,
+  formatDateRange,
   formatDayTitle,
   joinDocs,
 } from '@/utilities/conferenceUi'
@@ -25,9 +26,15 @@ import {
 
 export interface ProgrammeSectionProps {
   days: ConferenceDay[]
+  /** Archived editions must not promise a forthcoming schedule. */
+  isArchived?: boolean
 }
 
-export function ProgrammeSection({ days }: ProgrammeSectionProps) {
+function hasPublishedSessions(days: ConferenceDay[]): boolean {
+  return days.some((day) => joinDocs<AgendaItem>(day.agendaItems).length > 0)
+}
+
+export function ProgrammeSection({ days, isArchived = false }: ProgrammeSectionProps) {
   const [expandedDays, setExpandedDays] = useState<Record<string, boolean>>({})
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
   const { focusedItemId, clearFocus, now, isReady, leadMinutes } = useSavedAgenda()
@@ -98,7 +105,10 @@ export function ProgrammeSection({ days }: ProgrammeSectionProps) {
         </div>
       </div>
 
-      <div className="space-y-4">
+      {!hasPublishedSessions(days) ? (
+        <ProgrammeUnavailable isArchived={isArchived} days={days} />
+      ) : (
+        <div className="space-y-4">
         {days.map((day) => {
           const isDayOpen = Boolean(expandedDays[day.id])
           const rootItems = joinDocs<AgendaItem>(day.agendaItems)
@@ -147,8 +157,10 @@ export function ProgrammeSection({ days }: ProgrammeSectionProps) {
                   className="px-4 sm:px-6 pb-6 pt-2 border-t border-line space-y-3 bg-subtle/40"
                 >
                   {rootItems.length === 0 ? (
-                    <p className="text-sm text-fg-subtle py-6 text-center italic">
-                      No agenda items scheduled for this day yet.
+                    <p className="text-sm text-fg-muted py-6 text-center">
+                      {isArchived
+                        ? 'No sessions were published for this day.'
+                        : 'Sessions for this day have not been released yet.'}
                     </p>
                   ) : (
                     rootItems.map((item) => (
@@ -169,8 +181,35 @@ export function ProgrammeSection({ days }: ProgrammeSectionProps) {
             </div>
           )
         })}
-      </div>
+        </div>
+      )}
     </section>
+  )
+}
+
+function ProgrammeUnavailable({
+  isArchived,
+  days,
+}: {
+  isArchived: boolean
+  days: ConferenceDay[]
+}) {
+  const dateRange = formatDateRange(days)
+
+  return (
+    <div className="rounded-2xl border border-line/90 bg-surface shadow-xs px-5 sm:px-8 py-10 sm:py-12 text-center">
+      <p className="text-lg sm:text-xl font-bold text-fg">
+        {isArchived ? 'Programme not available' : 'Scientific programme forthcoming'}
+      </p>
+      {dateRange ? (
+        <p className="mt-2 text-sm font-medium text-fg-muted">{dateRange}</p>
+      ) : null}
+      <p className="mt-3 mx-auto max-w-xl text-sm sm:text-base text-fg-muted leading-relaxed">
+        {isArchived
+          ? 'This archived edition does not include a published session list.'
+          : 'Session titles, times, and linked abstracts will appear on this page once the organising committee has released the schedule.'}
+      </p>
+    </div>
   )
 }
 

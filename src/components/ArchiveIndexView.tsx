@@ -18,10 +18,12 @@ export function ArchiveIndexView({
   editions,
   footer,
   logo,
+  showArchiveNav = true,
 }: {
   editions: ArchivedEditionLink[]
   footer: FooterGlobal | null
   logo: Media | null
+  showArchiveNav?: boolean
 }) {
   const origin = getServerSideURL()
   const jsonLd = {
@@ -43,6 +45,7 @@ export function ArchiveIndexView({
         editionName={null}
         logo={logo}
         archivedEditions={editions}
+        showArchiveNav={showArchiveNav}
         isArchived
         brand="archive"
         showSectionNav={false}

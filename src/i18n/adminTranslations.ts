@@ -15,12 +15,12 @@ export const adminTranslations = {
       durationEmpty: 'Appears when Start time and End time are both set',
       archiveTitle: 'Public archive',
       archiveIntro:
-        'Two switches. Enable public archive turns the /archive URLs on or off for the whole site. Then tick the editions that should appear in the list (not the one on the home page). A ticked row is public at /archive/{slug}. Unchecked stays in the CMS only. The active conference is not listed here.',
+        'Two switches. Enable public archive shows or hides Archive in the site menu. Then tick the editions that should appear in the list (not the one on the home page). A ticked row is public at /archive/{slug}. Unchecked stays in the CMS only. The active conference is not listed here.',
       archiveRoutesLabel: 'Enable public archive',
       archiveRoutesHelp:
-        'When on, /archive (the list) and /archive/{slug} (each edition) are public, and Archive appears in the menu if at least one edition is ticked. When off, those addresses return 404 and the menu item is hidden. Edition ticks are kept.',
-      archiveRoutesOn: 'Public archive URLs are on',
-      archiveRoutesOff: 'Public archive URLs are off (404)',
+        'When on, Archive appears in the site menu if at least one edition is ticked. When off, the menu item is hidden. /archive (the list) and /archive/{slug} (each edition) stay available. Edition ticks are kept.',
+      archiveRoutesOn: 'Archive is shown in the site menu',
+      archiveRoutesOff: 'Archive is hidden from the site menu (URLs stay open)',
       archiveLoading: 'Loading conferences…',
       archiveEmpty:
         'No published past editions. Create and publish another edition, or change the active conference.',
@@ -100,12 +100,12 @@ export const adminTranslations = {
       durationEmpty: 'Compare quando Start time e End time sono entrambi impostati',
       archiveTitle: 'Archivio pubblico',
       archiveIntro:
-        'Due interruttori. Enable public archive accende o spegne gli indirizzi /archive per tutto il sito. Poi spuntate le edizioni che devono comparire in elenco (non quella in home). Una riga spuntata è pubblica su /archive/{slug}. Non spuntata resta solo nel CMS. La conferenza attiva non compare qui.',
+        'Due interruttori. Enable public archive mostra o nasconde Archive nel menu del sito. Poi spuntate le edizioni che devono comparire in elenco (non quella in home). Una riga spuntata è pubblica su /archive/{slug}. Non spuntata resta solo nel CMS. La conferenza attiva non compare qui.',
       archiveRoutesLabel: 'Enable public archive',
       archiveRoutesHelp:
-        'Se acceso, /archive (l’elenco) e /archive/{slug} (ogni edizione) sono pubblici, e Archive compare nel menu se almeno un’edizione è spuntata. Se spento, quegli indirizzi danno 404 e la voce di menu sparisce. Le spunte sulle edizioni restano salvate.',
-      archiveRoutesOn: 'Indirizzi archivio pubblici accesi',
-      archiveRoutesOff: 'Indirizzi archivio pubblici spenti (404)',
+        'Se acceso, Archive compare nel menu del sito se almeno un’edizione è spuntata. Se spento, la voce di menu sparisce. /archive (l’elenco) e /archive/{slug} (ogni edizione) restano raggiungibili. Le spunte sulle edizioni restano salvate.',
+      archiveRoutesOn: 'Archive visibile nel menu del sito',
+      archiveRoutesOff: 'Archive nascosto dal menu del sito (gli indirizzi restano aperti)',
       archiveLoading: 'Caricamento conferenze…',
       archiveEmpty:
         'Nessuna edizione passata pubblicata. Create e pubblicate un’altra edizione, oppure cambiate la conferenza attiva.',

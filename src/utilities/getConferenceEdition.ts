@@ -254,9 +254,6 @@ async function fetchPublicArchiveEnabled(): Promise<boolean> {
 }
 
 async function fetchArchivedConferences(): Promise<ArchivedEditionLink[]> {
-  const enabled = await fetchPublicArchiveEnabled()
-  if (!enabled) return []
-
   const payload = await getPayload({ config: configPromise })
   const result = await payload.find({
     collection: 'conferences',
@@ -382,7 +379,7 @@ async function fetchPublicFooter(): Promise<FooterGlobal | null> {
   try {
     return (await payload.findGlobal({
       slug: 'footer',
-      depth: 0,
+      depth: 1,
     })) as FooterGlobal
   } catch {
     return null
