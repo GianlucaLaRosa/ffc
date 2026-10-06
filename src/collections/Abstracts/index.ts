@@ -463,8 +463,8 @@ export const Abstracts: CollectionConfig<'abstracts'> = {
               },
               admin: {
                 description: copy(
-                  `Ordered photos for this abstract (images only). On the site they appear first in the carousel, then Speaker photos (Team Member excluded). Media folder “${ABSTRACT_PICTURES_FOLDER_NAME}”.`,
-                  `Foto ordinate di questo abstract (solo immagini). Sul sito compaiono per prime nel carosello, poi le foto degli Speaker (Team Member esclusi). Cartella Media «${ABSTRACT_PICTURES_FOLDER_NAME}».`,
+                  `Ordered photos for this abstract (images only). On the public card they appear at the top; a click opens the gallery. Media folder “${ABSTRACT_PICTURES_FOLDER_NAME}”.`,
+                  `Foto ordinate di questo abstract (solo immagini). Sulla scheda pubblica comparono in cima; un clic apre la galleria. Cartella Media «${ABSTRACT_PICTURES_FOLDER_NAME}».`,
                 ),
               },
               fields: [

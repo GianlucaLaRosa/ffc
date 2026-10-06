@@ -60,7 +60,7 @@ export function PhotoCarouselOverlay({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[60] flex flex-col bg-fg/92 backdrop-blur-sm pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-0 z-[60] flex flex-col bg-fg/92 dark:bg-black/92 backdrop-blur-sm pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
       role="dialog"
       aria-modal="true"
       aria-labelledby="photo-carousel-title"

@@ -60,13 +60,11 @@ export function AbstractModal({
   const speakers = authors.filter((row) => row.isSpeaker)
   const contentSections = Array.isArray(abstract.content) ? abstract.content : []
   const gallerySlides = abstractGallerySlides(abstract)
-  const previewSlide = gallerySlides[0]
   const relatedCodes = Array.isArray(abstract.relatedCodes) ? abstract.relatedCodes : []
-  const appendices = Array.isArray(abstract.appendices) ? abstract.appendices : []
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-fg/80 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-fg/80 dark:bg-black/80 backdrop-blur-sm transition-opacity"
       role="dialog"
       aria-modal="true"
       aria-labelledby="abstract-modal-title"
@@ -124,6 +122,48 @@ export function AbstractModal({
               <RichText content={abstract.title} disableContainer className="rich-text-inline" />
             </h1>
           </div>
+
+          {gallerySlides.length > 0 ? (
+            <div
+              className={
+                gallerySlides.length === 1
+                  ? 'grid grid-cols-1 gap-3'
+                  : 'grid grid-cols-2 gap-3'
+              }
+            >
+              {gallerySlides.map((slide, index) => {
+                const wide = gallerySlides.length === 3 && index === 0
+                const tall = gallerySlides.length === 1 || wide
+                return (
+                  <button
+                    key={slide.key}
+                    type="button"
+                    onClick={() => onOpenPhoto(index)}
+                    className={`group overflow-hidden rounded-xl border border-line bg-subtle text-left focus:outline-none focus:ring-2 focus:ring-brand ${wide ? 'col-span-2' : ''}`}
+                    aria-label={
+                      gallerySlides.length > 1
+                        ? `Open photo ${index + 1} of ${gallerySlides.length}`
+                        : 'Open photo'
+                    }
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={slide.url}
+                      alt={slide.alt}
+                      className={`w-full object-contain bg-subtle transition-transform duration-200 group-hover:scale-[1.01] ${
+                        tall ? 'max-h-[min(42vh,22rem)]' : 'h-36 sm:h-44'
+                      }`}
+                    />
+                    {slide.caption ? (
+                      <span className="block p-3 text-xs text-fg-muted bg-surface border-t border-line italic">
+                        {slide.caption}
+                      </span>
+                    ) : null}
+                  </button>
+                )
+              })}
+            </div>
+          ) : null}
 
           {speakers.length > 0 && (
             <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-brand-soft to-accent-soft/40 border border-brand-border/80">
@@ -225,58 +265,6 @@ export function AbstractModal({
             </div>
           )}
 
-          {appendices.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-fg-subtle">
-                Abstract appendix
-              </h2>
-              {appendices.map((row, i) => (
-                <section
-                  key={row.id || i}
-                  className="p-4 sm:p-5 rounded-xl border border-line bg-surface"
-                >
-                  {row.title && (
-                    <h3 className="text-sm font-bold text-fg mb-2">{row.title}</h3>
-                  )}
-                  {row.body && (
-                    <div className="text-sm text-fg-muted leading-relaxed">
-                      <RichText content={row.body} />
-                    </div>
-                  )}
-                </section>
-              ))}
-            </div>
-          )}
-
-          {previewSlide ? (
-            <div className="pt-2">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-fg-subtle mb-3">
-                Photos
-              </h2>
-              <button
-                type="button"
-                onClick={() => onOpenPhoto(0)}
-                className="group w-full overflow-hidden rounded-xl border border-line bg-subtle text-left focus:outline-none focus:ring-2 focus:ring-brand"
-                aria-label={
-                  gallerySlides.length > 1
-                    ? `Open photo gallery, ${gallerySlides.length} photos`
-                    : 'Open photo'
-                }
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={previewSlide.url}
-                  alt={previewSlide.alt}
-                  className="w-full h-40 sm:h-52 object-cover transition-transform duration-200 group-hover:scale-[1.02]"
-                />
-                {previewSlide.caption ? (
-                  <span className="block p-3 text-xs text-fg-muted bg-surface border-t border-line italic">
-                    {previewSlide.caption}
-                  </span>
-                ) : null}
-              </button>
-            </div>
-          ) : null}
         </div>
 
         <div className="px-4 sm:px-6 py-3.5 border-t border-line bg-subtle flex justify-stretch sm:justify-end shrink-0 pb-[max(0.875rem,env(safe-area-inset-bottom))]">

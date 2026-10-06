@@ -73,7 +73,7 @@ export type AbstractGallerySlide = {
   alt: string
 }
 
-/** Abstract photos first, then speaker photos in UI order. Team members are excluded. */
+/** Ordered Pictures from the abstract (speaker portraits stay on author cards). */
 export function abstractGallerySlides(abstract: Abstract): AbstractGallerySlide[] {
   const slides: AbstractGallerySlide[] = []
 
@@ -91,19 +91,6 @@ export function abstractGallerySlides(abstract: Abstract): AbstractGallerySlide[
       alt,
     })
   })
-
-  for (const row of abstractAuthors(abstract)) {
-    if (!row.isSpeaker || row.role === 'teamMember') continue
-    const url = mediaUrl(row.person.photo)
-    if (!url) continue
-    const name = personName(row.person)
-    slides.push({
-      key: `speaker-${row.person.id}`,
-      url,
-      caption: name,
-      alt: name || 'Speaker photo',
-    })
-  }
 
   return slides
 }

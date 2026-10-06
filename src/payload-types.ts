@@ -371,7 +371,7 @@ export interface Abstract {
       }[]
     | null;
   /**
-   * Ordered photos for this abstract (images only). On the site they appear first in the carousel, then Speaker photos (Team Member excluded). Media folder “Abstract pictures”.
+   * Ordered photos for this abstract (images only). On the public card they appear at the top; a click opens the gallery. Media folder “Abstract pictures”.
    */
   picture?:
     | {
