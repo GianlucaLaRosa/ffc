@@ -116,6 +116,16 @@ body {
   padding-right: env(safe-area-inset-right);
 }
 
+::selection {
+  background-color: rgb(var(--brand-soft));
+  color: rgb(var(--fg));
+}
+
+::-moz-selection {
+  background-color: rgb(var(--brand-soft));
+  color: rgb(var(--fg));
+}
+
 button:focus-visible,
 a:focus-visible {
   outline: 2px solid rgb(var(--accent));
