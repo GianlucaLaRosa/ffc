@@ -19,6 +19,7 @@ const config: Config = {
           muted: 'rgb(var(--fg-muted) / <alpha-value>)',
           subtle: 'rgb(var(--fg-subtle) / <alpha-value>)',
         },
+        overlay: 'rgb(var(--overlay) / <alpha-value>)',
         brand: {
           DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
           fg: 'rgb(var(--brand-fg) / <alpha-value>)',
@@ -41,8 +42,10 @@ const config: Config = {
         },
       },
       boxShadow: {
-        '2xs': '0 1px 2px 0 rgba(0, 0, 0, 0.03)',
-        xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        '2xs': 'var(--shadow-2xs)',
+        xs: 'var(--shadow-xs)',
+        sm: 'var(--shadow-sm)',
+        up: 'var(--shadow-up)',
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],

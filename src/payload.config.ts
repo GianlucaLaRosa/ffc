@@ -40,6 +40,7 @@ import {
 } from './utilities/mediaFolder'
 import { seedAbstractStatuses } from './utilities/seedAbstractStatuses'
 import { seedCountries } from './utilities/seedCountries'
+import { seedFooterContent } from './utilities/seedFooterContent'
 import { seedFooterPolicies } from './utilities/seedFooterPolicies'
 import { seedItalianRegions } from './utilities/seedItalianRegions'
 import { adminTranslations } from './i18n/adminTranslations'
@@ -175,6 +176,7 @@ export default buildConfig({
     await seedItalianRegions({ payload })
     await seedCountries({ payload })
     await seedFooterPolicies({ payload })
+    await seedFooterContent({ payload })
 
     const moveUploadToFolder = async ({
       folderName,

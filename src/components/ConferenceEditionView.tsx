@@ -5,6 +5,7 @@ import { HeroSection } from '@/components/HeroSection'
 import { IntroSection } from '@/components/IntroSection'
 import { ProgrammeSection } from '@/components/ProgrammeSection'
 import { VenueSection } from '@/components/VenueSection'
+import { PartnersSection } from '@/components/PartnersSection'
 import { AppendixSection } from '@/components/AppendixSection'
 import { Footer } from '@/components/Footer'
 import { ModalProvider } from '@/context/ModalContext'
@@ -15,6 +16,7 @@ import { ConferenceNoticesBanner } from '@/components/ConferenceNoticesBanner'
 import { conferenceJsonLd } from '@/utilities/conferenceJsonLd'
 import {
   getArchivedConferences,
+  getPublicFooter,
   isPublicArchiveEnabled,
   type ConferenceEditionData,
 } from '@/utilities/getConferenceEdition'
@@ -27,11 +29,14 @@ export async function ConferenceEditionView({
   data: ConferenceEditionData
   canonicalPath: string
 }) {
-  const { conference, days, abstracts, appendix, notices, footer, programmeAlerts } = data
-  const [archivedEditions, showArchiveNav] = await Promise.all([
+  const { conference, days, abstracts, appendix, notices, footer: editionFooter, programmeAlerts } =
+    data
+  const [archivedEditions, showArchiveNav, footer] = await Promise.all([
     getArchivedConferences(),
     isPublicArchiveEnabled(),
+    getPublicFooter(),
   ])
+  const siteFooter = footer ?? editionFooter
 
   const isArchived = canonicalPath.startsWith('/archive')
 
@@ -70,10 +75,11 @@ export async function ConferenceEditionView({
             <IntroSection conference={conference} />
             <ProgrammeSection days={days} isArchived={isArchived} />
             <VenueSection conference={conference} />
+            <PartnersSection footer={siteFooter} />
             <AppendixSection abstracts={abstracts} appendix={appendix} />
           </main>
 
-          <Footer editionYear={conference.year} footer={footer} />
+          <Footer editionYear={conference.year} footer={siteFooter} />
         </ConferenceTheme>
       </SavedAgendaProvider>
     </ModalProvider>

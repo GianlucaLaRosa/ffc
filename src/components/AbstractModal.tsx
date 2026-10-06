@@ -80,7 +80,7 @@ export function AbstractModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-fg/80 dark:bg-black/80 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-overlay/75 dark:bg-overlay/85 backdrop-blur-sm transition-opacity"
       role="dialog"
       aria-modal="true"
       aria-labelledby="abstract-modal-title"
@@ -141,45 +141,57 @@ export function AbstractModal({
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-8 sm:py-6 space-y-8">
-          <div>
-            <h1
-              id="abstract-modal-title"
-              className="text-2xl sm:text-3xl font-bold tracking-tight text-fg leading-snug"
-            >
-              <RichText content={abstract.title} disableContainer className="rich-text-inline" />
-            </h1>
-          </div>
-
           {cover ? (
-            <button
-              type="button"
-              onClick={() => onOpenPhoto(0)}
-              className="group relative -mx-4 sm:mx-0 w-[calc(100%+2rem)] sm:w-full overflow-hidden rounded-none sm:rounded-xl border-y sm:border border-line bg-subtle text-left focus:outline-none focus:ring-2 focus:ring-brand"
-              aria-label={
-                gallerySlides.length > 1
-                  ? `Open photo gallery, ${gallerySlides.length} photos`
-                  : 'Open photo'
-              }
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={cover.url}
-                alt={cover.alt}
-                className="w-full max-h-[min(56vw,18rem)] sm:max-h-[22rem] object-contain bg-subtle transition-transform duration-200 group-hover:scale-[1.01]"
-              />
+            <div className="group relative -mx-4 sm:mx-0 w-[calc(100%+2rem)] sm:w-full overflow-hidden rounded-none sm:rounded-xl border-y sm:border border-line bg-subtle">
+              <div className="absolute inset-x-0 top-0 z-[1] bg-gradient-to-b from-black/85 via-black/55 to-transparent px-4 pt-3 pb-10 sm:px-5 sm:pt-4 sm:pb-12 pointer-events-none">
+                <h1
+                  id="abstract-modal-title"
+                  className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-snug pr-12 [&_.rich-text-inline]:text-white"
+                >
+                  <RichText content={abstract.title} disableContainer className="rich-text-inline" />
+                </h1>
+              </div>
+              <button
+                type="button"
+                onClick={() => onOpenPhoto(0)}
+                className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-inset"
+                aria-label={
+                  gallerySlides.length > 1
+                    ? `Open photo gallery, ${gallerySlides.length} photos`
+                    : 'Open photo'
+                }
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={cover.url}
+                  alt={cover.alt}
+                  className="w-full max-h-[min(56vw,18rem)] sm:max-h-[22rem] object-contain bg-subtle transition-transform duration-200 group-hover:scale-[1.01]"
+                />
+              </button>
+              {cover.caption ? (
+                <div className="absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black/85 via-black/55 to-transparent px-4 pt-10 pb-3 sm:px-5 sm:pt-12 sm:pb-4 pointer-events-none">
+                  <p className="text-xs sm:text-sm text-white/95 italic leading-snug">
+                    {cover.caption}
+                  </p>
+                </div>
+              ) : null}
               {gallerySlides.length > 1 ? (
-                <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-fg/80 px-2.5 py-1 text-xs font-semibold text-page">
+                <span className="absolute top-3 right-3 z-[2] inline-flex items-center gap-1.5 rounded-full bg-fg/80 px-2.5 py-1 text-xs font-semibold text-page pointer-events-none">
                   <Images className="w-3.5 h-3.5" aria-hidden="true" />
                   {gallerySlides.length}
                 </span>
               ) : null}
-              {cover.caption ? (
-                <span className="block px-4 py-3 sm:p-3 text-xs text-fg-muted bg-surface border-t border-line italic">
-                  {cover.caption}
-                </span>
-              ) : null}
-            </button>
-          ) : null}
+            </div>
+          ) : (
+            <div>
+              <h1
+                id="abstract-modal-title"
+                className="text-2xl sm:text-3xl font-bold tracking-tight text-fg leading-snug"
+              >
+                <RichText content={abstract.title} disableContainer className="rich-text-inline" />
+              </h1>
+            </div>
+          )}
 
           {speakers.length > 0 && (
             <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-brand-soft to-accent-soft/40 border border-brand-border/80">

@@ -130,7 +130,7 @@ async function fetchConferenceEdition(conferenceId: number | string): Promise<Co
   try {
     footer = (await payload.findGlobal({
       slug: 'footer',
-      depth: 0,
+      depth: 1,
     })) as FooterGlobal
   } catch {
     footer = null
@@ -342,7 +342,14 @@ export const getActiveConferenceId = cache(() =>
 export const loadConferenceEdition = cache((conferenceId: number | string) =>
   unstable_cache(
     () => fetchConferenceEdition(conferenceId),
-    ['loadConferenceEdition', 'programme-abstracts', 'agenda-hydrate', 'appendix-institutions', String(conferenceId)],
+    [
+      'loadConferenceEdition',
+      'programme-abstracts',
+      'agenda-hydrate',
+      'appendix-institutions',
+      'footer-depth-1',
+      String(conferenceId),
+    ],
     {
       tags: [
         conferenceIdTag(conferenceId),
@@ -412,7 +419,7 @@ async function fetchPublicFooter(): Promise<FooterGlobal | null> {
 }
 
 export const getPublicFooter = cache(() =>
-  unstable_cache(fetchPublicFooter, ['getPublicFooter', 'with-policies'], {
+  unstable_cache(fetchPublicFooter, ['getPublicFooter', 'with-policies', 'footer-depth-1'], {
     tags: [CACHE_TAGS.footer],
     revalidate: 60,
   })(),

@@ -536,3 +536,20 @@ export const KEYNOTE_SPEAKERS = [
   { firstName: 'Peder Matzen', lastName: 'Berg' },
   { firstName: 'David N.', lastName: 'Sheppard' },
 ] as const
+
+export type SeedPartnerLogo = {
+  file: string
+  alt: string
+  url: string
+  mediaAlt: string
+}
+
+/** Site footer partners for the 2025 Verona convention (Camera di Commercio logo). */
+export const CONVENTION_2025_PARTNERS: readonly SeedPartnerLogo[] = [
+  {
+    file: 'vr.png',
+    alt: 'Camera di commercio di Verona',
+    url: 'https://www.vr.camcom.it/',
+    mediaAlt: 'Camera di commercio di Verona',
+  },
+]

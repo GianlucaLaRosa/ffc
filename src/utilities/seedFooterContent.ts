@@ -2,13 +2,13 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import type { Payload } from 'payload'
 
+import { CONVENTION_2025_PARTNERS } from '@/seed/data/convention2025'
 import {
   FOOTER_CREDITS_SEED,
   FOOTER_DELEGATION_SEED,
-  FOOTER_PARTNERS_SEED,
   FOOTER_STRUCTURE_SEED,
 } from '@/seed/data/footer'
-import { PARTNER_LOGOS_FOLDER_NAME, ensureMediaFolder } from '@/utilities/mediaFolder'
+import { seedPartnerLogos } from '@/seed/helpers'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 const PARTNERS_DIR = path.resolve(dirname, '../seed/assets/convention2025/partners')
@@ -30,50 +30,6 @@ const withIconProvider = (group: {
 
 const orgLinkEmpty = (group: { label?: string | null; url?: string | null } | null | undefined) =>
   !group?.label?.trim() && !group?.url?.trim()
-
-async function seedPartnerRows(payload: Payload) {
-  const folderId = await ensureMediaFolder({
-    folderName: PARTNER_LOGOS_FOLDER_NAME,
-    payload,
-  })
-
-  const partners = []
-
-  for (const partner of FOOTER_PARTNERS_SEED) {
-    const { docs } = await payload.find({
-      collection: 'media',
-      depth: 0,
-      limit: 1,
-      pagination: false,
-      where: { filename: { equals: partner.file } },
-    })
-
-    let imageId = docs[0]?.id
-
-    if (imageId == null) {
-      const created = await payload.create({
-        collection: 'media',
-        depth: 0,
-        overrideAccess: true,
-        context: SEED_CONTEXT,
-        data: {
-          alt: partner.mediaAlt,
-          folder: folderId,
-        },
-        filePath: path.join(PARTNERS_DIR, partner.file),
-      })
-      imageId = created.id
-    }
-
-    partners.push({
-      image: imageId,
-      url: partner.url,
-      alt: partner.alt,
-    })
-  }
-
-  return partners
-}
 
 /**
  * Fills Footer links, partners, and credits from the 23rd convention brochure when empty.
@@ -104,6 +60,12 @@ export async function seedFooterContent({ payload }: { payload: Payload }): Prom
   if (!seedStructure && !seedDelegation && !seedPartners && !seedCredits) return
 
   try {
+    if (seedPartners) {
+      payload.logger.info(
+        `Seeding ${CONVENTION_2025_PARTNERS.length} footer partner logo(s) for Convention 2025…`,
+      )
+    }
+
     await payload.updateGlobal({
       slug: 'footer',
       data: {
@@ -114,7 +76,11 @@ export async function seedFooterContent({ payload }: { payload: Payload }): Prom
           ? withIconProvider(FOOTER_DELEGATION_SEED)
           : withIconProvider(footer.delegation),
         partners: seedPartners
-          ? await seedPartnerRows(payload)
+          ? await seedPartnerLogos({
+              payload,
+              partners: CONVENTION_2025_PARTNERS,
+              assetsDir: PARTNERS_DIR,
+            })
           : Array.isArray(footer.partners)
             ? footer.partners
             : [],

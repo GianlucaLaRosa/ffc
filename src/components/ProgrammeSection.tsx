@@ -310,7 +310,7 @@ function AgendaItemCard({
           : soon
             ? 'bg-accent-soft/80 border-accent-border ring-1 ring-accent/20'
             : isKeynote
-              ? 'bg-gradient-to-r from-accent-soft/90 via-surface to-accent-soft/40 border-accent-border shadow-sm ring-1 ring-accent/20'
+              ? 'bg-gradient-to-r from-accent-soft via-page to-accent-soft/60 border-accent-border shadow-sm ring-1 ring-accent/20'
               : isChild
                 ? 'bg-surface border-line/90'
                 : 'bg-surface border-line/90 shadow-xs'
@@ -356,25 +356,25 @@ function AgendaItemCard({
           </div>
         </div>
 
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-brand-soft border border-brand-border flex items-center justify-center text-brand shrink-0 mt-0.5">
-            <SessionIcon name={item.icon} className="w-4 h-4" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-base sm:text-lg font-bold text-fg leading-snug">
+        <div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-brand-soft border border-brand-border flex items-center justify-center text-brand shrink-0">
+              <SessionIcon name={item.icon} className="w-4 h-4" />
+            </div>
+            <div className="min-w-0 flex-1 text-base sm:text-lg font-bold text-fg leading-snug">
               {item.name ? (
                 <RichText content={item.name} disableContainer className="rich-text-inline" />
               ) : (
                 item.title
               )}
             </div>
-
-            {item.description && (
-              <div className="mt-2 text-xs sm:text-sm text-fg-muted leading-relaxed">
-                <RichText content={item.description} />
-              </div>
-            )}
           </div>
+
+          {item.description && (
+            <div className="mt-2 pl-11 text-xs sm:text-sm text-fg-muted leading-relaxed">
+              <RichText content={item.description} />
+            </div>
+          )}
         </div>
 
         {linkedAbstracts.length > 0 && (

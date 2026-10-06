@@ -1,8 +1,10 @@
 import path from 'path'
 import type { Payload } from 'payload'
 
-import { CONFERENCE_TIME_ZONE } from '@/utilities/conferenceTime'
+import type { SeedPartnerLogo } from '@/seed/data/convention2025'
 import type { SeedAbstractPicture } from '@/seed/data/convention2025AbstractPictures'
+import { CONFERENCE_TIME_ZONE } from '@/utilities/conferenceTime'
+import { PARTNER_LOGOS_FOLDER_NAME, ensureMediaFolder } from '@/utilities/mediaFolder'
 
 const SEED_CONTEXT = { disableRevalidate: true } as const
 
@@ -146,7 +148,20 @@ export async function findOrCreatePerson({
       and: [{ firstName: { equals: firstName } }, { lastName: { equals: lastName } }],
     },
   })
-  if (docs[0]?.id != null) return docs[0].id as number
+  if (docs[0]?.id != null) {
+    const existingId = docs[0].id as number
+    if (institutionId != null && docs[0].institution == null) {
+      await payload.update({
+        collection: 'people',
+        id: existingId,
+        depth: 0,
+        overrideAccess: true,
+        context: SEED_CONTEXT,
+        data: { institution: institutionId },
+      })
+    }
+    return existingId
+  }
 
   const created = await payload.create({
     collection: 'people',
@@ -209,5 +224,57 @@ export async function seedAbstractPictureRows(
     })
     rows.push({ image, description: picture.caption })
   }
+  return rows
+}
+
+export async function seedPartnerLogos({
+  payload,
+  partners,
+  assetsDir,
+}: {
+  payload: Payload
+  partners: readonly SeedPartnerLogo[]
+  assetsDir: string
+}): Promise<Array<{ image: number; url: string; alt: string }>> {
+  const folderId = await ensureMediaFolder({
+    folderName: PARTNER_LOGOS_FOLDER_NAME,
+    payload,
+  })
+
+  const rows: Array<{ image: number; url: string; alt: string }> = []
+
+  for (const partner of partners) {
+    const { docs } = await payload.find({
+      collection: 'media',
+      depth: 0,
+      limit: 1,
+      pagination: false,
+      where: { filename: { equals: partner.file } },
+    })
+
+    let imageId = docs[0]?.id
+
+    if (imageId == null) {
+      const created = await payload.create({
+        collection: 'media',
+        depth: 0,
+        overrideAccess: true,
+        context: SEED_CONTEXT,
+        data: {
+          alt: partner.mediaAlt,
+          folder: folderId,
+        },
+        filePath: path.join(assetsDir, partner.file),
+      })
+      imageId = created.id
+    }
+
+    rows.push({
+      image: imageId,
+      url: partner.url,
+      alt: partner.alt,
+    })
+  }
+
   return rows
 }

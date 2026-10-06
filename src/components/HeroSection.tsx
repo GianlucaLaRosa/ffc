@@ -15,8 +15,8 @@ export function HeroSection({ conference, days }: HeroSectionProps) {
   const locationStr = [city, country].filter(Boolean).join(', ')
 
   return (
-    <section className="relative overflow-hidden pt-10 pb-8 sm:pt-16 sm:pb-10 bg-gradient-to-b from-brand-soft/60 via-page to-surface">
-      <div className="absolute inset-0 opacity-[0.08] pointer-events-none bg-[radial-gradient(rgb(var(--brand))_1px,transparent_1px)] [background-size:16px_16px]" />
+    <section className="relative overflow-hidden pt-10 pb-8 sm:pt-16 sm:pb-10 bg-gradient-to-b from-brand-soft/75 via-page to-surface">
+      <div className="absolute inset-0 opacity-[0.12] dark:opacity-[0.08] pointer-events-none bg-[radial-gradient(rgb(var(--brand))_1px,transparent_1px)] [background-size:16px_16px]" />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
         <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 mb-6">
@@ -27,14 +27,14 @@ export function HeroSection({ conference, days }: HeroSectionProps) {
             </span>
 
             {dateRangeStr && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-surface border border-line/90 text-fg-muted shadow-2xs">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-page/80 backdrop-blur-sm border border-line/90 text-fg-muted shadow-2xs">
                 <Calendar className="w-3.5 h-3.5 text-brand" />
                 {dateRangeStr}
               </span>
             )}
 
             {locationStr && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-surface border border-line/90 text-fg-muted shadow-2xs">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-page/80 backdrop-blur-sm border border-line/90 text-fg-muted shadow-2xs">
                 <MapPin className="w-3.5 h-3.5 text-brand" />
                 {locationStr}
               </span>

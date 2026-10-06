@@ -200,8 +200,8 @@ export const Footer: GlobalConfig = {
         {
           label: copy('Partners', 'Partner'),
           description: copy(
-            'Logos in the site footer. Optional URL opens in a new tab.',
-            'Loghi nel piè di pagina del sito. L’URL facoltativo si apre in una nuova scheda.',
+            'Logos shown on the conference page after the Venue section. Optional URL opens in a new tab.',
+            'Loghi mostrati nella pagina conferenza subito dopo la sezione Venue. L’URL facoltativo si apre in una nuova scheda.',
           ),
           fields: [
             {

@@ -27,10 +27,18 @@ import { ABSTRACT_CONTENT } from '@/seed/data/convention2025AbstractContent'
 import { ABSTRACT_PICTURES } from '@/seed/data/convention2025AbstractPictures'
 import {
   ABSTRACTS,
+  CONVENTION_2025_PARTNERS,
   CONVENTION_2025_TITLE,
   INSTITUTIONS,
   KEYNOTE_SPEAKERS,
+  type SeedAbstract,
 } from '@/seed/data/convention2025'
+import {
+  ABSTRACT_AUTHOR_LISTS,
+  BROCHURE_INSTITUTIONS,
+  BROCHURE_PEOPLE,
+  type BrochureAbstractAuthor,
+} from '@/seed/data/convention2025People'
 import {
   calendarDay,
   findCountryId,
@@ -54,6 +62,26 @@ import { seedFooterContent } from '@/utilities/seedFooterContent'
 const ABSTRACT_PICTURES_DIR = path.resolve(dirname, 'assets/convention2025/pictures')
 
 const SEED_CONTEXT = { disableRevalidate: true } as const
+
+function personDisplayKey(person: { firstName: string; lastName: string }): string {
+  return `${person.firstName} ${person.lastName}`
+}
+
+function authorRoleForAbstract(
+  author: BrochureAbstractAuthor,
+  abs: SeedAbstract,
+): 'primaryInvestigator' | 'partner' | 'teamMember' {
+  const authorKey = personDisplayKey(author)
+  const primaryKey = personDisplayKey(splitPersonName(abs.authors[0]!))
+  if (authorKey === primaryKey) return 'primaryInvestigator'
+
+  const partnerKeys = new Set(
+    abs.authors.slice(1).map((name) => personDisplayKey(splitPersonName(name))),
+  )
+  if (partnerKeys.has(authorKey)) return 'partner'
+
+  return 'teamMember'
+}
 
 const SESSION_TITLES: Record<number, string> = {
   1: 'Session 1 — The multifaceted Kaftrio',
@@ -389,7 +417,15 @@ async function seed() {
   const regionIds = new Map<string, number>()
   const institutionIds = new Map<string, number>()
 
-  for (const inst of INSTITUTIONS) {
+  const seedInstitutions = [...INSTITUTIONS]
+  const seenInstitutionNames = new Set(INSTITUTIONS.map((inst) => inst.name))
+  for (const inst of BROCHURE_INSTITUTIONS) {
+    if (seenInstitutionNames.has(inst.name)) continue
+    seedInstitutions.push(inst)
+    seenInstitutionNames.add(inst.name)
+  }
+
+  for (const inst of seedInstitutions) {
     if (!countryIds.has(inst.country)) {
       countryIds.set(inst.country, await findCountryId(payload, inst.country))
     }
@@ -407,6 +443,18 @@ async function seed() {
       regionId,
     })
     institutionIds.set(inst.name, id)
+  }
+
+  payload.logger.info('Creating people from brochure affiliations…')
+  for (const person of BROCHURE_PEOPLE) {
+    const institutionId =
+      person.institution != null ? institutionIds.get(person.institution) : undefined
+    await findOrCreatePerson({
+      payload,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      institutionId,
+    })
   }
 
   const picturesFolder = await ensureMediaFolder({
@@ -507,15 +555,26 @@ async function seed() {
     const agendaId = sessionAgendaIds.get(abs.session)
     if (agendaId == null) throw new Error(`Missing session ${abs.session} for abstract ${abs.n}`)
 
-    const speakerName = abs.speaker ?? abs.authors[0]
+    const brochureAuthors = ABSTRACT_AUTHOR_LISTS[abs.n]
+    if (!brochureAuthors?.length) {
+      throw new Error(`Missing brochure authors for abstract ${abs.n} (${abs.code})`)
+    }
+
+    const speakerKey = personDisplayKey(splitPersonName(abs.speaker ?? abs.authors[0]!))
     const authors = []
-    for (const [index, fullName] of abs.authors.entries()) {
-      const { firstName, lastName } = splitPersonName(fullName)
-      const personId = await findOrCreatePerson({ payload, firstName, lastName })
+    for (const author of brochureAuthors) {
+      const institutionId =
+        author.institution != null ? institutionIds.get(author.institution) : undefined
+      const personId = await findOrCreatePerson({
+        payload,
+        firstName: author.firstName,
+        lastName: author.lastName,
+        institutionId,
+      })
       authors.push({
         person: personId,
-        role: index === 0 ? 'primaryInvestigator' : 'partner',
-        isSpeaker: fullName === speakerName,
+        role: authorRoleForAbstract(author, abs),
+        isSpeaker: personDisplayKey(author) === speakerKey,
       })
     }
 
@@ -624,6 +683,9 @@ async function seed() {
     ],
   })
 
+  payload.logger.info(
+    `Seeding Convention 2025 partners (${CONVENTION_2025_PARTNERS.map((row) => row.alt).join(', ')})…`,
+  )
   await seedFooterContent({ payload })
 
   payload.logger.info(

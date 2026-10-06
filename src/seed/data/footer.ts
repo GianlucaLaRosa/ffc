@@ -12,14 +12,7 @@ export const FOOTER_DELEGATION_SEED = {
   url: 'https://www.google.com',
 }
 
-export const FOOTER_PARTNERS_SEED = [
-  {
-    file: 'vr.png',
-    alt: 'Camera di commercio di Verona',
-    url: 'https://www.vr.camcom.it/',
-    mediaAlt: 'Camera di commercio di Verona',
-  },
-] as const
+export { CONVENTION_2025_PARTNERS as FOOTER_PARTNERS_SEED } from './convention2025'
 
 export const FOOTER_CREDITS_SEED = [
   {

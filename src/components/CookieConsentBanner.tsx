@@ -20,7 +20,7 @@ export function CookieConsentBanner() {
       role="dialog"
       aria-modal="false"
       aria-labelledby={titleId}
-      className="fixed inset-x-0 bottom-0 z-[55] border-t border-line bg-surface/95 backdrop-blur-md shadow-[0_-8px_30px_rgb(15_23_42/0.12)] pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-x-0 bottom-0 z-[55] border-t border-line bg-surface/95 backdrop-blur-md shadow-up pb-[env(safe-area-inset-bottom)]"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
