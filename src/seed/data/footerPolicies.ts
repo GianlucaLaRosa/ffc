@@ -36,46 +36,48 @@ const garanteSite = {
 export const COOKIE_POLICY_SEED = {
   title: 'Cookie Policy',
   kicker: 'Official Policy & Compliance Statement',
-  headerBadge: 'Zero Tracking Platform',
+  headerBadge: 'Technical Storage Only',
   lastUpdated: 'October 2026',
   metaDescription:
-    'Information regarding cookies and tracking technologies on the official FFC Scientific Conference website.',
+    'Information regarding cookies, local storage, and tracking technologies on the official FFC Scientific Conference website.',
   intro: createLexicalDoc([
     [
-      'Official statement on the non-use of cookies and tracking technologies for the ',
+      'Official statement on cookies and similar technologies for the ',
       { text: 'FFC Scientific Conference', bold: true },
       ' website, managed by ',
       { text: 'Fondazione Ricerca Fibrosi Cistica - ETS', bold: true },
       '.',
     ],
   ]),
-  summaryTitle: 'Summary: This website does not use cookies',
+  summaryTitle: 'Summary: strictly necessary technical storage only',
   summary: createLexicalDoc([
     [
       'We believe in privacy-by-design. This website is built as an open, accessible scientific portal for researchers, clinicians, and participants. We do ',
       { text: 'not', bold: true },
-      ' store cookies on your device, we do ',
+      ' profile your browsing behavior, we do ',
       { text: 'not', bold: true },
-      ' profile your browsing behavior, and we do ',
+      ' use analytics or advertising cookies, and we do ',
       { text: 'not', bold: true },
-      ' integrate advertising or third-party tracking networks.',
+      ' integrate third-party tracking networks. Only strictly necessary technical storage is used to run the site and optional programme features you choose.',
     ],
   ]),
   highlights: [
     { label: 'No Profiling Cookies' },
     { label: 'No Third-Party Trackers' },
-    { label: 'No Banner Required' },
+    { label: 'Technical Storage Only' },
   ],
   content: createLexicalRoot([
     createLexicalHeading('h3', '01. What Are Cookies?'),
     createLexicalParagraph(
       'Cookies are small text files that websites often store on a visitor’s computer or mobile device when visiting a webpage. They are widely used to make websites work efficiently, remember user preferences, monitor visitor analytics, or deliver targeted advertising.',
     ),
-    createLexicalHeading('h3', '02. Our Zero-Cookie Architecture'),
+    createLexicalHeading('h3', '02. What We Use on the Public Website'),
     createLexicalParagraph([
-      'On this public website (the conference presentation, programme schedule, scientific abstracts, and venue directions), ',
-      { text: 'no cookies of any kind are placed on your terminal', bold: true },
-      ':',
+      'On this public website (the conference presentation, programme schedule, scientific abstracts, and venue directions), we use ',
+      { text: 'only strictly necessary technical storage', bold: true },
+      '. We do ',
+      { text: 'not', bold: true },
+      ' set profiling, marketing, analytics, or third-party tracking cookies:',
     ]),
     createLexicalList([
       [
@@ -95,7 +97,33 @@ export const COOKIE_POLICY_SEED = {
         'We do not embed active social media scripts (such as Meta Pixel or LinkedIn Insight Tag) that transmit user telemetry to third parties.',
       ],
     ]),
-    createLexicalHeading('h3', '03. Why Is There No Cookie Banner?'),
+    createLexicalHeading('h3', '03. Strictly Necessary Local Storage'),
+    createLexicalParagraph(
+      'Some features store data locally in your browser instead of using HTTP cookies. This data stays on your device and is not sold or shared with advertisers:',
+    ),
+    createLexicalList([
+      [
+        { text: 'My programme: ', bold: true },
+        'saved talks or abstracts and your alert preferences (local storage).',
+      ],
+      [
+        { text: 'Theme: ', bold: true },
+        'light, dark, or system appearance (local storage).',
+      ],
+      [
+        { text: 'Dismissed notices: ', bold: true },
+        'which conference notices you closed during the current browser session (session storage).',
+      ],
+      [
+        { text: 'Cookie notice: ', bold: true },
+        'whether you acknowledged this policy (local storage).',
+      ],
+      [
+        { text: 'Installable app / alerts (optional): ', bold: true },
+        'a service worker and, only if you explicitly enable alerts, a push subscription managed by your browser permission prompt.',
+      ],
+    ]),
+    createLexicalHeading('h3', '04. Cookie Notice'),
     createLexicalQuote([
       'Under the ',
       { text: 'EU ePrivacy Directive (Directive 2002/58/EC)', bold: true },
@@ -105,16 +133,11 @@ export const COOKIE_POLICY_SEED = {
       { text: 'Guidelines on Cookies and other Tracking Tools', bold: true },
       ' issued by the Italian Data Protection Authority (',
       { text: 'Garante per la protezione dei dati personali', italic: true },
-      ', June 10, 2021), a consent banner is ',
-      { text: 'only mandatory', bold: true },
-      ' when non-technical cookies or trackers are utilized.',
+      ', June 10, 2021), consent is ',
+      { text: 'not required', bold: true },
+      ' for strictly necessary technical cookies and similar storage. We still show a short notice on first visit so you can read this policy and confirm before we remember your choice.',
     ]),
-    createLexicalQuote([
-      'Because this website does not set any profiling, advertising, or third-party tracking cookies, ',
-      { text: 'no consent banner is required by law', bold: true },
-      '. You can browse the conference schedule and read research abstracts with complete peace of mind, free from intrusive pop-ups.',
-    ]),
-    createLexicalHeading('h3', '04. Technical Server Logs'),
+    createLexicalHeading('h3', '05. Technical Server Logs'),
     createLexicalParagraph(
       'Like virtually all web servers, the hosting infrastructure automatically records standard technical connection logs (such as your IP address, browser type and version, operating system, requested URL, and timestamp of the request).',
     ),
@@ -123,11 +146,11 @@ export const COOKIE_POLICY_SEED = {
       privacyLink,
       '.',
     ]),
-    createLexicalHeading('h3', '05. Staff authentication'),
+    createLexicalHeading('h3', '06. Staff authentication'),
     createLexicalParagraph(
       'Authenticated conference staff receive a strictly technical session cookie needed to stay signed in to the editorial area. Regular public visitors browsing the conference website do not receive this token.',
     ),
-    createLexicalHeading('h3', '06. Data Controller & Inquiries'),
+    createLexicalHeading('h3', '07. Data Controller & Inquiries'),
     createLexicalParagraph([
       { text: 'Fondazione Ricerca Fibrosi Cistica - ETS (FFC Ricerca)', bold: true },
     ]),
@@ -174,9 +197,9 @@ export const PRIVACY_POLICY_SEED = {
     ),
     createLexicalHeading('h4', 'C. Cookies and Trackers'),
     createLexicalParagraph([
-      'This website does ',
+      'The public website does ',
       { text: 'not', bold: true },
-      ' install cookies, tracking pixels, or fingerprinting tools on visitors’ browsers. For complete details, consult our dedicated ',
+      ' use profiling, analytics, advertising, or third-party tracking tools. It uses only strictly necessary technical storage (such as local storage for My programme and theme, session storage for dismissed notices, and an optional service worker if you enable alerts). For complete details, consult our dedicated ',
       cookieLink,
       '.',
     ]),

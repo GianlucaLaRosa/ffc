@@ -122,7 +122,7 @@ export function Footer({ editionYear = 2026, footer }: FooterProps) {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-soft text-brand-soft-fg border border-brand-border/60 font-medium">
             <ShieldCheck className="w-4 h-4 text-brand shrink-0" />
-            <span>Cookie-Free &amp; Privacy-First Platform {editionYear ? `· ${editionYear}` : ''}</span>
+            <span>Privacy-First · Technical cookies only {editionYear ? `· ${editionYear}` : ''}</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-5 sm:gap-6">

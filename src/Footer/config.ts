@@ -324,7 +324,7 @@ export const Footer: GlobalConfig = {
                 ...policyChromeFields({
                   title: 'Cookie Policy',
                   kicker: 'Official Policy & Compliance Statement',
-                  headerBadge: 'Zero Tracking Platform',
+                  headerBadge: 'Technical Storage Only',
                 }),
                 {
                   name: 'summaryTitle',

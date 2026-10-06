@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Metadata, Viewport } from 'next'
+import { CookieConsentBanner } from '@/components/CookieConsentBanner'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { PwaProvider } from '@/components/PwaProvider'
 import { conferenceFaviconIcons } from '@/utilities/conferenceFavicon'
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <PwaProvider>
             <div id="app">{children}</div>
+            <CookieConsentBanner />
           </PwaProvider>
         </ThemeProvider>
       </body>
