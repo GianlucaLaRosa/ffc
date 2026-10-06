@@ -23,11 +23,10 @@ export const ActiveConference: GlobalConfig = {
       type: 'relationship',
       relationTo: 'conferences',
       label: 'Conference',
-      required: true,
       admin: {
         description: copy(
-          'Published edition on the home page (/). Required. That edition is removed from the public archive automatically.',
-          'Edizione pubblicata in home (/). Obbligatoria. Quell’edizione viene tolta automaticamente dall’archivio pubblico.',
+          'Published edition on the home page (/). Optional: leave empty for the holding page. That edition is removed from the public archive automatically.',
+          'Edizione pubblicata in home (/). Facoltativa: lasciate vuoto per la pagina di attesa. Quell’edizione viene tolta automaticamente dall’archivio pubblico.',
         ),
       },
       filterOptions: {

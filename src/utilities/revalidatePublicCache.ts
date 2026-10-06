@@ -59,10 +59,14 @@ export function scheduleTagRevalidation(tags: Iterable<string>, logger?: Logger)
   if (unique.length === 0) return
 
   const run = () => {
-    for (const tag of unique) {
-      revalidateTag(tag, 'max')
+    try {
+      for (const tag of unique) {
+        revalidateTag(tag, 'max')
+      }
+      logger?.info(`Revalidated tags: ${unique.join(', ')}`)
+    } catch {
+      logger?.info(`Skipped tag revalidation (no Next.js request): ${unique.join(', ')}`)
     }
-    logger?.info(`Revalidated tags: ${unique.join(', ')}`)
   }
 
   try {

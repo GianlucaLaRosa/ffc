@@ -12,7 +12,7 @@ Two distinct ideas:
 1. **Published** on the document — “this content is ready”
 2. **Active conference** — “this edition is the site home”
 
-You can have many published editions. **Only one** is on the home page.
+You can have many published editions. **At most one** is on the home page. You can leave **Conference** empty: `/` then shows a short holding page until you pick an edition.
 
 <Steps>
 
@@ -32,15 +32,15 @@ A published conference with days still in draft shows little or nothing in that 
 
 **Site** menu (or Dashboard) → **Active conference**.
 
-Choose a conference that is **already published**. Save.
+Choose a conference that is **already published**, or clear **Conference** if nothing should be on the home page. Save.
 
-That edition:
+If you pick an edition, it:
 
 - appears at the main address `/`
 - **leaves** the public archive on its own, if it was there
 
 <Callout type="warning">
-  Do not leave an old edition on the home page by mistake. Check the title on **Edit active edition** (top of the left menu, or Dashboard).
+  Do not leave an old edition on the home page by mistake. Check the title on **Edit active edition** (top of the left menu, or Dashboard). That link is hidden when **Conference** is empty.
 </Callout>
 
 ### Archive past editions

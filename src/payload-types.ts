@@ -2365,9 +2365,9 @@ export interface Footer {
 export interface ActiveConference {
   id: number;
   /**
-   * Published edition on the home page (/). Required. That edition is removed from the public archive automatically.
+   * Published edition on the home page (/). Optional: leave empty for the holding page. That edition is removed from the public archive automatically.
    */
-  conference: number | Conference;
+  conference?: (number | null) | Conference;
   updatedAt?: string | null;
   createdAt?: string | null;
 }

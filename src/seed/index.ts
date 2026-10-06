@@ -4,6 +4,7 @@
  *
  * Lookup tables (countries, regions, abstract statuses) still seed in Payload onInit.
  * Idempotent: skips if an edition with this title and year already exists.
+ * Does not set Active conference — pick the home edition in admin.
  */
 import { config as loadEnv } from 'dotenv'
 import path from 'path'
@@ -21,6 +22,7 @@ import {
   createLexicalParagraph,
   createLexicalRoot,
 } from '@/seed/lexicalHelpers'
+import { ABSTRACT_CONTENT } from '@/seed/data/convention2025AbstractContent'
 import {
   ABSTRACTS,
   CONVENTION_2025_TITLE,
@@ -268,9 +270,7 @@ const introLayout = () => [
     size: 'full' as const,
     tone: 'deadline' as const,
     title: 'Venue',
-    body: createLexicalDoc([
-      'Centro Congressi Camera di Commercio, Corso Porta Nuova 96, Verona.',
-    ]),
+    body: createLexicalDoc(['Centro Congressi Camera di Commercio, Corso Porta Nuova 96, Verona.']),
   },
   {
     blockType: 'cta' as const,
@@ -382,7 +382,10 @@ async function seed() {
         'The 23rd Convention of Investigators in Cystic Fibrosis is the 2025 FFC Ricerca meeting in Verona for researchers working on Foundation-funded CF projects.',
       primaryEntity: '23rd Convention of Investigators in Cystic Fibrosis',
       keyFacts: [
-        { label: 'Topic', value: 'Cystic fibrosis research (FFC Ricerca funded projects 2023–2025)' },
+        {
+          label: 'Topic',
+          value: 'Cystic fibrosis research (FFC Ricerca funded projects 2023–2025)',
+        },
         { label: 'Audience', value: 'Investigators, clinicians, and research partners' },
         { label: 'Language', value: 'English' },
         { label: 'Organised by', value: 'Fondazione per la Ricerca sulla Fibrosi Cistica - ETS' },
@@ -411,9 +414,7 @@ async function seed() {
         endTime: wallClockTime(...item.end),
         isKeynote: Boolean(item.isKeynote),
         icon: lucide(item.icon ?? 'calendar'),
-        ...(item.description
-          ? { description: createLexicalDoc([item.description]) }
-          : {}),
+        ...(item.description ? { description: createLexicalDoc([item.description]) } : {}),
       })
       const match = /^s(\d)$/.exec(item.key)
       if (match) sessionAgendaIds.set(Number(match[1]), created.id as number)
@@ -445,6 +446,11 @@ async function seed() {
       })
     }
 
+    const sections = ABSTRACT_CONTENT[abs.n]
+    if (!sections?.length) {
+      throw new Error(`Missing brochure content for abstract ${abs.n} (${abs.code})`)
+    }
+
     await publishCreate(payload, 'abstracts', {
       conference: conferenceId,
       agendaItems: [agendaId],
@@ -454,6 +460,10 @@ async function seed() {
       relatedCodes: (abs.relatedCodes ?? []).map((code) => ({
         code,
         status: statusIds.new,
+      })),
+      content: sections.map((section) => ({
+        title: section.title,
+        description: createLexicalDoc([section.description]),
       })),
       authors,
     })
@@ -522,13 +532,8 @@ async function seed() {
     ],
   })
 
-  await payload.updateGlobal({
-    slug: 'active-conference',
-    data: { conference: conferenceId },
-  })
-
   payload.logger.info(
-    `Seeded conference ${conferenceId} and set it as Active conference. If the home page still shows another edition, restart pnpm dev (Next data cache).`,
+    `Seeded conference ${conferenceId}. Set Active conference in admin when you want it on the home page.`,
   )
   process.exit(0)
 }
