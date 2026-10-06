@@ -7,6 +7,8 @@ type RGB = { r: number; g: number; b: number }
 
 const WHITE: RGB = { r: 255, g: 255, b: 255 }
 const BLACK: RGB = { r: 0, g: 0, b: 0 }
+const LIGHT_PAGE: RGB = { r: 236, g: 240, b: 245 }
+const LIGHT_SURFACE: RGB = { r: 248, g: 250, b: 252 }
 const DARK_PAGE: RGB = { r: 2, g: 6, b: 23 }
 const DARK_SURFACE: RGB = { r: 15, g: 23, b: 42 }
 
@@ -107,9 +109,9 @@ function lightRole(source: RGB): RolePalette {
   const solid = source
   const fg = onColor(solid)
   const hover = mix(solid, BLACK, 0.16)
-  const soft = mix(source, WHITE, 0.88)
+  const soft = mix(source, LIGHT_SURFACE, 0.82)
   const softFg = ensureContrast(source, soft)
-  const border = mix(source, WHITE, 0.7)
+  const border = mix(source, LIGHT_PAGE, 0.62)
   return { solid, fg, hover, soft, softFg, border }
 }
 

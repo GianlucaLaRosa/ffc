@@ -3,6 +3,8 @@ import { joinDocs } from '@/utilities/conferenceUi'
 
 export const SAVED_AGENDA_LEAD_MINUTES = 5
 export const SAVED_AGENDA_STORE_VERSION = 2
+/** Saved abstracts bookmarked from the appendix (no programme session). */
+export const APPENDIX_AGENDA_ID = 'appendix'
 
 export type SavedProgrammeKind = 'session' | 'abstract'
 
@@ -63,21 +65,40 @@ export function toSavedSession(item: AgendaItem): SavedAgendaItem {
   }
 }
 
-export function toSavedAbstract(abstract: Abstract, session: AgendaItem): SavedAgendaItem {
+function abstractSavedTitle(abstract: Abstract): string {
   const code = typeof abstract.code === 'string' ? abstract.code.trim() : ''
-  const title =
+  return (
     (typeof abstract.plainTitle === 'string' && abstract.plainTitle.trim()) ||
     code ||
     'Untitled abstract'
+  )
+}
+
+export function toSavedAbstract(abstract: Abstract, session: AgendaItem): SavedAgendaItem {
+  const code = typeof abstract.code === 'string' ? abstract.code.trim() : ''
   return {
     id: savedAbstractKey(abstract.id),
     kind: 'abstract',
     agendaItemId: String(session.id),
     abstractId: String(abstract.id),
     abstractCode: code || null,
-    title,
+    title: abstractSavedTitle(abstract),
     startTime: session.startTime ?? null,
     endTime: session.endTime ?? null,
+  }
+}
+
+export function toSavedAppendixAbstract(abstract: Abstract): SavedAgendaItem {
+  const code = typeof abstract.code === 'string' ? abstract.code.trim() : ''
+  return {
+    id: savedAbstractKey(abstract.id),
+    kind: 'abstract',
+    agendaItemId: APPENDIX_AGENDA_ID,
+    abstractId: String(abstract.id),
+    abstractCode: code || null,
+    title: abstractSavedTitle(abstract),
+    startTime: null,
+    endTime: null,
   }
 }
 

@@ -59,6 +59,17 @@ export function abstractStatusLabel(status: Abstract['status']): string {
   return status.status
 }
 
+export type AbstractAppendixRow = NonNullable<Abstract['appendices']>[number]
+
+/** Published appendix rows from the abstract CMS Appendix tab. */
+export function abstractAppendixRows(abstract: Abstract): AbstractAppendixRow[] {
+  if (!Array.isArray(abstract.appendices)) return []
+  return abstract.appendices.filter((row) => {
+    const title = typeof row.title === 'string' ? row.title.trim() : ''
+    return Boolean(title || row.body)
+  })
+}
+
 export function abstractAuthors(abstract: Abstract): Array<{
   person: Person
   role: string

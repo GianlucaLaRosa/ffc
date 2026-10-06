@@ -1,8 +1,10 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { RichText } from './RichText'
-import { X, Building2, User, Sparkles, Images } from './IconRenderer'
+import { X, Building2, User, Sparkles, Images, ChevronDown } from './IconRenderer'
+import { List } from 'lucide-react'
+import { scrollToAppendixAbstract } from '@/utilities/appendixNavigation'
 import { CopyOverlayLink } from './CopyOverlayLink'
 import { PhotoCarouselOverlay } from './PhotoCarouselOverlay'
 import type { Abstract } from '@/payload-types'
@@ -36,6 +38,11 @@ export function AbstractModal({
   onPhotoIndexChange,
 }: AbstractModalProps) {
   const carouselOpen = photoIndex != null
+  const [expandedAuthorId, setExpandedAuthorId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!isOpen) setExpandedAuthorId(null)
+  }, [isOpen, abstract?.id])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -94,7 +101,7 @@ export function AbstractModal({
               </span>
             )}
             {abstractStatusLabel(abstract.status) && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider text-brand-fg bg-brand">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider text-brand-soft-fg bg-brand-soft border border-brand-border">
                 {abstractStatusLabel(abstract.status)}
               </span>
             )}
@@ -110,6 +117,17 @@ export function AbstractModal({
           </div>
 
           <div className="flex items-center gap-1 -mr-1 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                onClose()
+                scrollToAppendixAbstract(abstract.id)
+              }}
+              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-fg-muted hover:text-fg hover:bg-line/60 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+            >
+              <List className="w-3.5 h-3.5" aria-hidden />
+              View in appendix
+            </button>
             <CopyOverlayLink className="text-fg-subtle hover:text-fg hover:bg-line/60" />
             <button
               type="button"
@@ -222,10 +240,10 @@ export function AbstractModal({
 
           {authors.length > 0 && (
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-fg-subtle mb-2">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-fg-subtle mb-3">
                 Authors & Affiliations
               </h2>
-              <ul className="flex flex-wrap gap-2 text-sm text-fg-muted">
+              <ul className="space-y-2">
                 {authors.map((row) => {
                   const instName = personInstitution(row.person)
                   const photo = mediaUrl(row.person.photo)
@@ -233,38 +251,71 @@ export function AbstractModal({
                     gallerySlides,
                     row.person.id,
                   )
+                  const personId = String(row.person.id)
+                  const isExpanded = expandedAuthorId === personId
+                  const roleLabel = AUTHOR_ROLE_LABEL[row.role] || row.role
+
                   return (
                     <li
                       key={row.person.id}
-                      className={`inline-flex items-center gap-1.5 py-1.5 rounded-full bg-subtle border border-line/80 text-xs font-medium text-fg max-w-full ${
-                        photo && authorPhotoIndex != null ? 'pl-1.5 pr-3' : 'px-3'
-                      }`}
+                      className="rounded-xl border border-line/80 bg-subtle/60 overflow-hidden"
                     >
-                      {photo && authorPhotoIndex != null ? (
+                      <div className="flex items-center gap-1 px-1 py-1">
+                        {photo && authorPhotoIndex != null ? (
+                          <button
+                            type="button"
+                            onClick={() => openAuthorPhoto(row.person.id)}
+                            className="w-8 h-8 m-1.5 rounded-full overflow-hidden shrink-0 bg-line focus:outline-none focus:ring-2 focus:ring-brand"
+                            aria-label={`Open photo of ${personName(row.person)}`}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={photo}
+                              alt=""
+                              className="w-full h-full object-cover"
+                            />
+                          </button>
+                        ) : (
+                          <span className="w-8 h-8 m-1.5 rounded-full bg-line flex items-center justify-center shrink-0">
+                            <User className="w-4 h-4 text-fg-subtle" />
+                          </span>
+                        )}
                         <button
                           type="button"
-                          onClick={() => openAuthorPhoto(row.person.id)}
-                          className="w-6 h-6 rounded-full overflow-hidden shrink-0 bg-line focus:outline-none focus:ring-2 focus:ring-brand"
-                          aria-label={`Open photo of ${personName(row.person)}`}
+                          onClick={() =>
+                            setExpandedAuthorId(isExpanded ? null : personId)
+                          }
+                          aria-expanded={isExpanded}
+                          className="min-w-0 flex-1 flex items-center gap-2.5 min-h-11 px-2 py-2 text-left text-sm hover:bg-subtle rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
                         >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={photo}
-                            alt=""
-                            className="w-full h-full object-cover"
+                          <span className="min-w-0 flex-1">
+                            <span className="block font-semibold text-fg leading-snug">
+                              {personName(row.person)}
+                            </span>
+                            <span className="block text-xs text-fg-subtle mt-0.5">{roleLabel}</span>
+                          </span>
+                          <ChevronDown
+                            className={`w-4 h-4 shrink-0 text-fg-subtle transition-transform ${
+                              isExpanded ? 'rotate-180' : ''
+                            }`}
                           />
                         </button>
+                      </div>
+                      {isExpanded ? (
+                        <div className="px-3 pb-3 pt-0 space-y-2 border-t border-line/70">
+                          <p className="flex items-start gap-1.5 text-xs text-fg-muted pt-2">
+                            <Building2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-brand" />
+                            <span>{instName || 'No affiliation listed'}</span>
+                          </p>
+                          {row.person.bio ? (
+                            <div className="text-xs text-fg-muted leading-relaxed">
+                              <RichText content={row.person.bio} />
+                            </div>
+                          ) : (
+                            <p className="text-xs text-fg-subtle italic">No biography available.</p>
+                          )}
+                        </div>
                       ) : null}
-                      <span className="min-w-0">{personName(row.person)}</span>
-                      <span className="text-fg-subtle shrink-0">
-                        {AUTHOR_ROLE_LABEL[row.role] || row.role}
-                      </span>
-                      {instName && (
-                        <span className="text-fg-subtle flex items-center gap-0.5 min-w-0">
-                          • <Building2 className="w-3 h-3 inline shrink-0" />{' '}
-                          <span className="truncate">{instName}</span>
-                        </span>
-                      )}
                     </li>
                   )
                 })}
@@ -294,11 +345,22 @@ export function AbstractModal({
 
         </div>
 
-        <div className="px-4 sm:px-6 py-3.5 border-t border-line bg-subtle flex justify-stretch sm:justify-end shrink-0 pb-[max(0.875rem,env(safe-area-inset-bottom))]">
+        <div className="px-4 sm:px-6 py-3.5 border-t border-line bg-subtle flex flex-col-reverse sm:flex-row sm:justify-between gap-2 shrink-0 pb-[max(0.875rem,env(safe-area-inset-bottom))]">
+          <button
+            type="button"
+            onClick={() => {
+              onClose()
+              scrollToAppendixAbstract(abstract.id)
+            }}
+            className="sm:hidden w-full min-h-11 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-line bg-surface text-sm font-semibold text-fg-muted hover:text-fg hover:bg-subtle transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+          >
+            <List className="w-4 h-4" aria-hidden />
+            View in appendix
+          </button>
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto min-h-11 px-5 py-2 rounded-lg bg-fg text-page text-sm font-medium hover:opacity-90 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-brand"
+            className="w-full sm:w-auto sm:ml-auto min-h-11 px-5 py-2 rounded-lg bg-fg text-page text-sm font-medium hover:opacity-90 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-brand"
           >
             Close
           </button>

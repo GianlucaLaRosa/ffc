@@ -96,7 +96,7 @@ async function fetchConferenceEdition(conferenceId: number | string): Promise<Co
     where: {
       and: [{ conference: { equals: conference.id } }, { _status: { equals: 'published' } }],
     },
-    depth: 3,
+    depth: 4,
     draft: false,
     limit: 1000,
     pagination: false,

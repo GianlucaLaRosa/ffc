@@ -1,14 +1,22 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { hasVisibleLayoutBlocks, LayoutBlocks } from '@/components/LayoutBlocks'
-import { SessionIcon } from '@/components/IconRenderer'
+import { SessionIcon, ChevronDown } from '@/components/IconRenderer'
 import { RichText } from './RichText'
-import { BookOpen, Building2, ExternalLink } from 'lucide-react'
+import { BookOpen, Search, X } from 'lucide-react'
 import { useModal } from '@/context/ModalContext'
 import type { Abstract, Appendix, Institution } from '@/payload-types'
-import { abstractStatusLabel, type AgendaIconValue } from '@/utilities/conferenceUi'
+import {
+  abstractAppendixRows,
+  type AbstractAppendixRow,
+  type AgendaIconValue,
+} from '@/utilities/conferenceUi'
 import { groupInstitutionsForDisplay } from '@/utilities/groupInstitutions'
+import {
+  APPENDIX_ABSTRACT_FOCUS_EVENT,
+  type AppendixAbstractFocusDetail,
+} from '@/utilities/appendixNavigation'
 
 export interface AppendixSectionProps {
   abstracts: Abstract[]
@@ -18,6 +26,12 @@ export interface AppendixSectionProps {
 type TabId = 'abstracts' | string
 
 type AppendixBlock = NonNullable<Appendix['blocks']>[number]
+
+type TabOption = {
+  id: TabId
+  label: string
+  icon: AgendaIconValue
+}
 
 function defaultTabIcon(blockType: AppendixBlock['blockType']): AgendaIconValue {
   switch (blockType) {
@@ -37,10 +51,138 @@ function tabIcon(block: AppendixBlock): AgendaIconValue {
   return defaultTabIcon(block.blockType)
 }
 
+type AppendixListEntry = {
+  id: string
+  abstract: Abstract
+  row: AbstractAppendixRow
+}
+
+function flattenAppendixEntries(abstracts: Abstract[]): AppendixListEntry[] {
+  return abstracts.flatMap((abs) => {
+    const rows = abstractAppendixRows(abs)
+    return rows.map((row, rowIndex) => ({
+      id: `${abs.id}:${row.id || rowIndex}`,
+      abstract: abs,
+      row,
+    }))
+  })
+}
+
+function appendixEntryTitle(entry: AppendixListEntry): string {
+  const title = typeof entry.row.title === 'string' ? entry.row.title.trim() : ''
+  if (title) return title
+  const code = typeof entry.abstract.code === 'string' ? entry.abstract.code.trim() : ''
+  return code || entry.abstract.plainTitle || 'Appendix entry'
+}
+
+function appendixEntrySearchText(entry: AppendixListEntry): string {
+  const code = typeof entry.abstract.code === 'string' ? entry.abstract.code : ''
+  const plainTitle =
+    typeof entry.abstract.plainTitle === 'string' ? entry.abstract.plainTitle : ''
+  const title = typeof entry.row.title === 'string' ? entry.row.title : ''
+  return `${title} ${code} ${plainTitle}`.toLowerCase()
+}
+
 export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
   const { openAbstractModal } = useModal()
   const blocks = appendix?.blocks ?? []
   const [activeTab, setActiveTab] = useState<TabId>('abstracts')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [tabMenuOpen, setTabMenuOpen] = useState(false)
+  const [highlightId, setHighlightId] = useState<string | null>(null)
+  const [expandedEntryId, setExpandedEntryId] = useState<string | null>(null)
+  const tabMenuRef = useRef<HTMLDivElement>(null)
+  const searchInputId = useId()
+
+  const tabs = useMemo<TabOption[]>(() => {
+    const list: TabOption[] = [
+      {
+        id: 'abstracts',
+        label: `Scientific Abstracts (${abstracts.length})`,
+        icon: 'book-open',
+      },
+    ]
+    blocks.forEach((block, index) => {
+      list.push({
+        id: block.id || `${block.blockType}-${index}`,
+        label: block.title,
+        icon: tabIcon(block),
+      })
+    })
+    return list
+  }, [abstracts.length, blocks])
+
+  const activeTabOption = tabs.find((tab) => tab.id === activeTab) ?? tabs[0]
+
+  const appendixEntries = useMemo(() => flattenAppendixEntries(abstracts), [abstracts])
+
+  const filteredEntries = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) return appendixEntries
+    return appendixEntries.filter((entry) => appendixEntrySearchText(entry).includes(query))
+  }, [appendixEntries, searchQuery])
+
+  useEffect(() => {
+    if (!tabMenuOpen) return
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (tabMenuRef.current && !tabMenuRef.current.contains(event.target as Node)) {
+        setTabMenuOpen(false)
+      }
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setTabMenuOpen(false)
+    }
+
+    document.addEventListener('mousedown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [tabMenuOpen])
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<AppendixAbstractFocusDetail>).detail
+      if (!detail?.abstractId) return
+
+      setActiveTab('abstracts')
+      setTabMenuOpen(false)
+      const matchingEntry =
+        appendixEntries.find((entry) => String(entry.abstract.id) === detail.abstractId) ??
+        appendixEntries.find((entry) => entry.id.startsWith(`${detail.abstractId}:`))
+
+      if (matchingEntry) {
+        setHighlightId(matchingEntry.id)
+        if (detail.expand !== false) {
+          setExpandedEntryId(matchingEntry.id)
+        }
+      }
+
+      window.setTimeout(() => {
+        const scrollId = matchingEntry
+          ? `appendix-entry-${matchingEntry.id}`
+          : `appendix-abstract-${detail.abstractId}`
+        document.getElementById(scrollId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 120)
+
+      if (detail.openModal) {
+        const match = abstracts.find((abs) => String(abs.id) === detail.abstractId)
+        if (match) openAbstractModal(match)
+      }
+
+      window.setTimeout(() => setHighlightId(null), 2400)
+    }
+
+    window.addEventListener(APPENDIX_ABSTRACT_FOCUS_EVENT, handler)
+    return () => window.removeEventListener(APPENDIX_ABSTRACT_FOCUS_EVENT, handler)
+  }, [abstracts, appendixEntries, openAbstractModal])
+
+  const selectTab = (id: TabId) => {
+    setActiveTab(id)
+    setTabMenuOpen(false)
+  }
 
   const tabClass = (id: TabId) =>
     `px-4 py-3 min-h-11 text-sm font-semibold rounded-t-xl border-b-2 transition-colors whitespace-nowrap flex items-center gap-2 ${
@@ -63,81 +205,177 @@ export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
         </h2>
       </div>
 
-      <div
-        className="flex border-b border-line gap-2 overflow-x-auto overscroll-x-contain pb-1 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0"
-        role="tablist"
-      >
+      <div className="md:hidden relative mb-6" ref={tabMenuRef}>
         <button
           type="button"
-          role="tab"
-          aria-selected={activeTab === 'abstracts'}
-          onClick={() => setActiveTab('abstracts')}
-          className={tabClass('abstracts')}
+          aria-haspopup="listbox"
+          aria-expanded={tabMenuOpen}
+          onClick={() => setTabMenuOpen((open) => !open)}
+          className="w-full flex items-center justify-between gap-3 min-h-11 px-4 py-3 rounded-xl border border-line bg-surface text-sm font-semibold text-fg shadow-xs"
         >
-          <BookOpen className="w-4 h-4" />
-          <span>Scientific Abstracts ({abstracts.length})</span>
+          <span className="inline-flex items-center gap-2 min-w-0">
+            <SessionIcon name={activeTabOption.icon} className="w-4 h-4 shrink-0 text-brand" />
+            <span className="truncate">{activeTabOption.label}</span>
+          </span>
+          <ChevronDown
+            className={`w-4 h-4 shrink-0 text-fg-subtle transition-transform ${tabMenuOpen ? 'rotate-180' : ''}`}
+          />
         </button>
+        {tabMenuOpen ? (
+          <ul
+            role="listbox"
+            aria-label="Appendix sections"
+            className="absolute z-20 mt-1 w-full max-h-64 overflow-y-auto rounded-xl border border-line bg-surface shadow-lg py-1"
+          >
+            {tabs.map((tab) => (
+              <li key={tab.id}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={activeTab === tab.id}
+                  onClick={() => selectTab(tab.id)}
+                  className={`w-full flex items-center gap-2 px-4 py-3 min-h-11 text-left text-sm font-medium transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-brand-soft text-brand-soft-fg'
+                      : 'text-fg hover:bg-subtle'
+                  }`}
+                >
+                  <SessionIcon name={tab.icon} className="w-4 h-4 shrink-0" />
+                  <span className="min-w-0">{tab.label}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
 
-        {blocks.map((block, index) => {
-          const id = block.id || `${block.blockType}-${index}`
-          return (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === id}
-              onClick={() => setActiveTab(id)}
-              className={tabClass(id)}
-            >
-              <SessionIcon name={tabIcon(block)} className="w-4 h-4" />
-              <span>{block.title}</span>
-            </button>
-          )
-        })}
+      <div
+        className="hidden md:flex flex-wrap border-b border-line gap-x-2 gap-y-1 pb-1 mb-8"
+        role="tablist"
+      >
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab.id}
+            onClick={() => selectTab(tab.id)}
+            className={tabClass(tab.id)}
+          >
+            {tab.id === 'abstracts' ? (
+              <BookOpen className="w-4 h-4" />
+            ) : (
+              <SessionIcon name={tab.icon} className="w-4 h-4" />
+            )}
+            <span>{tab.label}</span>
+          </button>
+        ))}
       </div>
 
       {activeTab === 'abstracts' && (
         <div role="tabpanel" className="space-y-4">
-          {abstracts.length === 0 ? (
-            <p className="text-sm text-fg-subtle italic">No published abstracts yet.</p>
+          {appendixEntries.length === 0 ? (
+            <p className="text-sm text-fg-subtle italic">No published appendix entries yet.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {abstracts.map((abs) => (
-                <div
-                  key={abs.id}
-                  onClick={() => openAbstractModal(abs)}
-                  className="p-5 rounded-xl border border-line/90 bg-surface hover:border-brand hover:shadow-md cursor-pointer transition-all duration-150 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-xs font-bold text-brand-soft-fg bg-brand-soft px-2.5 py-0.5 rounded-md border border-brand-border">
-                        {abs.code || 'ABSTRACT'}
-                      </span>
-                      {abstractStatusLabel(abs.status) && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-brand-fg px-2 py-0.5 rounded bg-brand">
-                          {abstractStatusLabel(abs.status)}
-                        </span>
-                      )}
-                    </div>
-                    <h4 className="text-base font-bold text-fg leading-snug">
-                      <RichText content={abs.title} disableContainer className="rich-text-inline" />
-                    </h4>
-                  </div>
+            <>
+              <div className="relative">
+                <label htmlFor={searchInputId} className="sr-only">
+                  Search appendix entries by title or code
+                </label>
+                <Search
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-fg-subtle"
+                  aria-hidden
+                />
+                <input
+                  id={searchInputId}
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search appendix entries…"
+                  className="w-full min-h-11 pl-10 pr-10 py-2.5 rounded-xl border border-line bg-surface text-sm text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-2 focus:ring-brand"
+                />
+                {searchQuery ? (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    aria-label="Clear search"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 inline-flex size-9 items-center justify-center rounded-lg text-fg-subtle hover:bg-subtle hover:text-fg"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                ) : null}
+              </div>
 
-                  <div className="mt-4 pt-3 border-t border-line flex items-center justify-between gap-2 text-xs text-fg-subtle">
-                    <span>
-                      {Array.isArray(abs.authors)
-                        ? `${abs.authors.length} Authors`
-                        : 'Authors linked'}
-                    </span>
-                    <span className="text-brand font-semibold inline-flex items-center gap-1 shrink-0">
-                      Read <span className="hidden sm:inline">Full Details</span>{' '}
-                      <ExternalLink className="w-3 h-3" />
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+              {filteredEntries.length === 0 ? (
+                <p className="text-sm text-fg-muted py-6 text-center">
+                  No appendix entries match &ldquo;{searchQuery.trim()}&rdquo;.
+                </p>
+              ) : (
+                <ul className="divide-y divide-line rounded-xl border border-line/90 bg-surface overflow-hidden">
+                  {filteredEntries.map((entry) => {
+                    const title = appendixEntryTitle(entry)
+                    const isHighlighted = highlightId === entry.id
+                    const isExpanded = expandedEntryId === entry.id
+
+                    return (
+                      <li
+                        key={entry.id}
+                        id={`appendix-entry-${entry.id}`}
+                        className={`scroll-mt-32 transition-colors ${
+                          isHighlighted ? 'bg-brand-soft/70 ring-2 ring-inset ring-brand/40' : ''
+                        }`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedEntryId((prev) => (prev === entry.id ? null : entry.id))
+                          }
+                          aria-expanded={isExpanded}
+                          aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${title}`}
+                          className="w-full flex items-center gap-3 min-h-11 px-4 py-3 text-left hover:bg-subtle/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand"
+                        >
+                          <span className="min-w-0 flex-1 text-sm font-semibold text-fg leading-snug">
+                            {title}
+                          </span>
+                          <ChevronDown
+                            className={`w-4 h-4 shrink-0 text-fg-subtle transition-transform ${
+                              isExpanded ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </button>
+
+                        {isExpanded ? (
+                          <div className="px-4 sm:px-5 pb-4 border-t border-line/70 bg-subtle/30">
+                            {entry.row.body ? (
+                              <div className="pt-3 text-sm text-fg-muted leading-relaxed">
+                                <RichText content={entry.row.body} />
+                              </div>
+                            ) : (
+                              <p className="pt-3 text-sm text-fg-subtle italic">
+                                No appendix body for this entry yet.
+                              </p>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => openAbstractModal(entry.abstract)}
+                              className="mt-3 text-sm font-semibold text-brand-soft-fg hover:text-brand hover:underline underline-offset-2"
+                            >
+                              View full abstract details
+                            </button>
+                          </div>
+                        ) : null}
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
+
+              {searchQuery.trim() ? (
+                <p className="text-xs text-fg-subtle text-center">
+                  {filteredEntries.length} of {appendixEntries.length} entries
+                </p>
+              ) : null}
+            </>
           )}
         </div>
       )}
@@ -152,16 +390,16 @@ export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
             : []
           const countryGroups = groupInstitutionsForDisplay(institutions)
           return (
-            <div key={id} role="tabpanel" className="space-y-8">
+            <div key={id} role="tabpanel" className="space-y-6">
               {block.description && (
                 <div className="text-sm text-fg-muted mb-4">
                   <RichText content={block.description} />
                 </div>
               )}
               {countryGroups.map((group) => (
-                <section key={group.countryName || 'unknown-country'} className="space-y-6">
+                <section key={group.countryName || 'unknown-country'} className="space-y-4">
                   {group.countryName ? (
-                    <h3 className="text-lg font-extrabold text-fg tracking-tight">
+                    <h3 className="text-lg font-extrabold text-brand-soft-fg tracking-tight">
                       {group.countryName}
                     </h3>
                   ) : null}
@@ -175,37 +413,21 @@ export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
                           {region.regionName}
                         </h4>
                       ) : null}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {region.institutions.map((inst) => {
-                          const countryName =
-                            typeof inst.country === 'object' ? inst.country?.name : ''
-                          const regionName =
-                            typeof inst.region === 'object' && inst.region
-                              ? inst.region.name
-                              : ''
-                          return (
-                            <div
-                              key={inst.id}
-                              className="p-4 rounded-xl border border-line/90 bg-surface shadow-2xs flex items-start gap-3"
-                            >
-                              <div className="w-9 h-9 rounded-lg bg-subtle text-fg-muted flex items-center justify-center shrink-0">
-                                <Building2 className="w-5 h-5" />
+                      <ul className="columns-1 sm:columns-2 lg:columns-3 gap-x-8 [column-fill:_balance]">
+                        {region.institutions.map((inst) => (
+                          <li
+                            key={inst.id}
+                            className="break-inside-avoid mb-3 pl-3 border-l-2 border-brand/30"
+                          >
+                            <p className="text-sm font-semibold text-fg leading-snug">{inst.name}</p>
+                            {inst.description ? (
+                              <div className="text-xs text-fg-muted mt-1 leading-relaxed line-clamp-3">
+                                <RichText content={inst.description} />
                               </div>
-                              <div>
-                                <p className="font-semibold text-fg text-sm">{inst.name}</p>
-                                <p className="text-xs text-fg-subtle mt-0.5">
-                                  {[regionName, countryName].filter(Boolean).join(', ')}
-                                </p>
-                                {inst.description && (
-                                  <div className="text-xs text-fg-muted mt-2 line-clamp-3">
-                                    <RichText content={inst.description} />
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
+                            ) : null}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   ))}
                 </section>

@@ -34,11 +34,34 @@ function hasPublishedSessions(days: ConferenceDay[]): boolean {
   return days.some((day) => joinDocs<AgendaItem>(day.agendaItems).length > 0)
 }
 
+function sameCalendarDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  )
+}
+
 export function ProgrammeSection({ days, isArchived = false }: ProgrammeSectionProps) {
   const [expandedDays, setExpandedDays] = useState<Record<string, boolean>>({})
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
+  const [expandedAbstractSections, setExpandedAbstractSections] = useState<
+    Record<string, boolean>
+  >({})
   const { focusedItemId, clearFocus, now, isReady, leadMinutes } = useSavedAgenda()
   const { openAbstractModal } = useModal()
+
+  useEffect(() => {
+    if (days.length === 0) return
+    const today = new Date()
+    const matchingDay = days.find((day) => {
+      if (!day.date) return false
+      const dayDate = new Date(day.date)
+      return !Number.isNaN(dayDate.getTime()) && sameCalendarDay(dayDate, today)
+    })
+    const defaultDayId = String((matchingDay ?? days[0]).id)
+    setExpandedDays((prev) => (prev[defaultDayId] ? prev : { ...prev, [defaultDayId]: true }))
+  }, [days])
 
   useEffect(() => {
     if (!focusedItemId) return
@@ -85,6 +108,14 @@ export function ProgrammeSection({ days, isArchived = false }: ProgrammeSectionP
   const toggleItemChildren = (itemId: string, e: React.MouseEvent) => {
     e.stopPropagation()
     setExpandedItems((prev) => ({
+      ...prev,
+      [itemId]: !prev[itemId],
+    }))
+  }
+
+  const toggleAbstractSection = (itemId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setExpandedAbstractSections((prev) => ({
       ...prev,
       [itemId]: !prev[itemId],
     }))
@@ -168,7 +199,9 @@ export function ProgrammeSection({ days, isArchived = false }: ProgrammeSectionP
                         key={item.id}
                         item={item}
                         expandedItems={expandedItems}
+                        expandedAbstractSections={expandedAbstractSections}
                         onToggleChildren={toggleItemChildren}
+                        onToggleAbstractSection={toggleAbstractSection}
                         formatTime={formatTime}
                         now={now}
                         isReady={isReady}
@@ -216,7 +249,9 @@ function ProgrammeUnavailable({
 function AgendaItemCard({
   item,
   expandedItems,
+  expandedAbstractSections,
   onToggleChildren,
+  onToggleAbstractSection,
   formatTime,
   now,
   isReady,
@@ -225,7 +260,9 @@ function AgendaItemCard({
 }: {
   item: AgendaItem
   expandedItems: Record<string, boolean>
+  expandedAbstractSections: Record<string, boolean>
   onToggleChildren: (itemId: string, e: React.MouseEvent) => void
+  onToggleAbstractSection: (itemId: string, e: React.MouseEvent) => void
   formatTime: (d?: string | null) => string
   now: Date
   isReady: boolean
@@ -241,6 +278,11 @@ function AgendaItemCard({
   const hasChildren = children.length > 0
   const isKeynote = Boolean(item.isKeynote)
   const isExpanded = Boolean(expandedItems[item.id])
+  const hasMultipleAbstracts = linkedAbstracts.length > 1
+  const itemId = String(item.id)
+  const abstractsExpanded = hasMultipleAbstracts
+    ? Boolean(expandedAbstractSections[itemId])
+    : true
   const live = isReady && isHappeningNow(item, now)
   const anyLeafSaved =
     isSaved(savedSessionKey(item.id)) ||
@@ -305,74 +347,99 @@ function AgendaItemCard({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {hasAbstract && (
+            {hasAbstract && linkedAbstracts.length === 1 && (
               <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-soft text-brand-soft-fg">
-                {linkedAbstracts.length === 1
-                  ? 'View abstract →'
-                  : `${linkedAbstracts.length} abstracts`}
+                View abstract →
               </span>
             )}
             <SaveAgendaButton item={item} />
-            <div className="hidden sm:flex w-7 h-7 rounded-lg bg-brand-soft border border-brand-border items-center justify-center text-brand">
-              <SessionIcon name={item.icon} className="w-4 h-4" />
+          </div>
+        </div>
+
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 rounded-lg bg-brand-soft border border-brand-border flex items-center justify-center text-brand shrink-0 mt-0.5">
+            <SessionIcon name={item.icon} className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-base sm:text-lg font-bold text-fg leading-snug">
+              {item.name ? (
+                <RichText content={item.name} disableContainer className="rich-text-inline" />
+              ) : (
+                item.title
+              )}
             </div>
+
+            {item.description && (
+              <div className="mt-2 text-xs sm:text-sm text-fg-muted leading-relaxed">
+                <RichText content={item.description} />
+              </div>
+            )}
           </div>
         </div>
-
-        <div className="text-base sm:text-lg font-bold text-fg leading-snug">
-          {item.name ? (
-            <RichText content={item.name} disableContainer className="rich-text-inline" />
-          ) : (
-            item.title
-          )}
-        </div>
-
-        {item.description && (
-          <div className="mt-2 text-xs sm:text-sm text-fg-muted leading-relaxed">
-            <RichText content={item.description} />
-          </div>
-        )}
 
         {linkedAbstracts.length > 0 && (
           <div className="mt-3 pt-3 border-t border-line space-y-1.5">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-fg-subtle">
-              {linkedAbstracts.length === 1 ? 'Abstract' : 'Abstracts'}
-            </p>
-            {linkedAbstracts.map((abs) => (
-              <div
-                key={abs.id}
-                id={`agenda-abstract-${abs.id}`}
-                className="flex items-stretch gap-1"
+            {hasMultipleAbstracts ? (
+              <button
+                type="button"
+                onClick={(e) => onToggleAbstractSection(itemId, e)}
+                aria-expanded={abstractsExpanded}
+                className="w-full flex items-center justify-between gap-2 min-h-11 px-2.5 py-2 rounded-lg text-left bg-subtle/80 hover:bg-subtle transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
               >
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    openAbstractModal(abs)
-                  }}
-                  className="min-w-0 flex-1 flex items-start gap-2 min-h-11 px-2.5 py-2 rounded-lg text-left bg-subtle/80 hover:bg-brand-soft/70 border border-transparent hover:border-brand-border transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-                >
-                  <FileText className="w-4 h-4 mt-0.5 shrink-0 text-brand" />
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold text-fg leading-snug">
-                      {abs.plainTitle || abs.code || 'Scientific abstract'}
-                    </span>
-                    <span className="mt-0.5 flex items-center gap-2 text-xs text-fg-subtle">
-                      {abs.code ? <span className="font-medium">{abs.code}</span> : null}
-                      {abstractStatusLabel(abs.status) ? (
-                        <span className="px-2 py-0.5 rounded bg-surface font-medium text-fg-muted">
-                          {abstractStatusLabel(abs.status)}
+                <span className="text-[11px] font-bold uppercase tracking-wider text-fg-subtle">
+                  {linkedAbstracts.length} abstracts
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 text-fg-subtle transition-transform ${
+                    abstractsExpanded ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+            ) : (
+              <p className="text-[11px] font-bold uppercase tracking-wider text-fg-subtle">
+                Abstract
+              </p>
+            )}
+
+            {(!hasMultipleAbstracts || abstractsExpanded) && (
+              <div className="space-y-1.5">
+                {linkedAbstracts.map((abs) => (
+                  <div
+                    key={abs.id}
+                    id={`agenda-abstract-${abs.id}`}
+                    className="flex items-stretch rounded-lg border border-line/80 bg-subtle/50 overflow-hidden"
+                  >
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        openAbstractModal(abs)
+                      }}
+                      aria-label={`Open abstract ${abs.code || abs.plainTitle || 'details'}`}
+                      className="min-w-0 flex-1 flex items-center gap-2 min-h-11 px-2.5 py-2 text-left hover:bg-brand-soft/70 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand"
+                    >
+                      <FileText className="w-4 h-4 shrink-0 text-brand" />
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-semibold text-fg leading-snug">
+                          {abs.plainTitle || abs.code || 'Scientific abstract'}
                         </span>
-                      ) : null}
-                    </span>
-                  </span>
-                  <span className="shrink-0 text-xs font-semibold text-brand-soft-fg self-center">
-                    Read
-                  </span>
-                </button>
-                <SaveAbstractButton abstract={abs} session={item} />
+                        <span className="mt-0.5 flex items-center gap-2 text-xs text-fg-subtle">
+                          {abs.code ? <span className="font-medium">{abs.code}</span> : null}
+                          {abstractStatusLabel(abs.status) ? (
+                            <span className="px-2 py-0.5 rounded bg-surface font-medium text-fg-muted">
+                              {abstractStatusLabel(abs.status)}
+                            </span>
+                          ) : null}
+                        </span>
+                      </span>
+                    </button>
+                    <div className="flex items-center shrink-0 border-l border-line/70 px-1">
+                      <SaveAbstractButton abstract={abs} session={item} inline />
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         )}
 
@@ -410,7 +477,9 @@ function AgendaItemCard({
               key={child.id}
               item={child}
               expandedItems={expandedItems}
+              expandedAbstractSections={expandedAbstractSections}
               onToggleChildren={onToggleChildren}
+              onToggleAbstractSection={onToggleAbstractSection}
               formatTime={formatTime}
               now={now}
               isReady={isReady}

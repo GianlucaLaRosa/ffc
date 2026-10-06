@@ -4,7 +4,8 @@ import React, { useEffect, useId, useRef, useState } from 'react'
 import { Bell, Bookmark, BookmarkCheck, Clock, X } from 'lucide-react'
 import { useSavedAgenda } from '@/context/SavedAgendaContext'
 import { formatConferenceDateShort, formatConferenceTime } from '@/utilities/conferenceTime'
-import { isHappeningNow, isStartingSoon } from '@/utilities/savedAgenda'
+import { scrollToAppendixAbstract } from '@/utilities/appendixNavigation'
+import { APPENDIX_AGENDA_ID, isHappeningNow, isStartingSoon } from '@/utilities/savedAgenda'
 
 export function SavedAgendaMenu() {
   const {
@@ -94,8 +95,8 @@ export function SavedAgendaMenu() {
               <p className="text-sm font-bold text-fg">My programme</p>
               <p className="text-xs text-fg-subtle">
                 {hasSaved
-                  ? `${savedCount} ${savedCount === 1 ? 'saved session' : 'saved sessions'}, in time order`
-                  : 'Saved sessions, in time order'}
+                  ? `${savedCount} ${savedCount === 1 ? 'saved item' : 'saved items'}, in time order`
+                  : 'Saved items, in time order'}
               </p>
             </div>
             <button
@@ -124,13 +125,11 @@ export function SavedAgendaMenu() {
                     <label className="flex items-start gap-2 px-1 py-1 text-xs text-fg-muted cursor-pointer">
                       <input
                         type="checkbox"
-                        className="mt-0.5"
+                        className="mt-0.5 size-4 shrink-0 rounded border-line text-brand focus:ring-brand"
                         checked={conferenceUpdates}
                         onChange={(event) => void setConferenceUpdates(event.target.checked)}
                       />
-                      <span>
-                        Also receive conference updates (room or time changes).
-                      </span>
+                      <span>Also receive conference updates</span>
                     </label>
                   </>
                 ) : notificationState === 'denied' ? (
@@ -175,7 +174,14 @@ export function SavedAgendaMenu() {
                           <button
                             type="button"
                             onClick={() => {
-                              focusItem(item.id)
+                              if (
+                                item.agendaItemId === APPENDIX_AGENDA_ID &&
+                                item.abstractId
+                              ) {
+                                scrollToAppendixAbstract(item.abstractId, { expand: true })
+                              } else {
+                                focusItem(item.id)
+                              }
                               setOpen(false)
                             }}
                             className="flex-1 min-w-0 text-left"
@@ -185,6 +191,10 @@ export function SavedAgendaMenu() {
                                 <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-fg-muted">
                                   <Clock className="size-3" aria-hidden />
                                   {timeLabel}
+                                </span>
+                              ) : item.agendaItemId === APPENDIX_AGENDA_ID ? (
+                                <span className="text-[11px] font-semibold text-fg-muted">
+                                  Appendix
                                 </span>
                               ) : null}
                               {live ? (
@@ -283,8 +293,7 @@ function programmeButtonLabel({
 }): string {
   if (!isReady || savedCount === 0) return 'My programme'
 
-  const count =
-    savedCount === 1 ? '1 saved session' : `${savedCount} saved sessions`
+  const count = savedCount === 1 ? '1 saved item' : `${savedCount} saved items`
   if (live) return `My programme, ${count}, a saved session is live`
   if (soon) return `My programme, ${count}, a saved session is starting soon`
   return `My programme, ${count}`

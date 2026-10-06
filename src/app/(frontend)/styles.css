@@ -7,10 +7,10 @@
 :root {
   color-scheme: light;
 
-  --page: 248 250 252;
-  --surface: 255 255 255;
-  --subtle: 241 245 249;
-  --line: 226 232 240;
+  --page: 236 240 245;
+  --surface: 248 250 252;
+  --subtle: 226 232 240;
+  --line: 203 213 225;
   --fg: 15 23 42;
   --fg-muted: 51 65 85;
   --fg-subtle: 100 116 139;
@@ -18,9 +18,9 @@
   --brand-light: 13 92 58;
   --brand-fg-light: 255 255 255;
   --brand-hover-light: 11 77 49;
-  --brand-soft-light: 226 235 231;
+  --brand-soft-light: 206 222 217;
   --brand-soft-fg-light: 13 92 58;
-  --brand-border-light: 182 206 196;
+  --brand-border-light: 168 196 184;
   --brand-dark: 81 138 113;
   --brand-fg-dark: 15 23 42;
   --brand-hover-dark: 105 154 133;
@@ -31,9 +31,9 @@
   --accent-light: 46 204 113;
   --accent-fg-light: 15 23 42;
   --accent-hover-light: 39 171 95;
-  --accent-soft-light: 230 249 238;
+  --accent-soft-light: 212 242 227;
   --accent-soft-fg-light: 29 128 71;
-  --accent-border-light: 192 240 212;
+  --accent-border-light: 176 228 198;
   --accent-dark: 46 204 113;
   --accent-fg-dark: 15 23 42;
   --accent-hover-dark: 75 211 133;

@@ -54,12 +54,6 @@ export function VenueSection({ conference }: VenueSectionProps) {
             )}
           </div>
 
-          {hasCoords && (
-            <div className="text-xs text-fg-subtle bg-subtle p-3 rounded-lg border border-line/60 font-mono">
-              GPS: {latitude.toFixed(4)}° N, {longitude.toFixed(4)}° E
-            </div>
-          )}
-
           {mapUrl && (
             <a
               href={mapUrl}
