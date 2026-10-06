@@ -125,7 +125,7 @@ export function SavedAgendaMenu() {
                     <label className="flex items-start gap-2 px-1 py-1 text-xs text-fg-muted cursor-pointer">
                       <input
                         type="checkbox"
-                        className="mt-0.5 size-4 shrink-0 rounded border-line text-brand focus:ring-brand"
+                        className="mt-0.5 size-4 shrink-0 rounded accent-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                         checked={conferenceUpdates}
                         onChange={(event) => void setConferenceUpdates(event.target.checked)}
                       />

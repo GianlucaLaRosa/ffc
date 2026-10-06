@@ -297,6 +297,31 @@ def parse_unnumbered_authors(block: str) -> list[dict]:
     return []
 
 
+def parse_institution_after_unnumbered_authors(block: str) -> str | None:
+    """Plain institution paragraph after author name(s) without superscript numbers."""
+    lines = block.split('\n')
+    for index, line in enumerate(lines):
+        if not re.match(r'^\d+\s*$', line.strip()) or index + 1 >= len(lines):
+            continue
+        name_line = lines[index + 1].strip()
+        if is_institution_line(name_line) or re.match(r'^\d+[A-Za-z]', name_line):
+            continue
+        inst_parts: list[str] = []
+        for candidate in lines[index + 2 :]:
+            stripped = candidate.strip()
+            if re.match(r'^\([A-Za-z#]', stripped):
+                break
+            if is_institution_line(stripped):
+                inst_parts.append(stripped)
+            elif inst_parts:
+                inst_parts.append(stripped)
+            elif stripped.isdigit():
+                break
+        if inst_parts:
+            return normalize_inst(re.sub(r'\s+', ' ', ' '.join(inst_parts)))
+    return None
+
+
 def parse_shared_institution(block: str) -> str | None:
     lines = block.split('\n')
     for index, line in enumerate(lines):
@@ -386,6 +411,12 @@ def main() -> int:
             institutions = {k: normalize_inst(v) for k, v in parse_institutions(join_institution_lines(block)).items()}
             authors = parse_authors_from_block(block)
             shared = normalize_inst(parse_shared_institution(block)) if not institutions else None
+            if not authors:
+                authors = parse_unnumbered_authors(block)
+                if authors and not institutions:
+                    shared = parse_institution_after_unnumbered_authors(block)
+                    if shared:
+                        institutions = {1: shared}
 
         rows: list[dict] = []
         for author in authors:

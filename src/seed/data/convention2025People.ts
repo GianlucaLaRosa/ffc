@@ -60,7 +60,9 @@ export const BROCHURE_INSTITUTIONS: SeedInstitution[] = [
   { name: "Department of Diagnostic and Public Health, University of Verona, Italy", country: "Italy", region: "Veneto" },
   { name: "Department of Life and Environmental Sciences, Polytechnic University of Marche, Ancona, Italy", country: "Italy", region: "Marche" },
   { name: "Department of Medical Biotechnology and Translational Medicine, University of Milan, Italy", country: "Italy", region: "Lombardia" },
+  { name: "Department of Medical, Oral e Biotechnological Sciences, University G. d’ Annunzio Chieti-Pescara, Chieti, Italy", country: "Italy", region: "Abruzzo" },
   { name: "Department of Medical, Oral, and Biotechnology Science, University G. D’ Annunzio Chieti-Pescara, Chieti, Italy", country: "Italy", region: "Abruzzo" },
+  { name: "Department of Medicine and Surgery, University of Perugia, Italy", country: "Italy", region: "Umbria" },
   { name: "Department of Molecular Biotechnology and Health Sciences, Molecular Biotechnology Center, University of Turin, Italy", country: "Italy" },
   { name: "Department of Molecular Medicine and Medical Biotechnology, University of Naples Federico II, Italy", country: "Italy", region: "Campania" },
   { name: "Department of Molecular Medicine and Medical Biotechnology, University of Naples Federico II, Naples, Italy", country: "Italy", region: "Campania" },
@@ -76,6 +78,7 @@ export const BROCHURE_INSTITUTIONS: SeedInstitution[] = [
   { name: "Department of Public Health and Infectious Diseases, University of Rome Tor Vergata, Italy", country: "Italy", region: "Lazio" },
   { name: "Department of Science, Microbiology Unit, University of RomaTre, Rome, Italy", country: "Italy", region: "Lazio" },
   { name: "Department of Science, University Roma Tre, Italy", country: "Italy", region: "Lazio" },
+  { name: "Department of Science, University of RomaTre, Roma, Italy", country: "Italy", region: "Lazio" },
   { name: "Department of Sciences and Chemical Biology and Pharmaceutical Technology (STEBICEF), University of Palermo, Italy", country: "Italy" },
   { name: "Department of Translational Research and New Technologies in Medicine and Surgery, University of Pisa, Italy", country: "Italy", region: "Toscana" },
   { name: "Department of Translational Research on New Technologies in Medicine and Surgery, University of Pisa, Italy", country: "Italy", region: "Toscana" },
@@ -272,7 +275,9 @@ export const BROCHURE_PEOPLE: SeedPerson[] = [
   { firstName: "Sabrina", lastName: "Mariotti", institution: "Istituto Superiore di Sanità, Rome, Italy" },
   { firstName: "Giovanni", lastName: "Marzaro", institution: "Department of Diagnostic and Public Health, University of Verona, Italy" },
   { firstName: "Fabiana Lo", lastName: "Mascolo", institution: "Department of Sciences and Chemical Biology and Pharmaceutical Technology (STEBICEF), University of Palermo, Italy" },
+  { firstName: "Domenico", lastName: "Mattoscio", institution: "Department of Medical, Oral, and Biotechnology Science, University G. D’ Annunzio Chieti-Pescara, Chieti, Italy" },
   { firstName: "Giulia", lastName: "Maule", institution: "University of Trento" },
+  { firstName: "Marta", lastName: "Mellini", institution: "Department of Science, University of RomaTre, Roma, Italy" },
   { firstName: "Ludovica", lastName: "Menta", institution: "IRCCS G. Gaslini Institute, Genoa" },
   { firstName: "Laura", lastName: "Mercolini", institution: "University of Bologna" },
   { firstName: "Marco", lastName: "Mergiotti", institution: "Department of Molecular Biotechnology and Health Sciences, Molecular Biotechnology Center, University of Turin, Italy" },
@@ -324,6 +329,7 @@ export const BROCHURE_PEOPLE: SeedPerson[] = [
   { firstName: "Maria Valeria", lastName: "Raimondi", institution: "Department of Sciences and Chemical Biology and Pharmaceutical Technology (STEBICEF), University of Palermo, Italy" },
   { firstName: "Anabela S.", lastName: "Ramalho", institution: "Woman and Child unit, Department of Development and Regeneration, KU Leuven, Leuven, Belgium" },
   { firstName: "Santiago", lastName: "Ramón-García", institution: "University of Zaragoza" },
+  { firstName: "Antonio", lastName: "Recchiuti", institution: "Department of Medical, Oral, and Biotechnology Science, University G. D’ Annunzio Chieti-Pescara, Chieti, Italy" },
   { firstName: "Mario", lastName: "Renda", institution: "Telethon Institute of Genetics and Medicine (TIGEM), Pozzuoli" },
   { firstName: "Eugenia", lastName: "Ricciardelli", institution: "Human Technopole, Milan, Italy" },
   { firstName: "Laura", lastName: "Rindi", institution: "Department of Translational Research on New Technologies in Medicine and Surgery, University of Pisa, Italy" },
@@ -374,6 +380,7 @@ export const BROCHURE_PEOPLE: SeedPerson[] = [
   { firstName: "Davide", lastName: "Visigalli", institution: "University of Genoa" },
   { firstName: "Marta", lastName: "Zaccaria", institution: "Department of Pharmaceutical Science, University of Milan, Italy" },
   { firstName: "Serena", lastName: "Zacchigna", institution: "International Centre for Genetic Engineering and Biotechnology (ICGEB), Trieste" },
+  { firstName: "Teresa", lastName: "Zelante", institution: "Department of Medicine and Surgery, University of Perugia, Italy" },
   { firstName: "Francesca", lastName: "Zerbini", institution: "University of Trento" },
 ]
 
@@ -464,6 +471,7 @@ export const ABSTRACT_AUTHOR_LISTS: Record<number, BrochureAbstractAuthor[]> = {
     { brochureName: "Luis J. V . Galietta", firstName: "Luis J. V.", lastName: "Galietta", institution: "Telethon Institute of Genetics and Medicine (TIGEM), Pozzuoli" },
   ],
   10: [
+    { brochureName: "Giulia Maule", firstName: "Giulia", lastName: "Maule", institution: "University of Trento" },
   ],
   11: [
     { brochureName: "Anna Cereseto", firstName: "Anna", lastName: "Cereseto", institution: "University of Trento" },
@@ -487,8 +495,10 @@ export const ABSTRACT_AUTHOR_LISTS: Record<number, BrochureAbstractAuthor[]> = {
     { brochureName: "Adriana Chillin", firstName: "Adriana", lastName: "Chillin", institution: "University of Padova" },
   ],
   13: [
+    { brochureName: "Domenico Mattoscio", firstName: "Domenico", lastName: "Mattoscio", institution: "Department of Medical, Oral, and Biotechnology Science, University G. D’ Annunzio Chieti-Pescara, Chieti, Italy" },
   ],
   14: [
+    { brochureName: "Antonio Recchiuti", firstName: "Antonio", lastName: "Recchiuti", institution: "Department of Medical, Oral, and Biotechnology Science, University G. D’ Annunzio Chieti-Pescara, Chieti, Italy" },
   ],
   15: [
     { brochureName: "Roberto Plebani", firstName: "Roberto", lastName: "Plebani", institution: "Department of Medical, Oral, and Biotechnology Science, University G. D’ Annunzio Chieti-Pescara, Chieti, Italy" },
@@ -589,6 +599,7 @@ export const ABSTRACT_AUTHOR_LISTS: Record<number, BrochureAbstractAuthor[]> = {
     { brochureName: "Marianne S. Carlon", firstName: "Marianne S.", lastName: "Carlon", institution: "Laboratory of Respiratory Diseases and Thoracic Surgery (BREATHE), Department of Chronic Diseases and Metabolism (CHROMETA), KU Leuven, Leuven, Belgium" },
   ],
   28: [
+    { brochureName: "Luis J. V . Galietta", firstName: "Luis J. V.", lastName: "Galietta", institution: "Telethon Institute of Genetics and Medicine (TIGEM), Pozzuoli" },
   ],
   29: [
     { brochureName: "Marco Mergiotti", firstName: "Marco", lastName: "Mergiotti", institution: "Department of Molecular Biotechnology and Health Sciences, Molecular Biotechnology Center, University of Turin, Italy" },
@@ -602,6 +613,7 @@ export const ABSTRACT_AUTHOR_LISTS: Record<number, BrochureAbstractAuthor[]> = {
     { brochureName: "Mattia Mori", firstName: "Mattia", lastName: "Mori", institution: "Department of Biotechnology, Chemistry and Pharmacy, University of Siena, Italy" },
   ],
   31: [
+    { brochureName: "Marta Mellini", firstName: "Marta", lastName: "Mellini", institution: "Department of Science, University of RomaTre, Roma, Italy" },
   ],
   32: [
     { brochureName: "Andrea Battistoni", firstName: "Andrea", lastName: "Battistoni", institution: "Department of Biology, University of Rome Tor Vergata, Italy" },
@@ -692,6 +704,7 @@ export const ABSTRACT_AUTHOR_LISTS: Record<number, BrochureAbstractAuthor[]> = {
     { brochureName: "Anna Pistocchi", firstName: "Anna", lastName: "Pistocchi", institution: "Department of Medical Biotechnology and Translational Medicine, University of Milan, Italy" },
   ],
   41: [
+    { brochureName: "Teresa Zelante", firstName: "Teresa", lastName: "Zelante", institution: "Department of Medicine and Surgery, University of Perugia, Italy" },
   ],
   42: [
     { brochureName: "Giovanni Bertoni", firstName: "Giovanni", lastName: "Bertoni", institution: "Department of Biosciences, University of Milan, Italy" },
@@ -748,6 +761,7 @@ export const ABSTRACT_AUTHOR_LISTS: Record<number, BrochureAbstractAuthor[]> = {
     { brochureName: "Ludovica Menta", firstName: "Ludovica", lastName: "Menta", institution: "IRCCS G. Gaslini Institute, Genoa" },
   ],
   51: [
+    { brochureName: "Roberto Plebani", firstName: "Roberto", lastName: "Plebani", institution: "Department of Medical, Oral e Biotechnological Sciences, University G. d’ Annunzio Chieti-Pescara, Chieti, Italy" },
   ],
   52: [
     { brochureName: "Michele Genovese", firstName: "Michele", lastName: "Genovese", institution: "Telethon Institute of Genetics and Medicine (TIGEM), Pozzuoli" },
