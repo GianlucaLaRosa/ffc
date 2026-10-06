@@ -3,7 +3,7 @@
  * from the published investigator brochure.
  *
  * Lookup tables (countries, regions, abstract statuses) still seed in Payload onInit.
- * Idempotent: skips if an edition with this title and year already exists.
+ * Idempotent: if the edition already exists, only missing abstract photos are attached.
  * Does not set Active conference — pick the home edition in admin.
  */
 import { config as loadEnv } from 'dotenv'
@@ -13,7 +13,7 @@ import { fileURLToPath } from 'url'
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 loadEnv({ path: path.resolve(dirname, '../../.env') })
 
-import { getPayload } from 'payload'
+import { getPayload, type Payload } from 'payload'
 
 import config from '@payload-config'
 import {
@@ -24,6 +24,7 @@ import {
 } from '@/seed/lexicalHelpers'
 import { ABSTRACT_APPENDICES } from '@/seed/data/convention2025AbstractAppendices'
 import { ABSTRACT_CONTENT } from '@/seed/data/convention2025AbstractContent'
+import { ABSTRACT_PICTURES } from '@/seed/data/convention2025AbstractPictures'
 import {
   ABSTRACTS,
   CONVENTION_2025_TITLE,
@@ -39,10 +40,17 @@ import {
   findStatusId,
   lucide,
   publishCreate,
+  seedAbstractPictureRows,
   splitPersonName,
   wallClockTime,
 } from '@/seed/helpers'
-import { CONFERENCE_LOGOS_FOLDER_NAME, ensureMediaFolder } from '@/utilities/mediaFolder'
+import {
+  ABSTRACT_PICTURES_FOLDER_NAME,
+  CONFERENCE_LOGOS_FOLDER_NAME,
+  ensureMediaFolder,
+} from '@/utilities/mediaFolder'
+
+const ABSTRACT_PICTURES_DIR = path.resolve(dirname, 'assets/convention2025/pictures')
 
 const SEED_CONTEXT = { disableRevalidate: true } as const
 
@@ -289,6 +297,63 @@ const introLayout = () => [
   },
 ]
 
+async function attachAbstractPictures(payload: Payload, conferenceId: number | string) {
+  const folderId = await ensureMediaFolder({
+    folderName: ABSTRACT_PICTURES_FOLDER_NAME,
+    payload,
+  })
+
+  const { docs } = await payload.find({
+    collection: 'abstracts',
+    depth: 0,
+    draft: true,
+    limit: 200,
+    pagination: false,
+    where: { conference: { equals: conferenceId } },
+  })
+
+  const byCode = new Map(docs.map((doc) => [doc.code, doc]))
+  let attached = 0
+  let skipped = 0
+
+  for (const abs of ABSTRACTS) {
+    const doc = byCode.get(abs.code)
+    if (!doc) {
+      payload.logger.warn(`No seeded abstract with code “${abs.code}”; skipping photos.`)
+      continue
+    }
+    if (Array.isArray(doc.picture) && doc.picture.length > 0) {
+      skipped += 1
+      continue
+    }
+
+    const pictures = ABSTRACT_PICTURES[abs.n]
+    if (!pictures?.length) {
+      throw new Error(`Missing brochure photos for abstract ${abs.n} (${abs.code})`)
+    }
+
+    const picture = await seedAbstractPictureRows(payload, {
+      folderId,
+      picturesDir: ABSTRACT_PICTURES_DIR,
+      pictures,
+    })
+
+    await payload.update({
+      collection: 'abstracts',
+      id: doc.id,
+      data: { picture },
+      depth: 0,
+      draft: false,
+      overrideAccess: true,
+      context: SEED_CONTEXT,
+    })
+    attached += 1
+    payload.logger.info(`Photos for ${abs.code} (${pictures.length})`)
+  }
+
+  payload.logger.info(`Abstract photos: attached ${attached}, already present ${skipped}.`)
+}
+
 async function seed() {
   const payload = await getPayload({ config })
 
@@ -305,8 +370,9 @@ async function seed() {
 
   if (existing.docs[0]) {
     payload.logger.info(
-      `Convention 2025 already exists (id ${existing.docs[0].id}). Skipping seed.`,
+      `Convention 2025 already exists (id ${existing.docs[0].id}). Attaching missing abstract photos…`,
     )
+    await attachAbstractPictures(payload, existing.docs[0].id)
     process.exit(0)
   }
 
@@ -341,6 +407,10 @@ async function seed() {
     institutionIds.set(inst.name, id)
   }
 
+  const picturesFolder = await ensureMediaFolder({
+    folderName: ABSTRACT_PICTURES_FOLDER_NAME,
+    payload,
+  })
   const logoFolder = await ensureMediaFolder({
     folderName: CONFERENCE_LOGOS_FOLDER_NAME,
     payload,
@@ -452,6 +522,16 @@ async function seed() {
       throw new Error(`Missing brochure content for abstract ${abs.n} (${abs.code})`)
     }
 
+    const pictureSpec = ABSTRACT_PICTURES[abs.n]
+    if (!pictureSpec?.length) {
+      throw new Error(`Missing brochure photos for abstract ${abs.n} (${abs.code})`)
+    }
+    const picture = await seedAbstractPictureRows(payload, {
+      folderId: picturesFolder,
+      picturesDir: ABSTRACT_PICTURES_DIR,
+      pictures: pictureSpec,
+    })
+
     await publishCreate(payload, 'abstracts', {
       conference: conferenceId,
       agendaItems: [agendaId],
@@ -475,6 +555,7 @@ async function seed() {
         }
       }),
       authors,
+      picture,
     })
   }
 

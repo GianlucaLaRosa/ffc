@@ -1,6 +1,8 @@
+import path from 'path'
 import type { Payload } from 'payload'
 
 import { CONFERENCE_TIME_ZONE } from '@/utilities/conferenceTime'
+import type { SeedAbstractPicture } from '@/seed/data/convention2025AbstractPictures'
 
 const SEED_CONTEXT = { disableRevalidate: true } as const
 
@@ -158,4 +160,54 @@ export async function findOrCreatePerson({
     },
   })
   return created.id as number
+}
+
+export async function createSeedMedia(
+  payload: Payload,
+  {
+    alt,
+    filePath,
+    folderId,
+  }: {
+    alt: string
+    filePath: string
+    folderId: number
+  },
+): Promise<number> {
+  const created = await payload.create({
+    collection: 'media',
+    depth: 0,
+    overrideAccess: true,
+    context: SEED_CONTEXT,
+    data: {
+      alt,
+      folder: folderId,
+    },
+    filePath,
+  })
+  return created.id as number
+}
+
+export async function seedAbstractPictureRows(
+  payload: Payload,
+  {
+    folderId,
+    picturesDir,
+    pictures,
+  }: {
+    folderId: number
+    picturesDir: string
+    pictures: SeedAbstractPicture[]
+  },
+): Promise<Array<{ image: number; description: string }>> {
+  const rows: Array<{ image: number; description: string }> = []
+  for (const picture of pictures) {
+    const image = await createSeedMedia(payload, {
+      alt: picture.caption,
+      filePath: path.join(picturesDir, picture.file),
+      folderId,
+    })
+    rows.push({ image, description: picture.caption })
+  }
+  return rows
 }
