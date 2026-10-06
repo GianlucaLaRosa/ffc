@@ -2,12 +2,15 @@ import React from 'react'
 import { RichText } from './RichText'
 import { MapPin, ExternalLink } from './IconRenderer'
 import type { Conference } from '@/payload-types'
+import { hasVenueContent } from '@/utilities/conferenceUi'
 
 export interface VenueSectionProps {
   conference: Conference
 }
 
 export function VenueSection({ conference }: VenueSectionProps) {
+  if (!hasVenueContent(conference)) return null
+
   const { address, city, country, latitude, longitude, location } = conference
 
   const hasAddress = address || city || country

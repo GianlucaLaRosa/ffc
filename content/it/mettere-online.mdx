@@ -12,7 +12,7 @@ Due idee distinte:
 1. **Pubblicato** sulla scheda — “questo contenuto è pronto”
 2. **Conferenza attiva** — “questa edizione è la home del sito”
 
-Potete avere molte edizioni pubblicate. **Al massimo una** sta in home. Potete lasciare **Conference** vuoto: `/` mostra una breve pagina di attesa finché non scegliete un’edizione.
+Potete avere molte edizioni pubblicate. **Al massimo una** sta in home. Potete lasciare **Conference** vuoto: `/` mostra una breve pagina di attesa finché non scegliete un’edizione. Se **Enable public archive** è acceso e almeno un’edizione è spuntata in **Archivio conferenze**, quella pagina offre anche un link **Conference archive** verso `/archive`. Se l’archivio è nascosto dal menu, in attesa non compare alcun link.
 
 <Steps>
 
@@ -47,8 +47,8 @@ Se scegliete un’edizione, quella:
 
 **Archivio conferenze** (sempre in **Sito**). In alto, **Enable public archive** mostra o nasconde **Archive** nel menu del sito. Si salva appena spuntate (non serve **Salva**).
 
-- **Acceso:** **Archive** compare nel menu del sito se almeno un’edizione è spuntata sotto.
-- **Spento:** **Archive** sparisce dal menu. `/archive` (l’elenco) e `/archive/{slug}` (ogni edizione) restano raggiungibili se qualcuno ha il link. Le spunte sulle singole edizioni restano.
+- **Acceso:** **Archive** compare nel menu del sito se almeno un’edizione è spuntata sotto. Con **Conference** vuoto, la pagina di attesa in `/` mostra anche un link **Conference archive** verso `/archive`.
+- **Spento:** **Archive** sparisce dal menu e dalla pagina di attesa. `/archive` (l’elenco) e `/archive/{slug}` (ogni edizione) restano raggiungibili se qualcuno ha il link. Le spunte sulle singole edizioni restano.
 
 Poi decidete quali edizioni pubblicate (non quella attiva) comparire in elenco. Una riga spuntata è pubblica su `/archive/` più lo **Slug** di quella conferenza.
 

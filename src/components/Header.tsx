@@ -33,6 +33,8 @@ export interface HeaderProps {
   isArchived?: boolean
   brand?: 'edition' | 'archive'
   showSectionNav?: boolean
+  showVenueNav?: boolean
+  showAppendixNav?: boolean
   showSavedAgenda?: boolean
   showArchiveNav?: boolean
 }
@@ -45,6 +47,8 @@ export function Header({
   isArchived = false,
   brand = 'edition',
   showSectionNav = true,
+  showVenueNav = true,
+  showAppendixNav = true,
   showSavedAgenda = true,
   showArchiveNav = true,
 }: HeaderProps) {
@@ -53,8 +57,8 @@ export function Header({
 
   const navLinks = [
     { label: 'Programme', hash: 'programme', icon: Calendar },
-    { label: 'Venue', hash: 'venue', icon: MapPin },
-    { label: 'Appendix', hash: 'appendix', icon: BookOpen },
+    ...(showVenueNav ? [{ label: 'Venue', hash: 'venue', icon: MapPin }] : []),
+    ...(showAppendixNav ? [{ label: 'Appendix', hash: 'appendix', icon: BookOpen }] : []),
   ]
 
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {

@@ -14,6 +14,7 @@ import { ConferenceJsonLd } from '@/components/ConferenceSeo'
 import { UpcomingSessionBanner } from '@/components/SavedAgendaMenu'
 import { ConferenceNoticesBanner } from '@/components/ConferenceNoticesBanner'
 import { conferenceJsonLd } from '@/utilities/conferenceJsonLd'
+import { hasAppendixContent, hasResearchProjectsBlock, hasVenueContent } from '@/utilities/conferenceUi'
 import {
   getArchivedConferences,
   getPublicFooter,
@@ -39,9 +40,14 @@ export async function ConferenceEditionView({
   const siteFooter = footer ?? editionFooter
 
   const isArchived = canonicalPath.startsWith('/archive')
+  const showVenue = hasVenueContent(conference)
+  const showAppendix = hasAppendixContent(appendix)
 
   return (
-    <ModalProvider allAbstracts={abstracts}>
+    <ModalProvider
+      allAbstracts={abstracts}
+      canLinkToAppendix={hasResearchProjectsBlock(appendix)}
+    >
       <SavedAgendaProvider
         conferenceId={conference.id}
         canonicalPath={canonicalPath}
@@ -61,6 +67,8 @@ export async function ConferenceEditionView({
             logo={conference.logo}
             archivedEditions={archivedEditions}
             showArchiveNav={showArchiveNav}
+            showVenueNav={showVenue}
+            showAppendixNav={showAppendix}
             isArchived={isArchived}
           />
           <div className="sticky top-[calc(4rem+env(safe-area-inset-top))] sm:top-[calc(5rem+env(safe-area-inset-top))] z-30 flex flex-col">
@@ -74,9 +82,9 @@ export async function ConferenceEditionView({
           <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16">
             <IntroSection conference={conference} />
             <ProgrammeSection days={days} isArchived={isArchived} />
-            <VenueSection conference={conference} />
+            {showVenue ? <VenueSection conference={conference} /> : null}
             <PartnersSection footer={siteFooter} />
-            <AppendixSection abstracts={abstracts} appendix={appendix} />
+            {showAppendix ? <AppendixSection abstracts={abstracts} appendix={appendix} /> : null}
           </main>
 
           <Footer editionYear={conference.year} footer={siteFooter} />

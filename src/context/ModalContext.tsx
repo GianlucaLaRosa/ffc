@@ -76,9 +76,12 @@ export function findMatchingAbstract(
 export function ModalProvider({
   children,
   allAbstracts = [],
+  canLinkToAppendix = false,
 }: {
   children: React.ReactNode
   allAbstracts?: Abstract[]
+  /** When true, abstracts with appendix rows can link to the Research projects tab. */
+  canLinkToAppendix?: boolean
 }) {
   const [selectedAbstract, setSelectedAbstract] = useState<Abstract | null>(null)
   const [photoIndex, setPhotoIndex] = useState<number | null>(null)
@@ -210,6 +213,7 @@ export function ModalProvider({
         abstract={selectedAbstract}
         photoIndex={photoIndex}
         isOpen={Boolean(selectedAbstract)}
+        canLinkToAppendix={canLinkToAppendix}
         onClose={closeTopOverlay}
         onOpenPhoto={openPhotoOverlay}
         onPhotoIndexChange={setPhotoOverlayIndex}

@@ -12,7 +12,7 @@ Two distinct ideas:
 1. **Published** on the document — “this content is ready”
 2. **Active conference** — “this edition is the site home”
 
-You can have many published editions. **At most one** is on the home page. You can leave **Conference** empty: `/` then shows a short holding page until you pick an edition.
+You can have many published editions. **At most one** is on the home page. You can leave **Conference** empty: `/` then shows a short holding page until you pick an edition. If **Enable public archive** is on and at least one edition is ticked in **Conference archive**, that page also links to **Conference archive** at `/archive`. If the archive is hidden from the menu, the holding page shows no archive link.
 
 <Steps>
 
@@ -47,8 +47,8 @@ If you pick an edition, it:
 
 **Conference archive** (still under **Site**). At the top, **Enable public archive** shows or hides **Archive** in the site menu. It saves as soon as you tick it (no **Save**).
 
-- **On:** **Archive** appears in the site menu if at least one edition is ticked below.
-- **Off:** **Archive** is hidden in the menu. `/archive` (the list) and `/archive/{slug}` (each edition) stay available if someone has the link. The ticks on individual editions are kept.
+- **On:** **Archive** appears in the site menu if at least one edition is ticked below. When **Conference** is empty, the holding page at `/` also shows a **Conference archive** link to `/archive`.
+- **Off:** **Archive** is hidden in the menu and on the holding page. `/archive` (the list) and `/archive/{slug}` (each edition) stay available if someone has the link. The ticks on individual editions are kept.
 
 Then decide which published editions (not the active one) appear in the list. A ticked row is public at `/archive/` plus that conference’s **Slug**.
 

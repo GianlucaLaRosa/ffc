@@ -1,4 +1,16 @@
-import type { Abstract, ConferenceDay, Media, Person } from '@/payload-types'
+import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
+import type { Abstract, Appendix, Conference, ConferenceDay, Media, Person } from '@/payload-types'
+
+type LexicalJSON = Parameters<typeof convertLexicalToPlaintext>[0]['data']
+
+function lexicalHasText(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false
+  try {
+    return convertLexicalToPlaintext({ data: value as LexicalJSON }).trim().length > 0
+  } catch {
+    return false
+  }
+}
 import {
   formatConferenceDateRange,
   formatConferenceDayTitle,
@@ -68,6 +80,33 @@ export function abstractAppendixRows(abstract: Abstract): AbstractAppendixRow[] 
     const title = typeof row.title === 'string' ? row.title.trim() : ''
     return Boolean(title || row.body)
   })
+}
+
+export function hasVenueContent(conference: Conference): boolean {
+  const { address, city, country, latitude, longitude, location } = conference
+  const hasAddress = Boolean(
+    (typeof address === 'string' && address.trim()) ||
+      (typeof city === 'string' && city.trim()) ||
+      (typeof country === 'string' && country.trim()),
+  )
+  const hasCoords = typeof latitude === 'number' && typeof longitude === 'number'
+  return hasAddress || hasCoords || lexicalHasText(location)
+}
+
+export function hasAppendixContent(appendix: Appendix | null): boolean {
+  return Boolean(appendix?.blocks?.length)
+}
+
+export function hasResearchProjectsBlock(appendix: Appendix | null): boolean {
+  return Boolean(appendix?.blocks?.some((block) => block.blockType === 'researchProjects'))
+}
+
+export function researchProjectsBlockTabId(appendix: Appendix | null): string | null {
+  const blocks = appendix?.blocks ?? []
+  const index = blocks.findIndex((block) => block.blockType === 'researchProjects')
+  if (index < 0) return null
+  const block = blocks[index]
+  return block.id || `${block.blockType}-${index}`
 }
 
 export function abstractAuthors(abstract: Abstract): Array<{

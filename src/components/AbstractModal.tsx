@@ -10,6 +10,7 @@ import { PhotoCarouselOverlay } from './PhotoCarouselOverlay'
 import type { Abstract } from '@/payload-types'
 import {
   AUTHOR_ROLE_LABEL,
+  abstractAppendixRows,
   abstractAuthorSlideIndex,
   abstractAuthors,
   abstractCoverSlide,
@@ -24,6 +25,7 @@ export interface AbstractModalProps {
   abstract: Abstract | null
   photoIndex: number | null
   isOpen: boolean
+  canLinkToAppendix?: boolean
   onClose: () => void
   onOpenPhoto: (index0: number) => void
   onPhotoIndexChange: (index0: number) => void
@@ -33,12 +35,15 @@ export function AbstractModal({
   abstract,
   photoIndex,
   isOpen,
+  canLinkToAppendix = false,
   onClose,
   onOpenPhoto,
   onPhotoIndexChange,
 }: AbstractModalProps) {
   const carouselOpen = photoIndex != null
   const [expandedAuthorId, setExpandedAuthorId] = useState<string | null>(null)
+  const showAppendixLink =
+    canLinkToAppendix && abstract != null && abstractAppendixRows(abstract).length > 0
 
   useEffect(() => {
     if (!isOpen) setExpandedAuthorId(null)
@@ -117,17 +122,19 @@ export function AbstractModal({
           </div>
 
           <div className="flex items-center gap-1 -mr-1 shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                onClose()
-                scrollToAppendixAbstract(abstract.id)
-              }}
-              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-fg-muted hover:text-fg hover:bg-line/60 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-            >
-              <List className="w-3.5 h-3.5" aria-hidden />
-              View in appendix
-            </button>
+            {showAppendixLink ? (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose()
+                  scrollToAppendixAbstract(abstract.id)
+                }}
+                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-fg-muted hover:text-fg hover:bg-line/60 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+              >
+                <List className="w-3.5 h-3.5" aria-hidden />
+                View in appendix
+              </button>
+            ) : null}
             <CopyOverlayLink className="text-fg-subtle hover:text-fg hover:bg-line/60" />
             <button
               type="button"
@@ -358,17 +365,19 @@ export function AbstractModal({
         </div>
 
         <div className="px-4 sm:px-6 py-3.5 border-t border-line bg-subtle flex flex-col-reverse sm:flex-row sm:justify-between gap-2 shrink-0 pb-[max(0.875rem,env(safe-area-inset-bottom))]">
-          <button
-            type="button"
-            onClick={() => {
-              onClose()
-              scrollToAppendixAbstract(abstract.id)
-            }}
-            className="sm:hidden w-full min-h-11 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-line bg-surface text-sm font-semibold text-fg-muted hover:text-fg hover:bg-subtle transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-          >
-            <List className="w-4 h-4" aria-hidden />
-            View in appendix
-          </button>
+          {showAppendixLink ? (
+            <button
+              type="button"
+              onClick={() => {
+                onClose()
+                scrollToAppendixAbstract(abstract.id)
+              }}
+              className="sm:hidden w-full min-h-11 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-line bg-surface text-sm font-semibold text-fg-muted hover:text-fg hover:bg-subtle transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+            >
+              <List className="w-4 h-4" aria-hidden />
+              View in appendix
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={onClose}
