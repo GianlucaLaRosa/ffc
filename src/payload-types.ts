@@ -1110,7 +1110,7 @@ export interface InstitutionsAppendixBlock {
     [k: string]: unknown;
   } | null;
   /**
-   * All institutions except those of non–team-member authors on this conference’s abstracts. Create new ones here if needed. Drag to set display order.
+   * All institutions except those of non–team-member authors on this conference’s abstracts. The public list is ordered Italy first (regions A–Z), then other countries A–Z.
    */
   institutions?: (number | Institution)[] | null;
   id?: string | null;

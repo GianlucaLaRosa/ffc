@@ -514,11 +514,6 @@ export const ABSTRACT_CONTENT: Record<number, SeedAbstractSection[]> = {
       description:
         'These findings validate FtsZ as the VOMG target and support its further development as a therapeutic candidate.',
     },
-    {
-      title: 'Appendix (FFC#11/2025)',
-      description:
-        'Future efforts will focus on enhancing intracellular delivery: in order to improve the bioavailability of VOMG, particularly in Mab-infected lungs, VOMG will be encapsulated in liposomes. The new VOMG formulation will be tested both in ex vivo assays and in Mab-in-fected murine models.',
-    },
   ],
   20: [
     {

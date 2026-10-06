@@ -8,8 +8,7 @@ import {
   revalidatePublicDirectoriesDelete,
 } from '@/utilities/revalidatePublicCache'
 import { adminGroups, copy } from '@/i18n/copy'
-
-const ITALY_NAME = 'Italy'
+import { ITALY_COUNTRY_NAME } from '@/utilities/groupInstitutions'
 
 const toRelationId = (value: unknown): number | string | null => {
   if (value == null) return null
@@ -42,7 +41,7 @@ const clearRegionUnlessItaly: CollectionBeforeValidateHook = async ({ data, req 
     select: { name: true },
   })
 
-  if (country.name !== ITALY_NAME) {
+  if (country.name !== ITALY_COUNTRY_NAME) {
     data.region = null
   }
 

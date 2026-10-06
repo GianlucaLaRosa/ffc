@@ -190,9 +190,13 @@ export const AgendaItems: CollectionConfig<'agenda-items'> = {
   defaultSort: '_order',
   defaultPopulate: {
     title: true,
+    name: true,
     startTime: true,
     endTime: true,
     isKeynote: true,
+    description: true,
+    icon: true,
+    children: true,
   },
   fields: [
     {

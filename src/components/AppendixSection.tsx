@@ -8,6 +8,7 @@ import { BookOpen, Building2, ExternalLink } from 'lucide-react'
 import { useModal } from '@/context/ModalContext'
 import type { Abstract, Appendix, Institution } from '@/payload-types'
 import { abstractStatusLabel, type AgendaIconValue } from '@/utilities/conferenceUi'
+import { groupInstitutionsForDisplay } from '@/utilities/groupInstitutions'
 
 export interface AppendixSectionProps {
   abstracts: Abstract[]
@@ -149,42 +150,66 @@ export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
           const institutions = Array.isArray(block.institutions)
             ? block.institutions.filter((item): item is Institution => typeof item === 'object')
             : []
+          const countryGroups = groupInstitutionsForDisplay(institutions)
           return (
-            <div key={id} role="tabpanel" className="space-y-4">
+            <div key={id} role="tabpanel" className="space-y-8">
               {block.description && (
                 <div className="text-sm text-fg-muted mb-4">
                   <RichText content={block.description} />
                 </div>
               )}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {institutions.map((inst) => {
-                  const countryName =
-                    typeof inst.country === 'object' ? inst.country?.name : ''
-                  const regionName =
-                    typeof inst.region === 'object' && inst.region ? inst.region.name : ''
-                  return (
+              {countryGroups.map((group) => (
+                <section key={group.countryName || 'unknown-country'} className="space-y-6">
+                  {group.countryName ? (
+                    <h3 className="text-lg font-extrabold text-fg tracking-tight">
+                      {group.countryName}
+                    </h3>
+                  ) : null}
+                  {group.regions.map((region) => (
                     <div
-                      key={inst.id}
-                      className="p-4 rounded-xl border border-line/90 bg-surface shadow-2xs flex items-start gap-3"
+                      key={region.regionName ?? `${group.countryName}-unspecified`}
+                      className="space-y-3"
                     >
-                      <div className="w-9 h-9 rounded-lg bg-subtle text-fg-muted flex items-center justify-center shrink-0">
-                        <Building2 className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-fg text-sm">{inst.name}</h4>
-                        <p className="text-xs text-fg-subtle mt-0.5">
-                          {[regionName, countryName].filter(Boolean).join(', ')}
-                        </p>
-                        {inst.description && (
-                          <div className="text-xs text-fg-muted mt-2 line-clamp-3">
-                            <RichText content={inst.description} />
-                          </div>
-                        )}
+                      {group.isItaly && region.regionName ? (
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-brand-soft-fg">
+                          {region.regionName}
+                        </h4>
+                      ) : null}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {region.institutions.map((inst) => {
+                          const countryName =
+                            typeof inst.country === 'object' ? inst.country?.name : ''
+                          const regionName =
+                            typeof inst.region === 'object' && inst.region
+                              ? inst.region.name
+                              : ''
+                          return (
+                            <div
+                              key={inst.id}
+                              className="p-4 rounded-xl border border-line/90 bg-surface shadow-2xs flex items-start gap-3"
+                            >
+                              <div className="w-9 h-9 rounded-lg bg-subtle text-fg-muted flex items-center justify-center shrink-0">
+                                <Building2 className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <p className="font-semibold text-fg text-sm">{inst.name}</p>
+                                <p className="text-xs text-fg-subtle mt-0.5">
+                                  {[regionName, countryName].filter(Boolean).join(', ')}
+                                </p>
+                                {inst.description && (
+                                  <div className="text-xs text-fg-muted mt-2 line-clamp-3">
+                                    <RichText content={inst.description} />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        })}
                       </div>
                     </div>
-                  )
-                })}
-              </div>
+                  ))}
+                </section>
+              ))}
             </div>
           )
         }

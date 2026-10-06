@@ -22,6 +22,7 @@ import {
   createLexicalParagraph,
   createLexicalRoot,
 } from '@/seed/lexicalHelpers'
+import { ABSTRACT_APPENDICES } from '@/seed/data/convention2025AbstractAppendices'
 import { ABSTRACT_CONTENT } from '@/seed/data/convention2025AbstractContent'
 import {
   ABSTRACTS,
@@ -465,6 +466,14 @@ async function seed() {
         title: section.title,
         description: createLexicalDoc([section.description]),
       })),
+      appendices: [abs.code, ...(abs.relatedCodes ?? [])].map((code) => {
+        const row = ABSTRACT_APPENDICES[code]
+        if (!row) return { title: null, body: null }
+        return {
+          title: row.title,
+          body: createLexicalDoc(row.body),
+        }
+      }),
       authors,
     })
   }

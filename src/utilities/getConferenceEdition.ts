@@ -1,10 +1,10 @@
 import { cache } from 'react'
 import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
+import { getPayload, type Payload } from 'payload'
 import configPromise from '@/payload.config'
 import type { Abstract, Appendix, Conference, ConferenceDay, Footer as FooterGlobal, Media } from '@/payload-types'
 import { joinDocIds, joinDocs } from '@/utilities/conferenceUi'
-import { attachProgrammeAbstracts } from '@/utilities/programmeAbstracts'
+import { attachProgrammeAbstracts, hydrateProgrammeAgenda } from '@/utilities/programmeAbstracts'
 import { relationId, relationSlug } from '@/utilities/conferenceRoutes'
 import { CACHE_TAGS, conferenceIdTag, conferenceSlugTag } from '@/utilities/cacheTags'
 import {
@@ -49,6 +49,22 @@ async function fetchActiveConferenceId(): Promise<{
     id: relationId(activeConf),
     slug: relationSlug(typeof activeConf === 'object' ? activeConf : null),
   }
+}
+
+/** Join depth on conference does not populate appendix block relationships. */
+async function hydrateAppendixForPublic({
+  payload,
+  appendix,
+}: {
+  payload: Payload
+  appendix: Appendix
+}): Promise<Appendix> {
+  return (await payload.findByID({
+    collection: 'appendices',
+    id: appendix.id,
+    depth: 2,
+    draft: false,
+  })) as Appendix
 }
 
 async function fetchConferenceEdition(conferenceId: number | string): Promise<ConferenceEditionData | null> {
@@ -106,6 +122,9 @@ async function fetchConferenceEdition(conferenceId: number | string): Promise<Co
   const appendixDocs = joinDocs<Appendix>(conference.appendices).filter(
     (doc) => !doc._status || doc._status === 'published',
   )
+  const appendix = appendixDocs[0]
+    ? await hydrateAppendixForPublic({ payload, appendix: appendixDocs[0] })
+    : null
 
   let footer: FooterGlobal | null = null
   try {
@@ -170,9 +189,15 @@ async function fetchConferenceEdition(conferenceId: number | string): Promise<Co
 
   return {
     conference,
-    days: attachProgrammeAbstracts(daysRes.docs as ConferenceDay[], abstracts),
+    days: attachProgrammeAbstracts(
+      await hydrateProgrammeAgenda({
+        payload,
+        days: daysRes.docs as ConferenceDay[],
+      }),
+      abstracts,
+    ),
     abstracts,
-    appendix: appendixDocs[0] ?? null,
+    appendix,
     notices,
     footer,
     activeSlug,
@@ -317,7 +342,7 @@ export const getActiveConferenceId = cache(() =>
 export const loadConferenceEdition = cache((conferenceId: number | string) =>
   unstable_cache(
     () => fetchConferenceEdition(conferenceId),
-    ['loadConferenceEdition', 'programme-abstracts', String(conferenceId)],
+    ['loadConferenceEdition', 'programme-abstracts', 'agenda-hydrate', 'appendix-institutions', String(conferenceId)],
     {
       tags: [
         conferenceIdTag(conferenceId),

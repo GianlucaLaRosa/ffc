@@ -320,7 +320,11 @@ function AgendaItemCard({
         </div>
 
         <div className="text-base sm:text-lg font-bold text-fg leading-snug">
-          <RichText content={item.name} disableContainer className="rich-text-inline" />
+          {item.name ? (
+            <RichText content={item.name} disableContainer className="rich-text-inline" />
+          ) : (
+            item.title
+          )}
         </div>
 
         {item.description && (
