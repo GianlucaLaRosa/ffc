@@ -60,7 +60,7 @@ export function PhotoCarouselOverlay({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[60] flex flex-col bg-fg/92 dark:bg-black/92 backdrop-blur-sm pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-black/90 text-white pt-[env(safe-area-inset-top)]"
       role="dialog"
       aria-modal="true"
       aria-labelledby="photo-carousel-title"
@@ -70,18 +70,18 @@ export function PhotoCarouselOverlay({
       }}
     >
       <div
-        className="flex items-center justify-between gap-3 px-4 py-3 text-page"
+        className="flex items-center justify-between gap-3 px-4 py-3 shrink-0"
         onClick={(event) => event.stopPropagation()}
       >
-        <p id="photo-carousel-title" className="text-sm font-medium">
+        <p id="photo-carousel-title" className="text-sm font-medium text-white">
           {safeIndex + 1} / {slides.length}
         </p>
         <div className="flex items-center gap-1">
-          <CopyOverlayLink className="inline-flex size-11 items-center justify-center rounded-full text-page/80 hover:text-page hover:bg-page/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand" />
+          <CopyOverlayLink className="text-white/80 hover:text-white hover:bg-white/10" />
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-11 items-center justify-center rounded-full text-page/80 hover:text-page hover:bg-page/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+            className="inline-flex size-11 items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
             aria-label="Close photo gallery"
           >
             <X className="w-6 h-6" />
@@ -90,7 +90,7 @@ export function PhotoCarouselOverlay({
       </div>
 
       <div
-        className="relative flex-1 flex items-center justify-center px-4 sm:px-12 py-2 min-h-0"
+        className="relative flex-1 min-h-0 overflow-hidden"
         onClick={(event) => event.stopPropagation()}
         onTouchStart={(event) => {
           touchStartX.current = event.changedTouches[0]?.clientX ?? null
@@ -109,7 +109,7 @@ export function PhotoCarouselOverlay({
           <button
             type="button"
             onClick={() => goTo(-1)}
-            className="absolute left-1 sm:left-4 inline-flex size-11 items-center justify-center rounded-full bg-page/10 text-page hover:bg-page/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+            className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 z-10 inline-flex size-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
             aria-label="Previous photo"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -120,14 +120,14 @@ export function PhotoCarouselOverlay({
         <img
           src={slide.url}
           alt={slide.alt}
-          className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
+          className="absolute inset-0 m-auto max-h-full max-w-full object-contain p-4 sm:px-14"
         />
 
         {slides.length > 1 ? (
           <button
             type="button"
             onClick={() => goTo(1)}
-            className="absolute right-1 sm:right-4 inline-flex size-11 items-center justify-center rounded-full bg-page/10 text-page hover:bg-page/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+            className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 z-10 inline-flex size-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
             aria-label="Next photo"
           >
             <ChevronRight className="w-6 h-6" />
@@ -135,10 +135,11 @@ export function PhotoCarouselOverlay({
         ) : null}
       </div>
 
-      <div className="px-6 py-4 text-center text-page" onClick={(event) => event.stopPropagation()}>
-        {slide.caption ? (
-          <p className="text-sm sm:text-base italic text-page/90">{slide.caption}</p>
-        ) : null}
+      <div
+        className="px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-center shrink-0"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <p className="text-sm sm:text-base text-white min-h-[1.5em]">{slide.caption}</p>
       </div>
     </div>,
     document.body,

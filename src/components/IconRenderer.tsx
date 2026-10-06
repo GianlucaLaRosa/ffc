@@ -30,6 +30,7 @@ import {
   User,
   Sparkles,
   FileText,
+  Images,
   icons,
   type LucideIcon,
 } from 'lucide-react'
@@ -134,4 +135,5 @@ export {
   Clock,
   Calendar,
   FileText,
+  Images,
 }

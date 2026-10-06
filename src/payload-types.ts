@@ -371,7 +371,7 @@ export interface Abstract {
       }[]
     | null;
   /**
-   * Ordered photos for this abstract (images only). On the public card they appear at the top; a click opens the gallery. Media folder “Abstract pictures”.
+   * Ordered photos for this abstract (images only). The public card shows the first one; a click opens the gallery (these photos, then author portraits in Authors order). Media folder “Abstract pictures”.
    */
   picture?:
     | {

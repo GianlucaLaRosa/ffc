@@ -29,10 +29,21 @@ export function mediaUrl(media: number | Media | null | undefined): string | nul
   return null
 }
 
+export function personGivenAndFamilyName(
+  person: Person | number | null | undefined,
+): string {
+  if (!person || typeof person !== 'object') return ''
+  const name = [person.firstName, person.lastName]
+    .map((part) => (typeof part === 'string' ? part.trim() : ''))
+    .filter(Boolean)
+    .join(' ')
+  return name || person.fullName || ''
+}
+
 export function personName(person: Person | number | null | undefined): string {
   if (!person || typeof person !== 'object') return ''
   if (person.fullName) return person.fullName
-  return [person.firstName, person.lastName].filter(Boolean).join(' ')
+  return personGivenAndFamilyName(person)
 }
 
 export function personInstitution(person: Person | number | null | undefined): string {
@@ -73,17 +84,19 @@ export type AbstractGallerySlide = {
   alt: string
 }
 
-/** Ordered Pictures from the abstract (speaker portraits stay on author cards). */
-export function abstractGallerySlides(abstract: Abstract): AbstractGallerySlide[] {
+function abstractPictureSlides(abstract: Abstract): AbstractGallerySlide[] {
+  const pictures = Array.isArray(abstract.picture) ? abstract.picture : []
   const slides: AbstractGallerySlide[] = []
 
-  const pictures = Array.isArray(abstract.picture) ? abstract.picture : []
   pictures.forEach((item, index) => {
     const image = typeof item.image === 'object' ? item.image : null
     const url = mediaUrl(image)
     if (!url) return
-    const caption = item.description?.trim() || ''
-    const alt = caption || image?.alt || 'Abstract figure'
+    const caption =
+      item.description?.trim() ||
+      (typeof image?.alt === 'string' ? image.alt.trim() : '') ||
+      ''
+    const alt = caption || 'Abstract figure'
     slides.push({
       key: `picture-${item.id || index}`,
       url,
@@ -93,6 +106,52 @@ export function abstractGallerySlides(abstract: Abstract): AbstractGallerySlide[
   })
 
   return slides
+}
+
+function abstractAuthorSlides(
+  abstract: Abstract,
+  skipUrls: Set<string>,
+): AbstractGallerySlide[] {
+  const slides: AbstractGallerySlide[] = []
+  const seen = new Set(skipUrls)
+
+  abstractAuthors(abstract).forEach((row) => {
+    const url = mediaUrl(row.person.photo)
+    if (!url || seen.has(url)) return
+    seen.add(url)
+    const name = personGivenAndFamilyName(row.person)
+    if (!name) return
+    slides.push({
+      key: `author-${row.person.id}`,
+      url,
+      caption: name,
+      alt: name,
+    })
+  })
+
+  return slides
+}
+
+/** First Pictures row, for the public card cover. */
+export function abstractCoverSlide(abstract: Abstract): AbstractGallerySlide | null {
+  return abstractPictureSlides(abstract)[0] ?? null
+}
+
+/**
+ * Pictures in CMS order, then author portraits in the same order as Authors.
+ */
+export function abstractGallerySlides(abstract: Abstract): AbstractGallerySlide[] {
+  const pictures = abstractPictureSlides(abstract)
+  const skipUrls = new Set(pictures.map((slide) => slide.url))
+  return [...pictures, ...abstractAuthorSlides(abstract, skipUrls)]
+}
+
+export function abstractAuthorSlideIndex(
+  slides: AbstractGallerySlide[],
+  personId: number | string,
+): number | null {
+  const index = slides.findIndex((slide) => slide.key === `author-${personId}`)
+  return index >= 0 ? index : null
 }
 
 export function formatDayTitle(day: ConferenceDay): string {

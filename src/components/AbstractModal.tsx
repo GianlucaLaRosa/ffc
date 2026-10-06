@@ -2,13 +2,15 @@
 
 import React, { useEffect } from 'react'
 import { RichText } from './RichText'
-import { X, Building2, User, Sparkles } from './IconRenderer'
+import { X, Building2, User, Sparkles, Images } from './IconRenderer'
 import { CopyOverlayLink } from './CopyOverlayLink'
 import { PhotoCarouselOverlay } from './PhotoCarouselOverlay'
 import type { Abstract } from '@/payload-types'
 import {
   AUTHOR_ROLE_LABEL,
+  abstractAuthorSlideIndex,
   abstractAuthors,
+  abstractCoverSlide,
   abstractGallerySlides,
   abstractStatusLabel,
   mediaUrl,
@@ -60,7 +62,14 @@ export function AbstractModal({
   const speakers = authors.filter((row) => row.isSpeaker)
   const contentSections = Array.isArray(abstract.content) ? abstract.content : []
   const gallerySlides = abstractGallerySlides(abstract)
+  const cover = abstractCoverSlide(abstract)
   const relatedCodes = Array.isArray(abstract.relatedCodes) ? abstract.relatedCodes : []
+
+  const openAuthorPhoto = (personId: number | string) => {
+    const index = abstractAuthorSlideIndex(gallerySlides, personId)
+    if (index == null) return
+    onOpenPhoto(index)
+  }
 
   return (
     <div
@@ -101,7 +110,7 @@ export function AbstractModal({
           </div>
 
           <div className="flex items-center gap-1 -mr-1 shrink-0">
-            <CopyOverlayLink className="inline-flex size-11 sm:size-9 items-center justify-center text-fg-subtle hover:text-fg-muted hover:bg-line/60 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand" />
+            <CopyOverlayLink className="text-fg-subtle hover:text-fg hover:bg-line/60" />
             <button
               type="button"
               onClick={onClose}
@@ -123,46 +132,35 @@ export function AbstractModal({
             </h1>
           </div>
 
-          {gallerySlides.length > 0 ? (
-            <div
-              className={
-                gallerySlides.length === 1
-                  ? 'grid grid-cols-1 gap-3'
-                  : 'grid grid-cols-2 gap-3'
+          {cover ? (
+            <button
+              type="button"
+              onClick={() => onOpenPhoto(0)}
+              className="group relative -mx-4 sm:mx-0 w-[calc(100%+2rem)] sm:w-full overflow-hidden rounded-none sm:rounded-xl border-y sm:border border-line bg-subtle text-left focus:outline-none focus:ring-2 focus:ring-brand"
+              aria-label={
+                gallerySlides.length > 1
+                  ? `Open photo gallery, ${gallerySlides.length} photos`
+                  : 'Open photo'
               }
             >
-              {gallerySlides.map((slide, index) => {
-                const wide = gallerySlides.length === 3 && index === 0
-                const tall = gallerySlides.length === 1 || wide
-                return (
-                  <button
-                    key={slide.key}
-                    type="button"
-                    onClick={() => onOpenPhoto(index)}
-                    className={`group overflow-hidden rounded-xl border border-line bg-subtle text-left focus:outline-none focus:ring-2 focus:ring-brand ${wide ? 'col-span-2' : ''}`}
-                    aria-label={
-                      gallerySlides.length > 1
-                        ? `Open photo ${index + 1} of ${gallerySlides.length}`
-                        : 'Open photo'
-                    }
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={slide.url}
-                      alt={slide.alt}
-                      className={`w-full object-contain bg-subtle transition-transform duration-200 group-hover:scale-[1.01] ${
-                        tall ? 'max-h-[min(42vh,22rem)]' : 'h-36 sm:h-44'
-                      }`}
-                    />
-                    {slide.caption ? (
-                      <span className="block p-3 text-xs text-fg-muted bg-surface border-t border-line italic">
-                        {slide.caption}
-                      </span>
-                    ) : null}
-                  </button>
-                )
-              })}
-            </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={cover.url}
+                alt={cover.alt}
+                className="w-full max-h-[min(56vw,18rem)] sm:max-h-[22rem] object-contain bg-subtle transition-transform duration-200 group-hover:scale-[1.01]"
+              />
+              {gallerySlides.length > 1 ? (
+                <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-fg/80 px-2.5 py-1 text-xs font-semibold text-page">
+                  <Images className="w-3.5 h-3.5" aria-hidden="true" />
+                  {gallerySlides.length}
+                </span>
+              ) : null}
+              {cover.caption ? (
+                <span className="block px-4 py-3 sm:p-3 text-xs text-fg-muted bg-surface border-t border-line italic">
+                  {cover.caption}
+                </span>
+              ) : null}
+            </button>
           ) : null}
 
           {speakers.length > 0 && (
@@ -180,18 +178,25 @@ export function AbstractModal({
                       key={row.person.id}
                       className="p-3.5 rounded-lg border bg-surface flex items-start gap-3 shadow-xs border-brand-border ring-2 ring-brand/20"
                     >
-                      <div className="w-10 h-10 rounded-full bg-brand-soft flex items-center justify-center text-brand-soft-fg shrink-0 overflow-hidden font-bold text-sm">
-                        {photo ? (
-                          // eslint-disable-next-line @next/next/no-img-element
+                      {photo ? (
+                        <button
+                          type="button"
+                          onClick={() => openAuthorPhoto(row.person.id)}
+                          className="w-10 h-10 rounded-full bg-brand-soft flex items-center justify-center text-brand-soft-fg shrink-0 overflow-hidden font-bold text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+                          aria-label={`Open photo of ${personName(row.person)}`}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={photo}
-                            alt={personName(row.person)}
+                            alt=""
                             className="w-full h-full object-cover"
                           />
-                        ) : (
+                        </button>
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-brand-soft flex items-center justify-center text-brand-soft-fg shrink-0 overflow-hidden font-bold text-sm">
                           <User className="w-5 h-5 text-brand" />
-                        )}
-                      </div>
+                        </div>
+                      )}
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-semibold text-fg text-sm">
@@ -223,11 +228,33 @@ export function AbstractModal({
               <ul className="flex flex-wrap gap-2 text-sm text-fg-muted">
                 {authors.map((row) => {
                   const instName = personInstitution(row.person)
+                  const photo = mediaUrl(row.person.photo)
+                  const authorPhotoIndex = abstractAuthorSlideIndex(
+                    gallerySlides,
+                    row.person.id,
+                  )
                   return (
                     <li
                       key={row.person.id}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-subtle border border-line/80 text-xs font-medium text-fg max-w-full"
+                      className={`inline-flex items-center gap-1.5 py-1.5 rounded-full bg-subtle border border-line/80 text-xs font-medium text-fg max-w-full ${
+                        photo && authorPhotoIndex != null ? 'pl-1.5 pr-3' : 'px-3'
+                      }`}
                     >
+                      {photo && authorPhotoIndex != null ? (
+                        <button
+                          type="button"
+                          onClick={() => openAuthorPhoto(row.person.id)}
+                          className="w-6 h-6 rounded-full overflow-hidden shrink-0 bg-line focus:outline-none focus:ring-2 focus:ring-brand"
+                          aria-label={`Open photo of ${personName(row.person)}`}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={photo}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ) : null}
                       <span className="min-w-0">{personName(row.person)}</span>
                       <span className="text-fg-subtle shrink-0">
                         {AUTHOR_ROLE_LABEL[row.role] || row.role}
