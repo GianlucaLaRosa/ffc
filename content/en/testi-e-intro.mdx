@@ -11,30 +11,119 @@ In the **Intro** tab you build the top of the public page: welcome, explanations
 
 It is not a single “wall of text”. Add **blocks**, one under the other, and drag them to change order.
 
-## Block types
+## How blocks work in the admin
 
-| Block (English name) | What it is for |
-| --- | --- |
-| **Content** | Text in one or more columns. Each column has a width. |
-| **Accordion** | Questions that open on click (hours, short FAQs, notes). |
-| **Callout** | Notice or information box. |
-| **Cta** | Button with a link (registration, PDF, external site). |
-| **Quote** | Highlighted quotation. |
-| **Separator** | Visual divider. |
+Open the conference → **Intro** tab → scroll to **Page intro**.
+
+1. Click **Add Block** and pick a type (names are in English).
+2. Fill the fields inside each block. Use the handle on the left to **drag** blocks up or down.
+3. Blocks other than **Content** have a **Width** field. **Content** sets width per column inside **Columns**.
+4. Use **Preview** or **Live Preview** from the conference toolbar to check phone, tablet, and desktop without publishing.
+
+![Add Block picker in the admin](/docs/blocks/admin-add-block-picker.png)
+
+![Page intro blocks in the admin](/docs/blocks/admin-intro-blocks.png)
+
+The same block types appear in an appendix **Basic text** tab (see [Appendix](/en/docs/appendice)); only the tab **Title** is extra there.
+
+## On the public site
+
+Blocks render in order under the conference title. Example from the active edition:
+
+![Intro blocks on the public page](/docs/blocks/intro-public-overview.png)
+
+From top to bottom in the screenshot: **Content** (welcome text), **Callout** with **Deadline** tone (venue notice), two **Button** blocks at **Half** width side by side, another **Callout**, and a **Quote**.
 
 ## Widths
 
 From a large screen up, the row is like **12 columns**. Examples:
 
-- **Full** = the whole row
-- **Two thirds** = two thirds
-- **Half** = half
-- **One third** = one third
+| Width (field name) | Columns used |
+| --- | --- |
+| **Full** | 12 |
+| **Two thirds** | 8 |
+| **Half** | 6 |
+| **One third** | 4 |
 
-Two halves sit on the same row. If the sum goes over 12, the next block wraps. On a phone everything stacks, in the order you placed it.
+Two **Half** blocks sit on the same row (6 + 6 = 12). If the sum goes over 12, the next block wraps to a new row. On a phone everything stacks, in the order you placed it.
+
+Inside a **Content** block, each column has its own **Width** and they follow the same 12-column rule within that block.
+
+## Block reference
+
+### Content
+
+Rich text in one or more columns.
+
+| Field | What to do |
+| --- | --- |
+| **Columns** | Add at least one column. Each row is a text column. |
+| **Width** (per column) | **Full**, **Two thirds**, **Half**, or **One third**. |
+| **Content** (per column) | Headings, lists, links, images, tables — the full editor. |
+
+Use for the main welcome paragraph, or a two-column layout (e.g. **Half** + **Half**).
+
+### Accordion
+
+Expandable sections — good for short FAQs, practical notes, or times that would clutter the page if always visible.
+
+| Field | What to do |
+| --- | --- |
+| **Width** | How much horizontal space the whole accordion uses. |
+| **Items** | One row per section. |
+| **Title** (per item) | Label on the closed row (required). |
+| **Content** (per item) | Text shown when opened. |
+| **Open by default** (per item) | If checked, that section starts expanded. |
+
+On the site, only the **Title** shows until the visitor clicks; then **Content** appears below a divider.
+
+### Callout
+
+A highlighted box for a notice.
+
+| Field | What to do |
+| --- | --- |
+| **Width** | Row width (same scale as above). |
+| **Tone** | **Note** (neutral info), **Important** (stand-out notice), **Deadline** (dates and deadlines — warm accent). |
+| **Title** | Optional short heading inside the box. |
+| **Body** | Short formatted text (bold, lists, links — not full page layout). |
+
+### Button (block name **Cta** in the picker)
+
+A button that scrolls to a section on the same page or opens a link.
+
+| Field | What to do |
+| --- | --- |
+| **Width** | Often **Half** when placing two buttons on one row. |
+| **Label** | Text on the button (required). |
+| **Goes to** | **Programme section**, **Venue section**, **Abstracts & appendix**, or **Custom URL**. |
+| **URL** | Only when **Goes to** is **Custom URL** — external site or path such as `/archive/…`. |
+| **Open in new tab** | Only for **Custom URL**. |
+| **Style** | **Solid** (filled) or **Outline** (border only). |
+
+**Programme**, **Venue**, and **Abstracts & appendix** jump to anchors on the edition page — you do not type `#programme` yourself.
+
+### Quote
+
+A highlighted quotation with optional attribution.
+
+| Field | What to do |
+| --- | --- |
+| **Width** | Row width. |
+| **Quote** | The quotation text (required). |
+| **Attribution** | Optional speaker, role, or source. |
+
+### Separator
+
+Visual spacing or a horizontal line between blocks.
+
+| Field | What to do |
+| --- | --- |
+| **Width** | Row width (usually **Full**). |
+| **Style** | **Line** (thin rule) or **Space** (empty gap only). |
 
 <Callout type="info">
-  You can open **preview** from the conference to see the intro on phone, tablet, and computer without publishing.
+  You can open **Preview** from the conference to see the intro on phone, tablet, and computer without publishing.
 </Callout>
 
 ## Writing tips

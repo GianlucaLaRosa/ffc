@@ -11,30 +11,119 @@ Nella linguetta **Intro** costruite la parte alta della pagina pubblica: benvenu
 
 Non è un unico “muro di testo”. Aggiungete **blocchi**, uno sotto l’altro, e li potete trascinare per cambiare ordine.
 
-## Tipi di blocco
+## Come funzionano i blocchi in admin
 
-| Blocco (nome in inglese) | A cosa serve |
-| --- | --- |
-| **Content** | Testo in una o più colonne. Ogni colonna ha una larghezza. |
-| **Accordion** | Domande che si aprono al clic (orari, FAQ brevi, note). |
-| **Callout** | Riquadro di avviso o informazione. |
-| **Cta** | Pulsante con link (iscrizioni, PDF, sito esterno). |
-| **Quote** | Citazione in evidenza. |
-| **Separator** | Linea di separazione visiva. |
+Aprite la conferenza → linguetta **Intro** → scorrete fino a **Page intro**.
+
+1. Cliccate **Add Block** e scegliete il tipo (i nomi restano in inglese).
+2. Compilate i campi di ogni blocco. Con la maniglia a sinistra **trascinate** i blocchi per riordinarli.
+3. Tutti i blocchi tranne **Content** hanno il campo **Width**. In **Content** la larghezza si imposta per ogni colonna dentro **Columns**.
+4. Usate **Preview** o **Live Preview** dalla barra della conferenza per controllare telefono, tablet e desktop senza pubblicare.
+
+![Selettore Add Block in admin](/docs/blocks/admin-add-block-picker.png)
+
+![Blocchi Page intro in admin](/docs/blocks/admin-intro-blocks.png)
+
+Gli stessi tipi di blocco compaiono anche in una scheda **Basic text** dell’[appendice](/it/docs/appendice); lì c’è in più il **Title** della linguetta.
+
+## Sul sito pubblico
+
+I blocchi compaiono in ordine sotto il titolo della conferenza. Esempio dall’edizione attiva:
+
+![Blocchi intro sulla pagina pubblica](/docs/blocks/intro-public-overview.png)
+
+Dall’alto in basso nello screenshot: **Content** (testo di benvenuto), **Callout** con tono **Deadline** (avviso sede), due **Button** a **Half** affiancati, un altro **Callout** e una **Quote**.
 
 ## Larghezze
 
 Da schermo grande in su, la riga è come **12 colonnine**. Esempi:
 
-- **Full** = tutta la riga
-- **Two thirds** = due terzi
-- **Half** = metà
-- **One third** = un terzo
+| Larghezza (nome del campo) | Colonne usate |
+| --- | --- |
+| **Full** | 12 |
+| **Two thirds** | 8 |
+| **Half** | 6 |
+| **One third** | 4 |
 
-Due metà una accanto all’altra stanno sulla stessa riga. Se la somma supera 12, il blocco successivo va a capo. Sul telefono tutto si impila, nell’ordine in cui l’avete messo.
+Due blocchi **Half** stanno sulla stessa riga (6 + 6 = 12). Se la somma supera 12, il blocco successivo va a capo. Sul telefono tutto si impila, nell’ordine in cui l’avete messo.
+
+Dentro un blocco **Content**, ogni colonna ha la propria **Width** e segue la stessa regola a 12 colonne.
+
+## Scheda dei blocchi
+
+### Content
+
+Testo formattato in una o più colonne.
+
+| Campo | Cosa fare |
+| --- | --- |
+| **Columns** | Almeno una colonna. Ogni riga è una colonna di testo. |
+| **Width** (per colonna) | **Full**, **Two thirds**, **Half** o **One third**. |
+| **Content** (per colonna) | Titoli, elenchi, link, immagini, tabelle — editor completo. |
+
+Per il paragrafo di benvenuto o un layout a due colonne (es. **Half** + **Half**).
+
+### Accordion
+
+Sezioni espandibili — utili per FAQ brevi, note pratiche o orari che non volete sempre visibili.
+
+| Campo | Cosa fare |
+| --- | --- |
+| **Width** | Quanto spazio orizzontale occupa l’intero accordion. |
+| **Items** | Una riga per sezione. |
+| **Title** (per voce) | Etichetta sulla riga chiusa (obbligatorio). |
+| **Content** (per voce) | Testo mostrato all’apertura. |
+| **Open by default** (per voce) | Se attivo, quella sezione parte già aperta. |
+
+Sul sito si vede solo il **Title** finché il visitatore non clicca; poi compare il **Content** sotto un divisore.
+
+### Callout
+
+Riquadro in evidenza per un avviso.
+
+| Campo | Cosa fare |
+| --- | --- |
+| **Width** | Larghezza sulla riga (stessa scala di sopra). |
+| **Tone** | **Note** (info neutra), **Important** (avviso da notare), **Deadline** (date e scadenze — accento caldo). |
+| **Title** | Titoletto facoltativo dentro il riquadro. |
+| **Body** | Testo breve formattato (grassetto, elenchi, link — non layout da pagina intera). |
+
+### Button (nel selettore il blocco si chiama **Button**)
+
+Pulsante che scorre a una sezione della stessa pagina o apre un link.
+
+| Campo | Cosa fare |
+| --- | --- |
+| **Width** | Spesso **Half** se mettete due pulsanti sulla stessa riga. |
+| **Label** | Testo sul pulsante (obbligatorio). |
+| **Goes to** | **Programme section**, **Venue section**, **Abstracts & appendix** o **Custom URL**. |
+| **URL** | Solo con **Goes to** = **Custom URL** — sito esterno o percorso tipo `/archive/…`. |
+| **Open in new tab** | Solo per **Custom URL**. |
+| **Style** | **Solid** (pieno) o **Outline** (solo bordo). |
+
+**Programme**, **Venue** e **Abstracts & appendix** portano alle ancore della pagina dell’edizione — non dovete scrivere `#programme` a mano.
+
+### Quote
+
+Citazione in evidenza con attribuzione facoltativa.
+
+| Campo | Cosa fare |
+| --- | --- |
+| **Width** | Larghezza sulla riga. |
+| **Quote** | Testo della citazione (obbligatorio). |
+| **Attribution** | Relatore, ruolo o fonte, facoltativo. |
+
+### Separator
+
+Spazio vuoto o linea orizzontale tra blocchi.
+
+| Campo | Cosa fare |
+| --- | --- |
+| **Width** | Larghezza sulla riga (di solito **Full**). |
+| **Style** | **Line** (linea sottile) o **Space** (solo spazio). |
 
 <Callout type="info">
-  Potete aprire l’**anteprima** dalla conferenza per vedere intro su telefono, tablet e computer senza pubblicare.
+  Potete aprire l’**anteprima** dalla conferenza per vedere l’intro su telefono, tablet e computer senza pubblicare.
 </Callout>
 
 ## Consigli di scrittura

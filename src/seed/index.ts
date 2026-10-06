@@ -49,6 +49,7 @@ import {
   CONFERENCE_LOGOS_FOLDER_NAME,
   ensureMediaFolder,
 } from '@/utilities/mediaFolder'
+import { seedFooterContent } from '@/utilities/seedFooterContent'
 
 const ABSTRACT_PICTURES_DIR = path.resolve(dirname, 'assets/convention2025/pictures')
 
@@ -373,6 +374,7 @@ async function seed() {
       `Convention 2025 already exists (id ${existing.docs[0].id}). Attaching missing abstract photos…`,
     )
     await attachAbstractPictures(payload, existing.docs[0].id)
+    await seedFooterContent({ payload })
     process.exit(0)
   }
 
@@ -621,6 +623,8 @@ async function seed() {
       },
     ],
   })
+
+  await seedFooterContent({ payload })
 
   payload.logger.info(
     `Seeded conference ${conferenceId}. Set Active conference in admin when you want it on the home page.`,
