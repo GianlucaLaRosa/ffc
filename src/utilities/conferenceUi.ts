@@ -11,6 +11,7 @@ function lexicalHasText(value: unknown): boolean {
     return false
   }
 }
+import { isPrivateBlobUrl } from '@/utilities/blobAccess'
 import {
   formatConferenceDateRange,
   formatConferenceDayTitle,
@@ -44,10 +45,14 @@ export function joinDocIds(
 
 export function mediaUrl(media: number | Media | null | undefined): string | null {
   if (!media || typeof media !== 'object') return null
-  if (typeof media.url === 'string' && media.url) return media.url
-  if (typeof media.filename === 'string' && media.filename) {
-    return `/api/media/file/${media.filename}`
+  const filename = typeof media.filename === 'string' ? media.filename : null
+  const storedUrl = typeof media.url === 'string' ? media.url : null
+
+  if (filename && storedUrl && isPrivateBlobUrl(storedUrl)) {
+    return `/api/media/file/${filename}`
   }
+  if (storedUrl) return storedUrl
+  if (filename) return `/api/media/file/${filename}`
   return null
 }
 
