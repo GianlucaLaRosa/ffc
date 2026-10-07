@@ -220,6 +220,7 @@ export interface Media {
     hasNextPage?: boolean;
     totalDocs?: number;
   };
+  prefix?: string | null;
   _objectKey?: string | null;
   folder?: (number | null) | FolderInterface;
   updatedAt: string;
@@ -1514,6 +1515,7 @@ export interface MediaSelect<T extends boolean = true> {
   caption?: T;
   abstract?: T;
   taggedPeople?: T;
+  prefix?: T;
   _objectKey?: T;
   folder?: T;
   updatedAt?: T;

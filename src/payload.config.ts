@@ -29,6 +29,7 @@ import { iconPlugin } from './fields/icon'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getVercelBlobAccess } from './utilities/blobAccess'
+import { MEDIA_BLOB_PREFIX } from './utilities/mediaBlobStorage'
 import { getServerSideURL } from './utilities/getURL'
 import {
   ABSTRACT_PICTURES_FOLDER_NAME,
@@ -142,7 +143,9 @@ export default buildConfig({
     vercelBlobStorage({
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
       collections: {
-        media: true,
+        media: {
+          prefix: MEDIA_BLOB_PREFIX,
+        },
       },
       token: process.env.BLOB_READ_WRITE_TOKEN,
       // Plugin types only list 'public'; @vercel/blob supports private stores too.

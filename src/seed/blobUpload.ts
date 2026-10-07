@@ -10,6 +10,7 @@ import type { Payload } from 'payload'
 import { CONVENTION_2025_PARTNERS } from '@/seed/data/convention2025'
 import { ABSTRACT_PICTURES } from '@/seed/data/convention2025AbstractPictures'
 import { getVercelBlobAccess } from '@/utilities/blobAccess'
+import { mediaBlobObjectKey } from '@/utilities/mediaBlobStorage'
 
 const BLOB_CACHE_MAX_AGE = 60 * 60 * 24 * 365
 
@@ -18,7 +19,7 @@ export function isBlobSeedEnabled(): boolean {
 }
 
 export function blobStorageKey(filename: string): string {
-  return `media/${filename}`
+  return mediaBlobObjectKey(filename)
 }
 
 export async function uploadBytesToBlob(
