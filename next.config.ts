@@ -16,6 +16,14 @@ const withNextra = nextra({
 })
 
 const nextConfig: NextConfig = {
+  // payload-plugin-icons loads react-dom/server and lucide-react via opaque runtime imports;
+  // Vercel/serverless tracing omits them unless listed explicitly (same as standalone Docker).
+  outputFileTracingIncludes: {
+    '/*': [
+      './node_modules/react-dom/**/*',
+      './node_modules/lucide-react/**/*',
+    ],
+  },
   sassOptions: {
     loadPaths: ['./node_modules/@payloadcms/ui/dist/scss/'],
   },

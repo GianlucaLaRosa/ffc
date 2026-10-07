@@ -1,0 +1,28 @@
+diff --git a/dist/providers/serverUtils.js b/dist/providers/serverUtils.js
+index 17bb74c2101cc9de751579c7953c8e59e802750c..6c2acb9cd19a7cbbf4cfc3eb9fe66c596c3bd79e 100644
+--- a/dist/providers/serverUtils.js
++++ b/dist/providers/serverUtils.js
+@@ -1,12 +1,8 @@
+ import { createRequire } from 'node:module';
+ import { createElement } from 'react';
++import { renderToStaticMarkup } from 'react-dom/server';
++
+ const require = createRequire(import.meta.url);
+-const serverRenderer = Reflect.apply(require, undefined, [
+-    [
+-        'react-dom',
+-        'server'
+-    ].join('/')
+-]);
+ // Next compiles literal imports (and Lucide's full export graph); keep this fixed server loader opaque.
+ // eslint-disable-next-line @typescript-eslint/no-implied-eval
+ const nativeImport = Function('specifier', 'return import(specifier)');
+@@ -191,7 +187,7 @@ export function isSerializedIcon(value) {
+     return typeof icon.viewBox === 'string' && icon.viewBox.length <= 100 && !/[<>&]/.test(icon.viewBox) && (icon.attributes === undefined || validAttributes(icon.attributes, true)) && Array.isArray(icon.nodes) && icon.nodes.length <= 256 && icon.nodes.every((node)=>validNode(node, 0));
+ }
+ /** Convert provider output to a small, validated structure safe for the client renderer. */ export function serializeIconComponent(Component, props = {}) {
+-    const svg = parseRenderedSvg(serverRenderer.renderToStaticMarkup(createElement(Component, props)));
++    const svg = parseRenderedSvg(renderToStaticMarkup(createElement(Component, props)));
+     const viewBox = svg.attributes.viewBox;
+     if (typeof viewBox !== 'string') {
+         throw new Error('Provider icon SVG is missing a viewBox');

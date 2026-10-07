@@ -8,6 +8,9 @@ patchedDependencies:
   nextra-theme-docs@4.6.1:
     hash: a1dffeacfc3906baff7a9ac9bce4c22afb32a21ff683df3e0858f5292f1c29cf
     path: patches/nextra-theme-docs@4.6.1.patch
+  payload-plugin-icons@1.1.5:
+    hash: 07f5abc82dffbec34d21b3ffbe071906ecef5d22df95e91e43b66b7aabc92b85
+    path: patches/payload-plugin-icons@1.1.5.patch
 
 importers:
 
@@ -78,7 +81,7 @@ importers:
         version: 3.90.1(graphql@16.14.2)(typescript@5.7.3)
       payload-plugin-icons:
         specifier: ^1.1.5
-        version: 1.1.5(@payloadcms/ui@3.90.1(@types/react@19.2.14)(monaco-editor@0.56.0)(next@16.3.3(@babel/core@7.29.7)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.105.1))(payload@3.90.1(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3))(@phosphor-icons/react@2.1.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(lucide-react@0.563.0(react@19.2.6))(payload@3.90.1(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 1.1.5(patch_hash=07f5abc82dffbec34d21b3ffbe071906ecef5d22df95e91e43b66b7aabc92b85)(@payloadcms/ui@3.90.1(@types/react@19.2.14)(monaco-editor@0.56.0)(next@16.3.3(@babel/core@7.29.7)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.105.1))(payload@3.90.1(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3))(@phosphor-icons/react@2.1.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(lucide-react@0.563.0(react@19.2.6))(payload@3.90.1(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       pg:
         specifier: ^8.13.3
         version: 8.23.0
@@ -10591,7 +10594,7 @@ snapshots:
 
   path-type@4.0.0: {}
 
-  payload-plugin-icons@1.1.5(@payloadcms/ui@3.90.1(@types/react@19.2.14)(monaco-editor@0.56.0)(next@16.3.3(@babel/core@7.29.7)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.105.1))(payload@3.90.1(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3))(@phosphor-icons/react@2.1.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(lucide-react@0.563.0(react@19.2.6))(payload@3.90.1(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  payload-plugin-icons@1.1.5(patch_hash=07f5abc82dffbec34d21b3ffbe071906ecef5d22df95e91e43b66b7aabc92b85)(@payloadcms/ui@3.90.1(@types/react@19.2.14)(monaco-editor@0.56.0)(next@16.3.3(@babel/core@7.29.7)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.105.1))(payload@3.90.1(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3))(@phosphor-icons/react@2.1.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(lucide-react@0.563.0(react@19.2.6))(payload@3.90.1(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       '@payloadcms/ui': 3.90.1(@types/react@19.2.14)(monaco-editor@0.56.0)(next@16.3.3(@babel/core@7.29.7)(@types/node@22.19.9)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(sass@1.105.1))(payload@3.90.1(graphql@16.14.2)(typescript@5.7.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.7.3)
       '@phosphor-icons/react': 2.1.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
