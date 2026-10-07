@@ -109,16 +109,27 @@ function UploadFigure({
   )
 }
 
+type LexicalRichTextNode = {
+  type?: string
+  children?: LexicalRichTextNode[]
+  checked?: boolean
+  value?: number
+}
+
+type RichTextNodes = NonNullable<Parameters<JSXConverterArgs['nodesToJSX']>[0]['nodes']>
+
 function inlineChildren(args: Pick<JSXConverterArgs, 'node' | 'nodesToJSX'>) {
-  return args.nodesToJSX({ nodes: args.node.children ?? [] })
+  const node = args.node as LexicalRichTextNode
+  return args.nodesToJSX({ nodes: (node.children ?? []) as RichTextNodes })
 }
 
 /** Payload's checklist converter uses uuid() which mismatches SSR vs client. */
 function listItemConverter(args: JSXConverterArgs) {
-  const { childIndex, node, nodesToJSX, parent } = args
+  const { childIndex, nodesToJSX, parent } = args
+  const node = args.node as LexicalRichTextNode
   const children = node.children ?? []
-  const hasSubLists = children.some((child: { type?: string }) => child.type === 'list')
-  const content = nodesToJSX({ nodes: children })
+  const hasSubLists = children.some((child: LexicalRichTextNode) => child.type === 'list')
+  const content = nodesToJSX({ nodes: children as RichTextNodes })
 
   if (parent && 'listType' in parent && parent.listType === 'check') {
     const checkboxId = `rt-check-${childIndex}-${String(node.value ?? 'item')}`

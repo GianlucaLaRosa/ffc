@@ -1,4 +1,6 @@
 import type { Payload } from 'payload'
+
+import type { Footer } from '@/payload-types'
 import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
 
 import { COOKIE_POLICY_SEED, PRIVACY_POLICY_SEED } from '../seed/data/footerPolicies'
@@ -71,8 +73,12 @@ export async function seedFooterPolicies({ payload }: { payload: Payload }): Pro
         delegation: withIconProvider(footer.delegation),
         partners: Array.isArray(footer.partners) ? footer.partners : [],
         credits: Array.isArray(footer.credits) ? footer.credits : [],
-        ...(cookieEmpty ? { cookiePolicy: COOKIE_POLICY_SEED } : {}),
-        ...(privacyEmpty ? { privacyPolicy: PRIVACY_POLICY_SEED } : {}),
+        ...(cookieEmpty
+          ? { cookiePolicy: COOKIE_POLICY_SEED as NonNullable<Footer['cookiePolicy']> }
+          : {}),
+        ...(privacyEmpty
+          ? { privacyPolicy: PRIVACY_POLICY_SEED as NonNullable<Footer['privacyPolicy']> }
+          : {}),
       },
       context: { disableRevalidate: true },
     })

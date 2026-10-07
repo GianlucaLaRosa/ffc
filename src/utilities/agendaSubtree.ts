@@ -23,7 +23,6 @@ export async function collectAgendaSubtreeIds({
       pagination: false,
       overrideAccess: true,
       req,
-      select: { id: true },
     })
     frontier = []
     for (const doc of docs) {

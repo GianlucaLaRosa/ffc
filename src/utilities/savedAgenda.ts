@@ -279,12 +279,12 @@ export function dueProgrammeAlerts(
   now: Date,
   leadMinutes = SAVED_AGENDA_LEAD_MINUTES,
 ): DueProgrammeAlert[] {
-  return items.flatMap((item) => {
+  return items.flatMap((item): DueProgrammeAlert[] => {
     if (isHappeningNow(item, now)) {
-      return [{ item, kind: 'live' as const, minutes: 0 }]
+      return [{ item, kind: 'live', minutes: 0 }]
     }
     if (isStartingSoon(item, now, leadMinutes)) {
-      return [{ item, kind: 'soon' as const, minutes: minutesUntilStart(item, now) }]
+      return [{ item, kind: 'soon', minutes: minutesUntilStart(item, now) }]
     }
     return []
   })

@@ -46,7 +46,7 @@ function groupByRegion(institutions: Institution[]): InstitutionRegionGroup[] {
     byRegion.set(regionName, list)
   }
 
-  const regions = [...byRegion.entries()]
+  const regions: InstitutionRegionGroup[] = [...byRegion.entries()]
     .sort(([a], [b]) => compareLabel(a, b, 'it'))
     .map(([regionName, docs]) => ({
       regionName,

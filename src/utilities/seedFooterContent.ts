@@ -15,17 +15,19 @@ const PARTNERS_DIR = path.resolve(dirname, '../seed/assets/convention2025/partne
 
 const SEED_CONTEXT = { disableRevalidate: true } as const
 
-const withIconProvider = (group: {
-  icon?: { provider?: string | null; name?: string | null } | null
-  label?: string | null
-  url?: string | null
-}) => ({
+const withIconProvider = (
+  group: {
+    icon?: { provider?: string | null; name?: string | null } | null
+    label?: string | null
+    url?: string | null
+  } | null | undefined,
+) => ({
   icon: {
-    provider: group.icon?.provider || 'lucide',
-    name: group.icon?.name ?? null,
+    provider: group?.icon?.provider || 'lucide',
+    name: group?.icon?.name ?? null,
   },
-  label: group.label ?? null,
-  url: group.url ?? null,
+  label: group?.label ?? null,
+  url: group?.url ?? null,
 })
 
 const orgLinkEmpty = (group: { label?: string | null; url?: string | null } | null | undefined) =>
