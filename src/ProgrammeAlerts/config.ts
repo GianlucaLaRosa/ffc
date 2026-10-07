@@ -27,8 +27,8 @@ export const ProgrammeAlerts: GlobalConfig = {
       defaultValue: true,
       admin: {
         description: copy(
-          'If off, the site hides “Enable session alerts” and the minute cron sends nothing.',
-          'Se è spento, il sito nasconde “Enable session alerts” e il cron al minuto non invia nulla.',
+          'If off, the site hides “Enable session alerts” and the scheduled check sends nothing.',
+          'Se è spento, il sito nasconde “Enable session alerts” e il controllo programmato non invia nulla.',
         ),
       },
     },
@@ -61,7 +61,7 @@ export const ProgrammeAlerts: GlobalConfig = {
           min: 1,
           max: 30,
           admin: {
-            width: '50%',
+            width: '33%',
             description: copy(
               'How many minutes before a saved session to notify.',
               'Avvisare tanti minuti prima di una sessione salvata.',
@@ -70,12 +70,33 @@ export const ProgrammeAlerts: GlobalConfig = {
           },
         },
         {
+          name: 'pollMinutes',
+          type: 'select',
+          label: 'Check interval',
+          defaultValue: '5',
+          options: [
+            { label: '5 minutes', value: '5' },
+            { label: '10 minutes', value: '10' },
+            { label: '15 minutes', value: '15' },
+            { label: '20 minutes', value: '20' },
+            { label: '25 minutes', value: '25' },
+            { label: '30 minutes', value: '30' },
+          ],
+          admin: {
+            width: '33%',
+            description: copy(
+              'How often the server checks for due reminders. Set cron-job.org to the same interval.',
+              'Ogni quanto il server controlla i promemoria. Impostate cron-job.org con lo stesso intervallo.',
+            ),
+          },
+        },
+        {
           name: 'notificationTitle',
           type: 'text',
           label: 'Notification title',
           defaultValue: 'FFC Conference',
           admin: {
-            width: '50%',
+            width: '34%',
             description: copy(
               'Short name on lock-screen notifications.',
               'Nome breve sulle notifiche a schermo bloccato.',

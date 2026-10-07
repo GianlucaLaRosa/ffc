@@ -149,6 +149,17 @@ export const Conferences: CollectionConfig<'conferences'> = {
               ],
             },
             {
+              name: 'headerEyebrow',
+              type: 'text',
+              label: 'Header eyebrow',
+              admin: {
+                description: copy(
+                  'Small uppercase line above the event name in the site header (e.g. Scientific Event). Leave empty for the default (Scientific Event, or Archived edition on archive pages).',
+                  'Riga piccola in maiuscole sopra il nome dell’evento nell’intestazione del sito (es. Scientific Event). Lasciate vuoto per il default (Scientific Event, oppure Archived edition nelle pagine archivio).',
+                ),
+              },
+            },
+            {
               type: 'row',
               fields: [
                 colorField({

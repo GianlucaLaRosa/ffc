@@ -166,11 +166,23 @@ export async function GET(request: Request): Promise<Response> {
   const payload = await getPayload({ config: configPromise })
   const settings = await loadProgrammeAlertSettings(payload)
   if (!settings.enabled) {
-    return Response.json({ ok: true, skipped: 'disabled', sent: 0, removed: 0 })
+    return Response.json({
+      ok: true,
+      skipped: 'disabled',
+      sent: 0,
+      removed: 0,
+      pollMinutes: settings.pollMinutes,
+    })
   }
 
   if (!configureVapid(settings.contactEmail)) {
-    return Response.json({ ok: true, skipped: 'missing-contact-email', sent: 0, removed: 0 })
+    return Response.json({
+      ok: true,
+      skipped: 'missing-contact-email',
+      sent: 0,
+      removed: 0,
+      pollMinutes: settings.pollMinutes,
+    })
   }
 
   const now = new Date()
@@ -254,5 +266,5 @@ export async function GET(request: Request): Promise<Response> {
     page += 1
   }
 
-  return Response.json({ ok: true, sent, removed })
+  return Response.json({ ok: true, sent, removed, pollMinutes: settings.pollMinutes })
 }

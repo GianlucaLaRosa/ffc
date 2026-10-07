@@ -16,6 +16,16 @@ import {
   formatConferenceDayTitle,
 } from '@/utilities/conferenceTime'
 
+export function formatHeaderEyebrow({
+  headerEyebrow,
+  isArchived = false,
+}: {
+  headerEyebrow?: string | null
+  isArchived?: boolean
+}): string {
+  return headerEyebrow?.trim() || (isArchived ? 'Archived edition' : 'Scientific Event')
+}
+
 export function joinDocs<T>(join: { docs?: (number | T)[] } | null | undefined): T[] {
   if (!join?.docs) return []
   return join.docs.filter((doc): doc is T => typeof doc === 'object' && doc !== null)

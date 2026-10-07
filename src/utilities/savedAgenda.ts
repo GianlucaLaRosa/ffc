@@ -259,9 +259,11 @@ export function isStartingSoon(
   now: Date,
   leadMinutes = SAVED_AGENDA_LEAD_MINUTES,
 ): boolean {
-  const minutes = minutesUntilStart(item, now)
-  if (minutes === null) return false
-  return minutes > 0 && minutes <= leadMinutes
+  const start = parseInstant(item.startTime)
+  if (start === null) return false
+  const nowMs = now.getTime()
+  const notifyFrom = start - leadMinutes * 60_000
+  return nowMs >= notifyFrom && nowMs < start
 }
 
 export type ProgrammeAlertKind = 'soon' | 'live'

@@ -30,9 +30,10 @@ In the panel **Start time** and **End time** are required. The reminder uses the
 - **Enable session alerts** — if you untick it, the site hides the option and no alerts go out
 - **Push contact email** — technical email (not shown to participants); required if alerts are on
 - **Minutes before start** — lead time (1 to 30 minutes)
+- **Check interval** — how often the server looks for due reminders (5 to 30 minutes, in 5-minute steps). Whoever runs **cron-job.org** must use the same interval
 - **Notification title** — short name on the lock screen
 
-Technical notification permissions are set by whoever administers the server. You only decide whether to enable them and with which text.
+Technical notification permissions and the cron-job.org schedule are set by whoever administers the server. You choose whether alerts are on, the lead time, the check interval, and the lock-screen title.
 
 For **programme changes** during the conference (room, time) do not use this screen: use the edition **Notices** tab. See [Notices during the conference](/en/docs/avvisi-conferenza).
 

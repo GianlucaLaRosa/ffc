@@ -6,7 +6,7 @@ import { SessionIcon, ChevronDown, Sparkles, Clock, FileText } from './IconRende
 import { SaveAbstractButton, SaveAgendaButton } from './SaveAgendaButton'
 import { useModal } from '@/context/ModalContext'
 import { useSavedAgenda } from '@/context/SavedAgendaContext'
-import type { AgendaItem, ConferenceDay } from '@/payload-types'
+import type { Abstract, AgendaItem, ConferenceDay } from '@/payload-types'
 import {
   abstractStatusLabel,
   formatDateRange,
@@ -126,14 +126,7 @@ export function ProgrammeSection({ days, isArchived = false }: ProgrammeSectionP
   return (
     <section id="programme" className="scroll-mt-24 sm:scroll-mt-28 py-10 sm:py-16">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-line gap-4">
-        <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-brand-soft-fg">
-            Scientific Schedule
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-fg tracking-tight mt-1">
-            Conference Programme
-          </h2>
-        </div>
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-fg tracking-tight">Programme</h2>
       </div>
 
       {!hasPublishedSessions(days) ? (
@@ -246,6 +239,51 @@ function ProgrammeUnavailable({
   )
 }
 
+function AbstractRow({
+  abs,
+  item,
+  openAbstractModal,
+}: {
+  abs: Abstract
+  item: AgendaItem
+  openAbstractModal: (abstract: Abstract) => void
+}) {
+  return (
+    <div
+      id={`agenda-abstract-${abs.id}`}
+      className="flex items-stretch rounded-lg border border-line/80 bg-subtle/50 overflow-hidden"
+    >
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation()
+          openAbstractModal(abs)
+        }}
+        aria-label={`Open abstract ${abs.code || abs.plainTitle || 'details'}`}
+        className="min-w-0 flex-1 flex items-center gap-2 min-h-11 px-2.5 py-2 text-left hover:bg-brand-soft/70 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand"
+      >
+        <FileText className="w-4 h-4 shrink-0 text-brand" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-semibold text-fg leading-snug">
+            {abs.plainTitle || abs.code || 'Scientific abstract'}
+          </span>
+          <span className="mt-0.5 flex items-center gap-2 text-xs text-fg-subtle">
+            {abs.code ? <span className="font-medium">{abs.code}</span> : null}
+            {abstractStatusLabel(abs.status) ? (
+              <span className="px-2 py-0.5 rounded bg-surface font-medium text-fg-muted">
+                {abstractStatusLabel(abs.status)}
+              </span>
+            ) : null}
+          </span>
+        </span>
+      </button>
+      <div className="flex items-center shrink-0 border-l border-line/70 px-1">
+        <SaveAbstractButton abstract={abs} session={item} inline />
+      </div>
+    </div>
+  )
+}
+
 function AgendaItemCard({
   item,
   expandedItems,
@@ -300,10 +338,16 @@ function AgendaItemCard({
   const durationLabel =
     typeof item.durationMinutes === 'number' ? `${item.durationMinutes} min` : ''
 
+  const abstractCountLabel = `${linkedAbstracts.length} ${linkedAbstracts.length === 1 ? 'abstract' : 'abstracts'}`
+
   return (
     <div
       id={`agenda-item-${item.id}`}
-      onClick={hasAbstract && primaryAbstract ? () => openAbstractModal(primaryAbstract) : undefined}
+      onClick={
+        hasAbstract && primaryAbstract && !hasMultipleAbstracts
+          ? () => openAbstractModal(primaryAbstract)
+          : undefined
+      }
       className={`relative rounded-xl transition-all duration-200 border scroll-mt-32 ${
         live
           ? 'bg-brand-soft/70 border-brand ring-2 ring-brand/30 shadow-sm'
@@ -356,91 +400,79 @@ function AgendaItemCard({
           </div>
         </div>
 
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-brand-soft border border-brand-border flex items-center justify-center text-brand shrink-0">
-              <SessionIcon name={item.icon} className="w-4 h-4" />
-            </div>
-            <div className="min-w-0 flex-1 text-base sm:text-lg font-bold text-fg leading-snug">
-              {item.name ? (
-                <RichText content={item.name} disableContainer className="rich-text-inline" />
-              ) : (
-                item.title
-              )}
-            </div>
-          </div>
+        {hasMultipleAbstracts ? (
+          <>
+            <button
+              type="button"
+              onClick={(e) => onToggleAbstractSection(itemId, e)}
+              aria-expanded={abstractsExpanded}
+              className="w-full flex items-center gap-3 min-h-11 text-left rounded-lg -mx-1 px-1 hover:bg-subtle/60 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
+            >
+              <div className="w-8 h-8 rounded-lg bg-brand-soft border border-brand-border flex items-center justify-center text-brand shrink-0">
+                <SessionIcon name={item.icon} className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1 text-base sm:text-lg font-bold text-fg leading-snug">
+                {item.name ? (
+                  <RichText content={item.name} disableContainer className="rich-text-inline" />
+                ) : (
+                  item.title
+                )}
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-fg-subtle shrink-0">
+                {abstractCountLabel}
+              </span>
+              <ChevronDown
+                className={`w-4 h-4 text-fg-subtle shrink-0 transition-transform ${
+                  abstractsExpanded ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
 
-          {item.description && (
-            <div className="mt-2 pl-11 text-xs sm:text-sm text-fg-muted leading-relaxed">
-              <RichText content={item.description} />
-            </div>
-          )}
-        </div>
-
-        {linkedAbstracts.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-line space-y-1.5">
-            {hasMultipleAbstracts ? (
-              <button
-                type="button"
-                onClick={(e) => onToggleAbstractSection(itemId, e)}
-                aria-expanded={abstractsExpanded}
-                className="w-full flex items-center justify-between gap-2 min-h-11 px-2.5 py-2 rounded-lg text-left bg-subtle/80 hover:bg-subtle transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-              >
-                <span className="text-[11px] font-bold uppercase tracking-wider text-fg-subtle">
-                  {linkedAbstracts.length} abstracts
-                </span>
-                <ChevronDown
-                  className={`w-4 h-4 text-fg-subtle transition-transform ${
-                    abstractsExpanded ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
-            ) : (
-              <p className="text-[11px] font-bold uppercase tracking-wider text-fg-subtle">
-                Abstract
-              </p>
-            )}
-
-            {(!hasMultipleAbstracts || abstractsExpanded) && (
-              <div className="space-y-1.5">
-                {linkedAbstracts.map((abs) => (
-                  <div
-                    key={abs.id}
-                    id={`agenda-abstract-${abs.id}`}
-                    className="flex items-stretch rounded-lg border border-line/80 bg-subtle/50 overflow-hidden"
-                  >
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        openAbstractModal(abs)
-                      }}
-                      aria-label={`Open abstract ${abs.code || abs.plainTitle || 'details'}`}
-                      className="min-w-0 flex-1 flex items-center gap-2 min-h-11 px-2.5 py-2 text-left hover:bg-brand-soft/70 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand"
-                    >
-                      <FileText className="w-4 h-4 shrink-0 text-brand" />
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-semibold text-fg leading-snug">
-                          {abs.plainTitle || abs.code || 'Scientific abstract'}
-                        </span>
-                        <span className="mt-0.5 flex items-center gap-2 text-xs text-fg-subtle">
-                          {abs.code ? <span className="font-medium">{abs.code}</span> : null}
-                          {abstractStatusLabel(abs.status) ? (
-                            <span className="px-2 py-0.5 rounded bg-surface font-medium text-fg-muted">
-                              {abstractStatusLabel(abs.status)}
-                            </span>
-                          ) : null}
-                        </span>
-                      </span>
-                    </button>
-                    <div className="flex items-center shrink-0 border-l border-line/70 px-1">
-                      <SaveAbstractButton abstract={abs} session={item} inline />
-                    </div>
-                  </div>
-                ))}
+            {item.description && (
+              <div className="mt-2 pl-11 text-xs sm:text-sm text-fg-muted leading-relaxed">
+                <RichText content={item.description} />
               </div>
             )}
-          </div>
+
+            {abstractsExpanded ? (
+              <div className="mt-3 space-y-1.5">
+                {linkedAbstracts.map((abs) => (
+                  <AbstractRow key={abs.id} abs={abs} item={item} openAbstractModal={openAbstractModal} />
+                ))}
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-brand-soft border border-brand-border flex items-center justify-center text-brand shrink-0">
+                <SessionIcon name={item.icon} className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1 text-base sm:text-lg font-bold text-fg leading-snug">
+                {item.name ? (
+                  <RichText content={item.name} disableContainer className="rich-text-inline" />
+                ) : (
+                  item.title
+                )}
+              </div>
+            </div>
+
+            {item.description && (
+              <div className="mt-2 pl-11 text-xs sm:text-sm text-fg-muted leading-relaxed">
+                <RichText content={item.description} />
+              </div>
+            )}
+
+            {linkedAbstracts.length === 1 ? (
+              <div className="mt-3 space-y-1.5">
+                <AbstractRow
+                  abs={linkedAbstracts[0]}
+                  item={item}
+                  openAbstractModal={openAbstractModal}
+                />
+              </div>
+            ) : null}
+          </>
         )}
 
         {hasChildren && (

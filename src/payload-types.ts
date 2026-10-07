@@ -553,6 +553,10 @@ export interface Conference {
    */
   logo?: (number | null) | Media;
   /**
+   * Small uppercase line above the event name in the site header (e.g. Scientific Event). Leave empty for the default (Scientific Event, or Archived edition on archive pages).
+   */
+  headerEyebrow?: string | null;
+  /**
    * Buttons, links, and section accents. Adapts automatically to light and dark theme.
    */
   primaryColor: string;
@@ -1906,6 +1910,7 @@ export interface ConferencesSelect<T extends boolean = true> {
   name?: T;
   year?: T;
   logo?: T;
+  headerEyebrow?: T;
   primaryColor?: T;
   secondaryColor?: T;
   intro?:
@@ -2393,7 +2398,7 @@ export interface ConferenceArchive {
 export interface ProgrammeAlert {
   id: number;
   /**
-   * If off, the site hides “Enable session alerts” and the minute cron sends nothing.
+   * If off, the site hides “Enable session alerts” and the scheduled check sends nothing.
    */
   enabled?: boolean | null;
   /**
@@ -2404,6 +2409,10 @@ export interface ProgrammeAlert {
    * How many minutes before a saved session to notify.
    */
   leadMinutes?: number | null;
+  /**
+   * How often the server checks for due reminders. Set cron-job.org to the same interval.
+   */
+  pollMinutes?: ('5' | '10' | '15' | '20' | '25' | '30') | null;
   /**
    * Short name on lock-screen notifications.
    */
@@ -2530,6 +2539,7 @@ export interface ProgrammeAlertsSelect<T extends boolean = true> {
   enabled?: T;
   contactEmail?: T;
   leadMinutes?: T;
+  pollMinutes?: T;
   notificationTitle?: T;
   updatedAt?: T;
   createdAt?: T;

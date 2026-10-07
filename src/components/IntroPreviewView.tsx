@@ -6,7 +6,7 @@ import { hasVisibleLayoutBlocks } from '@/components/LayoutBlocks'
 import { RichText } from '@/components/RichText'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import type { Conference } from '@/payload-types'
-import { mediaUrl } from '@/utilities/conferenceUi'
+import { formatHeaderEyebrow, mediaUrl } from '@/utilities/conferenceUi'
 
 export function IntroPreviewView({ conference }: { conference: Conference }) {
   const logoSrc = mediaUrl(conference.logo) || '/logo.png'
@@ -28,11 +28,15 @@ export function IntroPreviewView({ conference }: { conference: Conference }) {
                 className="h-10 sm:h-11 w-auto object-contain rounded"
               />
               <div className="leading-tight min-w-0">
-                <span className="text-xs font-bold uppercase tracking-widest text-brand-soft-fg block">
-                  Scientific Event {conference.year || ''}
+                <span className="text-xs font-bold uppercase tracking-widest text-brand-soft-fg block truncate">
+                  {formatHeaderEyebrow({ headerEyebrow: conference.headerEyebrow })}
                 </span>
-                <div className="text-sm sm:text-base font-extrabold text-fg line-clamp-1">
-                  <RichText content={conference.name} disableContainer className="rich-text-inline" />
+                <div className="text-sm sm:text-base font-extrabold text-fg truncate">
+                  <RichText
+                    content={conference.name}
+                    disableContainer
+                    className="rich-text-inline header-edition-title"
+                  />
                 </div>
               </div>
             </div>

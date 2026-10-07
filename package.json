@@ -13,6 +13,7 @@
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "ci": "payload migrate && pnpm build",
+    "cron:test": "node scripts/test-programme-alerts-cron.mjs",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start --port 3101",
     "seed": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" tsx ./src/seed/index.ts",
     "db:up": "docker compose up -d db",

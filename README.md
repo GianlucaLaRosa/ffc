@@ -61,4 +61,16 @@ Non committare `.env`. In produzione usa un `PAYLOAD_SECRET` casuale e una conne
 
 ## Produzione
 
-Deploy tipico: **Vercel** + **Neon** + Blob per i media. `pnpm ci` esegue le migration e la build. Schema Postgres solo via migration Payload, non via `db.push`.
+Deploy tipico: **Vercel** + **Neon** + Blob per i media. `vercel.json` imposta `pnpm ci` (migration + build). Schema Postgres solo via migration Payload, non via `db.push`.
+
+### Vercel + GitHub
+
+1. Importa il repo su [vercel.com](https://vercel.com) (GitHub collegato).
+2. Variabili: `DATABASE_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, `PREVIEW_SECRET`; opzionali Blob e VAPID (vedi sopra).
+3. Ogni push sul branch di produzione ridistribuisce automaticamente.
+
+### Promemoria push (cron-job.org)
+
+I promemoria “My programme” richiedono un job esterno che chiami `GET /api/programme-alerts` all’intervallo scelto in **Globals → Programme alerts → Check interval** (default ogni **5 minuti**), con header `Authorization: Bearer <CRON_SECRET>`.
+
+Guida passo-passo: [`scripts/cron-job.org.md`](scripts/cron-job.org.md). Test locale o produzione: `pnpm cron:test`.

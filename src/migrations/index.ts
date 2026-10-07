@@ -16,6 +16,7 @@ import * as migration_20261005_151000_enable_public_archive from './20261005_151
 import * as migration_20261005_153000_footer_policies from './20261005_153000_footer_policies';
 import * as migration_20261005_170400_footer_partners_credits from './20261005_170400_footer_partners_credits';
 import * as migration_20261006_100800_optional_active_conference from './20261006_100800_optional_active_conference';
+import * as migration_20261007_100700_conference_header_eyebrow from './20261007_100700_conference_header_eyebrow';
 
 export const migrations = [
   {
@@ -107,5 +108,10 @@ export const migrations = [
     up: migration_20261006_100800_optional_active_conference.up,
     down: migration_20261006_100800_optional_active_conference.down,
     name: '20261006_100800_optional_active_conference',
+  },
+  {
+    up: migration_20261007_100700_conference_header_eyebrow.up,
+    down: migration_20261007_100700_conference_header_eyebrow.down,
+    name: '20261007_100700_conference_header_eyebrow',
   },
 ];

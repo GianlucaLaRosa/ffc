@@ -263,6 +263,14 @@ a:focus-visible {
   margin: 0;
 }
 
+.header-edition-title.rich-text-inline,
+.header-edition-title.rich-text-inline p {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .policy-intro .rich-text,
 .policy-intro p {
   font-size: inherit;

@@ -7,7 +7,7 @@ import { ThemeToggle } from './ThemeToggle'
 import { SavedAgendaMenu } from './SavedAgendaMenu'
 import { InstallPwaButton } from './InstallPwaButton'
 import { Calendar, MapPin, BookOpen, Home } from 'lucide-react'
-import { mediaUrl } from '@/utilities/conferenceUi'
+import { formatHeaderEyebrow, mediaUrl } from '@/utilities/conferenceUi'
 import { ArchiveNav } from '@/components/ArchiveNav'
 import type { ArchivedEditionLink } from '@/utilities/getConferenceEdition'
 
@@ -28,6 +28,7 @@ function CurrentEditionLink({ variant }: { variant: 'desktop' | 'mobile' }) {
 export interface HeaderProps {
   editionName: any
   editionYear?: number | null
+  headerEyebrow?: string | null
   logo?: any
   archivedEditions?: ArchivedEditionLink[]
   isArchived?: boolean
@@ -42,6 +43,7 @@ export interface HeaderProps {
 export function Header({
   editionName,
   editionYear,
+  headerEyebrow,
   logo,
   archivedEditions = [],
   isArchived = false,
@@ -112,11 +114,15 @@ export function Header({
                 </>
               ) : (
                 <>
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-brand-soft-fg hidden sm:block">
-                    {isArchived ? 'Archived edition' : 'Scientific Event'} {editionYear || ''}
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-brand-soft-fg hidden sm:block truncate">
+                    {formatHeaderEyebrow({ headerEyebrow, isArchived })}
                   </span>
-                  <span className="block text-sm sm:text-base font-extrabold text-fg line-clamp-1">
-                    <RichText content={editionName} disableContainer className="rich-text-inline" />
+                  <span className="block text-sm sm:text-base font-extrabold text-fg truncate">
+                    <RichText
+                      content={editionName}
+                      disableContainer
+                      className="rich-text-inline header-edition-title"
+                    />
                   </span>
                 </>
               )}

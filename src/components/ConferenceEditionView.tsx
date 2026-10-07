@@ -64,6 +64,7 @@ export async function ConferenceEditionView({
           <Header
             editionName={conference.name}
             editionYear={conference.year}
+            headerEyebrow={conference.headerEyebrow}
             logo={conference.logo}
             archivedEditions={archivedEditions}
             showArchiveNav={showArchiveNav}

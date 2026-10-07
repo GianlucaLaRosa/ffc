@@ -27,15 +27,10 @@ export function VenueSection({ conference }: VenueSectionProps) {
   return (
     <section
       id="venue"
-      className="scroll-mt-24 sm:scroll-mt-28 py-10 sm:py-16 border-t border-line"
+      className="scroll-mt-24 sm:scroll-mt-28 py-10 sm:py-16"
     >
       <div className="mb-8 pb-4 border-b border-line">
-        <span className="text-xs font-bold uppercase tracking-wider text-brand-soft-fg">
-          Location & Logistics
-        </span>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-fg tracking-tight mt-1">
-          Conference Venue
-        </h2>
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-fg tracking-tight">Venue</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -44,10 +39,7 @@ export function VenueSection({ conference }: VenueSectionProps) {
             <div className="w-10 h-10 rounded-xl bg-brand-soft text-brand-soft-fg flex items-center justify-center shrink-0">
               <MapPin className="w-5 h-5" />
             </div>
-            <div>
-              <h3 className="font-bold text-fg text-base">Address & City</h3>
-              <p className="text-xs text-fg-subtle">Official conference hall</p>
-            </div>
+            <h3 className="font-bold text-fg text-base">Address</h3>
           </div>
 
           <div className="text-sm text-fg-muted space-y-1 pl-1 border-l-2 border-brand">
@@ -72,9 +64,6 @@ export function VenueSection({ conference }: VenueSectionProps) {
         </div>
 
         <div className="lg:col-span-2 rounded-2xl bg-surface border border-line/90 p-5 sm:p-8 shadow-xs">
-          <h3 className="text-lg font-bold text-fg mb-4 pb-2 border-b border-line">
-            Directions, Transport & Delegate Services
-          </h3>
           {location ? (
             <div className="text-sm text-fg-muted leading-relaxed space-y-3">
               <RichText content={location} />

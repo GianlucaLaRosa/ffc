@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm ci",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "functions": {
+    "src/app/api/programme-alerts/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}

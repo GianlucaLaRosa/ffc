@@ -334,18 +334,13 @@ export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
   return (
     <section
       id="appendix"
-      className="scroll-mt-24 sm:scroll-mt-28 pt-10 sm:pt-16 pb-10 sm:pb-16 border-t border-line"
+      className="scroll-mt-24 sm:scroll-mt-28 pt-10 sm:pt-16 pb-10 sm:pb-16"
     >
       <div
         className={`sticky ${appendixStickyTop} z-20 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 pt-1 pb-4 mb-8 bg-page/95 backdrop-blur-md border-b border-line shadow-xs`}
       >
-        <div className="mb-4 pb-4 border-b border-line/70">
-          <span className="text-xs font-bold uppercase tracking-wider text-brand-soft-fg">
-            Supplementary Documentation
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-fg tracking-tight mt-1">
-            Conference Appendix
-          </h2>
+        <div className="mb-4">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-fg tracking-tight">Appendix</h2>
         </div>
 
         <div className="md:hidden relative" ref={tabMenuRef}>
@@ -393,7 +388,7 @@ export function AppendixSection({ abstracts, appendix }: AppendixSectionProps) {
         </div>
 
         <div
-          className="hidden md:flex flex-wrap gap-x-2 gap-y-1 pt-4 -mb-1"
+          className="hidden md:flex flex-wrap gap-x-2 gap-y-1 pt-4 -mb-4"
           role="tablist"
         >
           {tabs.map((tab) => (
