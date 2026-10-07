@@ -56,7 +56,11 @@ export async function seedFooterContent({ payload }: { payload: Payload }): Prom
 
   const seedStructure = orgLinkEmpty(footer.structure)
   const seedDelegation = orgLinkEmpty(footer.delegation)
-  const seedPartners = !Array.isArray(footer.partners) || footer.partners.length === 0
+  const canSeedPartnerFiles =
+    !process.env.VERCEL || Boolean(process.env.BLOB_READ_WRITE_TOKEN)
+  const seedPartners =
+    canSeedPartnerFiles &&
+    (!Array.isArray(footer.partners) || footer.partners.length === 0)
   const seedCredits = !Array.isArray(footer.credits) || footer.credits.length === 0
 
   if (!seedStructure && !seedDelegation && !seedPartners && !seedCredits) return

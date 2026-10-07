@@ -49,6 +49,7 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  serverURL: getServerSideURL(),
   admin: {
     meta: {
       titleSuffix: ' — FFC Ricerca',
@@ -156,27 +157,31 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   onInit: async (payload) => {
-    await ensureMediaFolder({
-      folderName: CONFERENCE_LOGOS_FOLDER_NAME,
-      payload,
-    })
-    await ensureMediaFolder({
-      folderName: PEOPLE_PHOTOS_FOLDER_NAME,
-      payload,
-    })
-    await ensureMediaFolder({
-      folderName: ABSTRACT_PICTURES_FOLDER_NAME,
-      payload,
-    })
-    await ensureMediaFolder({
-      folderName: PARTNER_LOGOS_FOLDER_NAME,
-      payload,
-    })
-    await seedAbstractStatuses({ payload })
-    await seedItalianRegions({ payload })
-    await seedCountries({ payload })
-    await seedFooterPolicies({ payload })
-    await seedFooterContent({ payload })
+    try {
+      await ensureMediaFolder({
+        folderName: CONFERENCE_LOGOS_FOLDER_NAME,
+        payload,
+      })
+      await ensureMediaFolder({
+        folderName: PEOPLE_PHOTOS_FOLDER_NAME,
+        payload,
+      })
+      await ensureMediaFolder({
+        folderName: ABSTRACT_PICTURES_FOLDER_NAME,
+        payload,
+      })
+      await ensureMediaFolder({
+        folderName: PARTNER_LOGOS_FOLDER_NAME,
+        payload,
+      })
+      await seedAbstractStatuses({ payload })
+      await seedItalianRegions({ payload })
+      await seedCountries({ payload })
+      await seedFooterPolicies({ payload })
+      await seedFooterContent({ payload })
+    } catch (err) {
+      payload.logger.error({ err, msg: 'Payload onInit bootstrap failed' })
+    }
 
     const moveUploadToFolder = async ({
       folderName,
@@ -203,43 +208,43 @@ export default buildConfig({
       }
     }
 
-    const { docs: conferences } = await payload.find({
-      collection: 'conferences',
-      depth: 0,
-      limit: 1000,
-      pagination: false,
-      select: {
-        logo: true,
-      },
-    })
-
-    for (const conference of conferences) {
-      await moveUploadToFolder({
-        folderName: CONFERENCE_LOGOS_FOLDER_NAME,
-        label: 'conference logo',
-        mediaId: mediaIdFromUpload(conference.logo),
-      })
-    }
-
-    const { docs: people } = await payload.find({
-      collection: 'people',
-      depth: 0,
-      limit: 1000,
-      pagination: false,
-      select: {
-        photo: true,
-      },
-    })
-
-    for (const person of people) {
-      await moveUploadToFolder({
-        folderName: PEOPLE_PHOTOS_FOLDER_NAME,
-        label: 'people photo',
-        mediaId: mediaIdFromUpload(person.photo),
-      })
-    }
-
     try {
+      const { docs: conferences } = await payload.find({
+        collection: 'conferences',
+        depth: 0,
+        limit: 1000,
+        pagination: false,
+        select: {
+          logo: true,
+        },
+      })
+
+      for (const conference of conferences) {
+        await moveUploadToFolder({
+          folderName: CONFERENCE_LOGOS_FOLDER_NAME,
+          label: 'conference logo',
+          mediaId: mediaIdFromUpload(conference.logo),
+        })
+      }
+
+      const { docs: people } = await payload.find({
+        collection: 'people',
+        depth: 0,
+        limit: 1000,
+        pagination: false,
+        select: {
+          photo: true,
+        },
+      })
+
+      for (const person of people) {
+        await moveUploadToFolder({
+          folderName: PEOPLE_PHOTOS_FOLDER_NAME,
+          label: 'people photo',
+          mediaId: mediaIdFromUpload(person.photo),
+        })
+      }
+
       const footer = await payload.findGlobal({
         slug: 'footer',
         depth: 0,
@@ -252,30 +257,30 @@ export default buildConfig({
           mediaId: mediaIdFromUpload((row as { image?: unknown } | null | undefined)?.image),
         })
       }
-    } catch (err) {
-      payload.logger.error({ err, msg: 'Failed to assign partner logos to Media folder' })
-    }
 
-    const { docs: abstracts } = await payload.find({
-      collection: 'abstracts',
-      depth: 0,
-      draft: true,
-      limit: 1000,
-      pagination: false,
-      select: {
-        picture: true,
-      },
-    })
+      const { docs: abstracts } = await payload.find({
+        collection: 'abstracts',
+        depth: 0,
+        draft: true,
+        limit: 1000,
+        pagination: false,
+        select: {
+          picture: true,
+        },
+      })
 
-    for (const abstract of abstracts) {
-      const rows = Array.isArray(abstract.picture) ? abstract.picture : []
-      for (const row of rows) {
-        await moveUploadToFolder({
-          folderName: ABSTRACT_PICTURES_FOLDER_NAME,
-          label: 'abstract picture',
-          mediaId: mediaIdFromUpload((row as { image?: unknown } | null | undefined)?.image),
-        })
+      for (const abstract of abstracts) {
+        const rows = Array.isArray(abstract.picture) ? abstract.picture : []
+        for (const row of rows) {
+          await moveUploadToFolder({
+            folderName: ABSTRACT_PICTURES_FOLDER_NAME,
+            label: 'abstract picture',
+            mediaId: mediaIdFromUpload((row as { image?: unknown } | null | undefined)?.image),
+          })
+        }
       }
+    } catch (err) {
+      payload.logger.error({ err, msg: 'Payload onInit media folder sync failed' })
     }
   },
 })

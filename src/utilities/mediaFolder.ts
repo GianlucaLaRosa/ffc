@@ -39,6 +39,7 @@ export async function ensureMediaFolder({
     collection: FOLDERS_SLUG,
     depth: 0,
     limit: 1,
+    overrideAccess: true,
     pagination: false,
     req,
     where: {
@@ -59,6 +60,7 @@ export async function ensureMediaFolder({
       name: folderName,
       folderType: ['media'],
     },
+    overrideAccess: true,
     req,
   })
 

@@ -1,15 +1,34 @@
 import canUseDOM from './canUseDOM'
 
-export const getServerSideURL = () => {
-  return (
-    process.env.NEXT_PUBLIC_SERVER_URL ||
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : 'http://localhost:3101')
-  )
+const stripTrailingSlash = (url: string) => url.replace(/\/$/, '')
+
+const isLocalhostUrl = (url: string): boolean => {
+  try {
+    const { hostname } = new URL(url)
+    return hostname === 'localhost' || hostname === '127.0.0.1'
+  } catch {
+    return false
+  }
 }
 
-export const getClientSideURL = () => {
+/** Public origin for Payload, SEO, and server-side links. */
+export const getServerSideURL = (): string => {
+  const explicit = process.env.NEXT_PUBLIC_SERVER_URL?.trim()
+  const vercelProduction = process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : ''
+  const vercelDeployment = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ''
+
+  if (process.env.VERCEL) {
+    if (explicit && !isLocalhostUrl(explicit)) return stripTrailingSlash(explicit)
+    if (vercelProduction) return stripTrailingSlash(vercelProduction)
+    if (vercelDeployment) return stripTrailingSlash(vercelDeployment)
+  }
+
+  return stripTrailingSlash(explicit || vercelProduction || vercelDeployment || 'http://localhost:3101')
+}
+
+export const getClientSideURL = (): string => {
   if (canUseDOM) {
     const protocol = window.location.protocol
     const domain = window.location.hostname
@@ -18,9 +37,5 @@ export const getClientSideURL = () => {
     return `${protocol}//${domain}${port ? `:${port}` : ''}`
   }
 
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  }
-
-  return process.env.NEXT_PUBLIC_SERVER_URL || ''
+  return getServerSideURL()
 }
