@@ -17,9 +17,10 @@ const withNextra = nextra({
 
 const nextConfig: NextConfig = {
   // payload-plugin-icons loads react-dom/server and lucide-react via opaque runtime imports;
-  // Vercel/serverless tracing omits them unless listed explicitly (same as standalone Docker).
+  // Vercel/serverless tracing omits them unless listed explicitly. Scope to /admin only —
+  // a '/*' key creates an extra serverless function and exceeds the Hobby plan limit (12).
   outputFileTracingIncludes: {
-    '/*': [
+    '/admin/[[...segments]]': [
       './node_modules/react-dom/**/*',
       './node_modules/lucide-react/**/*',
     ],
