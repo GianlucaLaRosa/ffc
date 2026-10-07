@@ -13,10 +13,12 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
+const projectRoot = path.resolve(dirname, '../..')
 
 import { getPayload, type Payload } from 'payload'
 
 import config from '@payload-config'
+import { syncBrochureMediaToBlob, uploadBytesToBlob } from '@/seed/blobUpload'
 import {
   createLexicalDoc,
   createLexicalList,
@@ -413,6 +415,7 @@ async function seed() {
     )
     await attachAbstractPictures(payload, existing.docs[0].id)
     await seedFooterContent({ payload })
+    await syncBrochureMediaToBlob(payload, projectRoot)
     process.exit(0)
   }
 
@@ -493,6 +496,13 @@ async function seed() {
       size: logoBuffer.length,
     },
   })
+  if (typeof logo.filename === 'string' && logo.filename) {
+    await uploadBytesToBlob(payload, {
+      buffer: logoBuffer,
+      filename: logo.filename,
+      mimeType: 'image/png',
+    })
+  }
 
   payload.logger.info('Creating conference…')
   const conference = await publishCreate(payload, 'conferences', {
@@ -704,6 +714,7 @@ async function seed() {
     `Seeding Convention 2025 partners (${CONVENTION_2025_PARTNERS.map((row) => row.alt).join(', ')})…`,
   )
   await seedFooterContent({ payload })
+  await syncBrochureMediaToBlob(payload, projectRoot)
 
   payload.logger.info(
     `Seeded conference ${conferenceId}. Set Active conference in admin when you want it on the home page.`,

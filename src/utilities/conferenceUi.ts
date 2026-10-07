@@ -49,7 +49,6 @@ export function mediaUrl(media: number | Media | null | undefined): string | nul
   if (!filename) return null
 
   const storedUrl = typeof media.url === 'string' ? media.url : null
-  // Always serve through Payload so private Blob + dev/stale absolute URLs work on any host.
   if (storedUrl && isPrivateBlobUrl(storedUrl)) {
     return `/api/media/file/${filename}`
   }

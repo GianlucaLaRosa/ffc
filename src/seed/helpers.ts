@@ -2,6 +2,7 @@ import { readFileSync } from 'fs'
 import path from 'path'
 import type { Payload } from 'payload'
 
+import { uploadBytesToBlob, uploadFileToBlob } from '@/seed/blobUpload'
 import type { SeedPartnerLogo } from '@/seed/data/convention2025'
 import type { SeedAbstractPicture } from '@/seed/data/convention2025AbstractPictures'
 import { CONFERENCE_TIME_ZONE } from '@/utilities/conferenceTime'
@@ -201,6 +202,7 @@ export async function createSeedMedia(
 ): Promise<number> {
   const buffer = readFileSync(filePath)
   const name = path.basename(filePath)
+  const mimeType = mimeTypeForSeedFile(filePath)
   const created = await payload.create({
     collection: 'media',
     depth: 0,
@@ -212,11 +214,18 @@ export async function createSeedMedia(
     },
     file: {
       data: buffer,
-      mimetype: mimeTypeForSeedFile(filePath),
+      mimetype: mimeType,
       name,
       size: buffer.length,
     },
   })
+  if (typeof created.filename === 'string' && created.filename) {
+    await uploadBytesToBlob(payload, {
+      buffer,
+      filename: created.filename,
+      mimeType,
+    })
+  }
   return created.id as number
 }
 
@@ -272,6 +281,9 @@ export async function seedPartnerLogos({
     let imageId = docs[0]?.id
 
     if (imageId == null) {
+      const partnerPath = path.join(assetsDir, partner.file)
+      const buffer = readFileSync(partnerPath)
+      const mimeType = mimeTypeForSeedFile(partnerPath)
       const created = await payload.create({
         collection: 'media',
         depth: 0,
@@ -281,8 +293,20 @@ export async function seedPartnerLogos({
           alt: partner.mediaAlt,
           folder: folderId,
         },
-        filePath: path.join(assetsDir, partner.file),
+        file: {
+          data: buffer,
+          mimetype: mimeType,
+          name: partner.file,
+          size: buffer.length,
+        },
       })
+      if (typeof created.filename === 'string' && created.filename) {
+        await uploadBytesToBlob(payload, {
+          buffer,
+          filename: created.filename,
+          mimeType,
+        })
+      }
       imageId = created.id
     }
 
