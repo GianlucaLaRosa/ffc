@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs'
 import path from 'path'
 import type { Payload } from 'payload'
 
@@ -177,6 +178,15 @@ export async function findOrCreatePerson({
   return created.id as number
 }
 
+function mimeTypeForSeedFile(filePath: string): string {
+  const ext = path.extname(filePath).toLowerCase()
+  if (ext === '.png') return 'image/png'
+  if (ext === '.webp') return 'image/webp'
+  if (ext === '.gif') return 'image/gif'
+  if (ext === '.svg') return 'image/svg+xml'
+  return 'image/jpeg'
+}
+
 export async function createSeedMedia(
   payload: Payload,
   {
@@ -189,6 +199,8 @@ export async function createSeedMedia(
     folderId: number
   },
 ): Promise<number> {
+  const buffer = readFileSync(filePath)
+  const name = path.basename(filePath)
   const created = await payload.create({
     collection: 'media',
     depth: 0,
@@ -198,7 +210,12 @@ export async function createSeedMedia(
       alt,
       folder: folderId,
     },
-    filePath,
+    file: {
+      data: buffer,
+      mimetype: mimeTypeForSeedFile(filePath),
+      name,
+      size: buffer.length,
+    },
   })
   return created.id as number
 }

@@ -46,14 +46,22 @@ export function joinDocIds(
 export function mediaUrl(media: number | Media | null | undefined): string | null {
   if (!media || typeof media !== 'object') return null
   const filename = typeof media.filename === 'string' ? media.filename : null
-  const storedUrl = typeof media.url === 'string' ? media.url : null
+  if (!filename) return null
 
-  if (filename && storedUrl && isPrivateBlobUrl(storedUrl)) {
+  const storedUrl = typeof media.url === 'string' ? media.url : null
+  // Always serve through Payload so private Blob + dev/stale absolute URLs work on any host.
+  if (storedUrl && isPrivateBlobUrl(storedUrl)) {
     return `/api/media/file/${filename}`
   }
-  if (storedUrl) return storedUrl
-  if (filename) return `/api/media/file/${filename}`
-  return null
+  if (
+    storedUrl &&
+    !storedUrl.includes('localhost') &&
+    !storedUrl.includes('127.0.0.1') &&
+    storedUrl.startsWith('http')
+  ) {
+    return storedUrl
+  }
+  return `/api/media/file/${filename}`
 }
 
 export function personGivenAndFamilyName(

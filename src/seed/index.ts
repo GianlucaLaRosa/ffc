@@ -6,12 +6,13 @@
  * Idempotent: if the edition already exists, only missing abstract photos are attached.
  * Does not set Active conference — pick the home edition in admin.
  */
-import { config as loadEnv } from 'dotenv'
+import './env'
+
+import { readFileSync } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
-loadEnv({ path: path.resolve(dirname, '../../.env') })
 
 import { getPayload, type Payload } from 'payload'
 
@@ -383,8 +384,17 @@ async function attachAbstractPictures(payload: Payload, conferenceId: number | s
   payload.logger.info(`Abstract photos: attached ${attached}, already present ${skipped}.`)
 }
 
+function seedDatabaseLabel(): string {
+  const uri = process.env.DATABASE_URI ?? ''
+  if (uri.includes('neon.tech')) return 'Neon (remote)'
+  if (uri.includes('localhost') || uri.includes('127.0.0.1')) return 'localhost Postgres'
+  if (uri.includes('@db:')) return 'Docker Postgres'
+  return 'DATABASE_URI (custom host)'
+}
+
 async function seed() {
   const payload = await getPayload({ config })
+  payload.logger.info(`Seed target: ${seedDatabaseLabel()}`)
 
   const existing = await payload.find({
     collection: 'conferences',
@@ -465,6 +475,8 @@ async function seed() {
     folderName: CONFERENCE_LOGOS_FOLDER_NAME,
     payload,
   })
+  const logoPath = path.resolve(dirname, '../../public/brand/ffc-ricerca.png')
+  const logoBuffer = readFileSync(logoPath)
   const logo = await payload.create({
     collection: 'media',
     depth: 0,
@@ -474,7 +486,12 @@ async function seed() {
       alt: 'FFC Ricerca',
       folder: logoFolder,
     },
-    filePath: path.resolve(dirname, '../../public/brand/ffc-ricerca.png'),
+    file: {
+      data: logoBuffer,
+      mimetype: 'image/png',
+      name: path.basename(logoPath),
+      size: logoBuffer.length,
+    },
   })
 
   payload.logger.info('Creating conference…')
