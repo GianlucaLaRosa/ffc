@@ -12,7 +12,7 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "ci": "payload migrate && pnpm build",
+    "ci": "payload migrate && pnpm generate:importmap && pnpm build",
     "cron:test": "node scripts/test-programme-alerts-cron.mjs",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start --port 3101",
     "seed": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" tsx ./src/seed/index.ts",
