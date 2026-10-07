@@ -51,6 +51,16 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(dirname),
   },
+  async rewrites() {
+    // Turbopack production builds emit lazy-import URLs as /static/immutable/…
+    // but assets are served under /_next/static/immutable/… — without this, Payload admin is a blank page.
+    return [
+      {
+        source: '/static/immutable/:path*',
+        destination: '/_next/static/immutable/:path*',
+      },
+    ]
+  },
   async headers() {
     return [
         {
