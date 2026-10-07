@@ -60,6 +60,7 @@ import {
   CONFERENCE_LOGOS_FOLDER_NAME,
   ensureMediaFolder,
 } from '@/utilities/mediaFolder'
+import { seedFooterPartners } from '@/seed/footerPartners'
 import { seedFooterContent } from '@/utilities/seedFooterContent'
 
 const ABSTRACT_PICTURES_DIR = path.resolve(dirname, 'assets/convention2025/pictures')
@@ -415,6 +416,7 @@ async function seed() {
     )
     await attachAbstractPictures(payload, existing.docs[0].id)
     await seedFooterContent({ payload })
+    await seedFooterPartners({ payload })
     await syncBrochureMediaToBlob(payload, projectRoot)
     process.exit(0)
   }
@@ -710,10 +712,8 @@ async function seed() {
     ],
   })
 
-  payload.logger.info(
-    `Seeding Convention 2025 partners (${CONVENTION_2025_PARTNERS.map((row) => row.alt).join(', ')})…`,
-  )
   await seedFooterContent({ payload })
+  await seedFooterPartners({ payload })
   await syncBrochureMediaToBlob(payload, projectRoot)
 
   payload.logger.info(

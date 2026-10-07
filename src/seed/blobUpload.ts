@@ -114,7 +114,7 @@ export async function syncBrochureMediaToBlob(payload: Payload, rootDir: string)
       sourcePath = path.join(rootDir, 'src/seed/assets/convention2025/partners/vr.png')
     }
 
-    if (!sourcePath || !existsSync(sourcePath)) continue
+    if (!sourcePath || !existsSync(/* turbopackIgnore: true */ sourcePath)) continue
 
     const mimeType =
       typeof doc.mimeType === 'string' && doc.mimeType
