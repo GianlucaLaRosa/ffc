@@ -61,7 +61,7 @@ Non committare `.env`. In produzione usa un `PAYLOAD_SECRET` casuale e una conne
 
 ## Produzione
 
-Deploy tipico: **Vercel** + **Neon** + Blob per i media. `vercel.json` imposta `pnpm ci` (migration + build). Schema Postgres solo via migration Payload, non via `db.push`.
+Deploy tipico: **Vercel** + **Neon** + Blob per i media. `vercel.json` imposta `pnpm run ci` (migration + build). Schema Postgres solo via migration Payload, non via `db.push`.
 
 ### Vercel + GitHub
 
