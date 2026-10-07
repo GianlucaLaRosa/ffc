@@ -13,6 +13,8 @@ import {
 import { formatAdminURL } from 'payload/shared'
 import React, { useCallback } from 'react'
 
+import { asT } from '@/i18n/asT'
+
 import { conferenceSeoGenerateBody } from './conferenceSeoGenerateBody'
 
 export const SeoMetaTitle: React.FC<{
@@ -108,7 +110,7 @@ export const SeoMetaTitle: React.FC<{
               }}
               type="button"
             >
-              {t('plugin-seo:autoGenerate')}
+              {asT(t)('plugin-seo:autoGenerate')}
             </button>
           </>
         )}

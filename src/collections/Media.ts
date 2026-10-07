@@ -1,4 +1,6 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Field } from 'payload'
+
+type JoinFieldAdmin = Extract<Field, { type: 'join' }>['admin']
 import {
   FixedToolbarFeature,
   InlineToolbarFeature,
@@ -90,7 +92,7 @@ export const Media: CollectionConfig = {
           'Abstracts that use this image. Change the link from the abstract, not from here.',
           'Abstract che usano questa immagine. Modificate il collegamento dall’abstract, non da qui.',
         ),
-      },
+      } as unknown as JoinFieldAdmin,
     },
     {
       name: 'taggedPeople',
@@ -106,7 +108,7 @@ export const Media: CollectionConfig = {
           'People whose profile photo is this file. Change the photo on the person.',
           'Persone la cui foto profilo è questo file. Modificate la foto sulla persona.',
         ),
-      },
+      } as unknown as JoinFieldAdmin,
     },
   ],
   hooks: {

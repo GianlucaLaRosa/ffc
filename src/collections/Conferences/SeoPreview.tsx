@@ -10,6 +10,8 @@ import {
 import { formatAdminURL } from 'payload/shared'
 import React, { useEffect, useState } from 'react'
 
+import { asT } from '@/i18n/asT'
+
 import { conferenceSeoGenerateBody } from './conferenceSeoGenerateBody'
 
 export const SeoPreview: React.FC<{
@@ -77,7 +79,7 @@ export const SeoPreview: React.FC<{
 
   return (
     <div style={{ marginBottom: '20px' }}>
-      <div>{t('plugin-seo:preview')}</div>
+      <div>{asT(t)('plugin-seo:preview')}</div>
       <div
         style={{
           background: 'var(--theme-elevation-50)',

@@ -129,7 +129,7 @@ export function folderNameFromRequest(req: PayloadRequest): string | null {
       ? req.headers.get('cookie')
       : typeof (req.headers as { cookie?: string } | undefined)?.cookie ===
           'string'
-        ? (req.headers as { cookie: string }).cookie
+        ? (req.headers as unknown as { cookie?: string }).cookie ?? null
         : null
 
   if (!raw) return null

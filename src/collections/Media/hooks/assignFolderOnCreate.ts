@@ -11,7 +11,7 @@ function isMediaAdminCreate(req: PayloadRequest): boolean {
       ? req.headers.get('referer')
       : typeof (req.headers as { referer?: string } | undefined)?.referer ===
           'string'
-        ? (req.headers as { referer: string }).referer
+        ? (req.headers as unknown as { referer?: string }).referer ?? null
         : null
 
   return Boolean(referer?.includes('/admin/collections/media'))
