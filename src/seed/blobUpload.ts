@@ -9,20 +9,20 @@ import type { Payload } from 'payload'
 
 import { CONVENTION_2025_PARTNERS } from '@/seed/data/convention2025'
 import { ABSTRACT_PICTURES } from '@/seed/data/convention2025AbstractPictures'
-import { getVercelBlobAccess } from '@/utilities/blobAccess'
+import {
+  getBlobReadWriteToken,
+  getBlobStoreIdFromToken,
+  getVercelBlobAccess,
+} from '@/utilities/blobAccess'
 import { getServerSideURL } from '@/utilities/getURL'
 import { MEDIA_BLOB_PREFIX, mediaBlobObjectKey } from '@/utilities/mediaBlobStorage'
 
 const BLOB_CACHE_MAX_AGE = 60 * 60 * 24 * 365
 const SEED_CONTEXT = { disableRevalidate: true } as const
 
-export function blobStoreIdFromToken(token: string | undefined): string | null {
-  return token?.match(/^vercel_blob_rw_([a-z\d]+)/i)?.[1]?.toLowerCase() ?? null
-}
-
 export function logBlobSeedTarget(payload: Payload): void {
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim()
-  const storeId = blobStoreIdFromToken(token)
+  const token = getBlobReadWriteToken()
+  const storeId = getBlobStoreIdFromToken(token)
   const publicUrl = getServerSideURL()
 
   if (!token) {
@@ -97,7 +97,7 @@ export async function syncMediaBlobMetadata(payload: Payload): Promise<number> {
 }
 
 export function isBlobSeedEnabled(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim())
+  return Boolean(getBlobReadWriteToken())
 }
 
 export function blobStorageKey(filename: string): string {
@@ -116,7 +116,7 @@ export async function uploadBytesToBlob(
     mimeType: string
   },
 ): Promise<void> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim()
+  const token = getBlobReadWriteToken()
   if (!token) return
 
   await put(blobStorageKey(filename), buffer, {

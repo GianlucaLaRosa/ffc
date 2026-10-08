@@ -28,7 +28,7 @@ import { ProgrammeAlerts } from './ProgrammeAlerts/config'
 import { iconPlugin } from './fields/icon'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
-import { getVercelBlobAccess } from './utilities/blobAccess'
+import { getBlobReadWriteToken, getVercelBlobAccess } from './utilities/blobAccess'
 import { MEDIA_BLOB_PREFIX } from './utilities/mediaBlobStorage'
 import { getServerSideURL } from './utilities/getURL'
 import {
@@ -141,13 +141,13 @@ export default buildConfig({
     ...plugins,
     iconPlugin,
     vercelBlobStorage({
-      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      enabled: Boolean(getBlobReadWriteToken()),
       collections: {
         media: {
           prefix: MEDIA_BLOB_PREFIX,
         },
       },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: getBlobReadWriteToken(),
       // Plugin types only list 'public'; @vercel/blob supports private stores too.
       access: getVercelBlobAccess() as 'public',
     }),

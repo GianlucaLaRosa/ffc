@@ -4,6 +4,7 @@ import type { Payload } from 'payload'
 
 import { CONVENTION_2025_PARTNERS } from '@/seed/data/convention2025'
 import { seedPartnerLogos } from '@/seed/helpers'
+import { getBlobReadWriteToken } from '@/utilities/blobAccess'
 
 const SEED_CONTEXT = { disableRevalidate: true } as const
 
@@ -12,7 +13,7 @@ const PARTNERS_DIR = path.resolve(dirname, 'assets/convention2025/partners')
 
 /** Seeds footer partner logos from brochure assets. CLI seed only — not imported from payload.config. */
 export async function seedFooterPartners({ payload }: { payload: Payload }): Promise<void> {
-  if (process.env.VERCEL && !process.env.BLOB_READ_WRITE_TOKEN?.trim()) {
+  if (process.env.VERCEL && !getBlobReadWriteToken()) {
     payload.logger.warn('Skipping footer partner logos — BLOB_READ_WRITE_TOKEN not set on Vercel.')
     return
   }
