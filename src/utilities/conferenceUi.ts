@@ -12,6 +12,7 @@ function lexicalHasText(value: unknown): boolean {
   }
 }
 import { isPrivateBlobUrl } from '@/utilities/blobAccess'
+import { MEDIA_BLOB_PREFIX } from '@/utilities/mediaBlobStorage'
 import {
   formatConferenceDateRange,
   formatConferenceDayTitle,
@@ -43,6 +44,11 @@ export function joinDocIds(
   })
 }
 
+function payloadMediaFilePath(filename: string): string {
+  const params = new URLSearchParams({ prefix: MEDIA_BLOB_PREFIX })
+  return `/api/media/file/${encodeURIComponent(filename)}?${params.toString()}`
+}
+
 export function mediaUrl(media: number | Media | null | undefined): string | null {
   if (!media || typeof media !== 'object') return null
   const filename = typeof media.filename === 'string' ? media.filename : null
@@ -50,7 +56,7 @@ export function mediaUrl(media: number | Media | null | undefined): string | nul
 
   const storedUrl = typeof media.url === 'string' ? media.url : null
   if (storedUrl && isPrivateBlobUrl(storedUrl)) {
-    return `/api/media/file/${filename}`
+    return payloadMediaFilePath(filename)
   }
   if (
     storedUrl &&
@@ -60,7 +66,7 @@ export function mediaUrl(media: number | Media | null | undefined): string | nul
   ) {
     return storedUrl
   }
-  return `/api/media/file/${filename}`
+  return payloadMediaFilePath(filename)
 }
 
 export function personGivenAndFamilyName(

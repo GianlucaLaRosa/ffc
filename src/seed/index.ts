@@ -18,7 +18,12 @@ const projectRoot = path.resolve(dirname, '../..')
 import { getPayload, type Payload } from 'payload'
 
 import config from '@payload-config'
-import { syncBrochureMediaToBlob, uploadBytesToBlob } from '@/seed/blobUpload'
+import {
+  logBlobSeedTarget,
+  syncBrochureMediaToBlob,
+  syncMediaBlobMetadata,
+  uploadBytesToBlob,
+} from '@/seed/blobUpload'
 import {
   createLexicalDoc,
   createLexicalList,
@@ -398,6 +403,7 @@ function seedDatabaseLabel(): string {
 async function seed() {
   const payload = await getPayload({ config })
   payload.logger.info(`Seed target: ${seedDatabaseLabel()}`)
+  logBlobSeedTarget(payload)
 
   const existing = await payload.find({
     collection: 'conferences',
@@ -418,6 +424,7 @@ async function seed() {
     await seedFooterContent({ payload })
     await seedFooterPartners({ payload })
     await syncBrochureMediaToBlob(payload, projectRoot)
+    await syncMediaBlobMetadata(payload)
     process.exit(0)
   }
 
@@ -715,6 +722,7 @@ async function seed() {
   await seedFooterContent({ payload })
   await seedFooterPartners({ payload })
   await syncBrochureMediaToBlob(payload, projectRoot)
+  await syncMediaBlobMetadata(payload)
 
   payload.logger.info(
     `Seeded conference ${conferenceId}. Set Active conference in admin when you want it on the home page.`,

@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import path from 'path'
 import type { Payload } from 'payload'
 
-import { uploadBytesToBlob, uploadFileToBlob } from '@/seed/blobUpload'
+import { patchMediaAfterBlobUpload, uploadBytesToBlob, uploadFileToBlob } from '@/seed/blobUpload'
 import type { SeedPartnerLogo } from '@/seed/data/convention2025'
 import type { SeedAbstractPicture } from '@/seed/data/convention2025AbstractPictures'
 import { CONFERENCE_TIME_ZONE } from '@/utilities/conferenceTime'
@@ -225,6 +225,10 @@ export async function createSeedMedia(
       filename: created.filename,
       mimeType,
     })
+    await patchMediaAfterBlobUpload(payload, {
+      id: created.id,
+      filename: created.filename,
+    })
   }
   return created.id as number
 }
@@ -305,6 +309,10 @@ export async function seedPartnerLogos({
           buffer,
           filename: created.filename,
           mimeType,
+        })
+        await patchMediaAfterBlobUpload(payload, {
+          id: created.id,
+          filename: created.filename,
         })
       }
       imageId = created.id
