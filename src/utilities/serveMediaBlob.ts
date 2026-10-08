@@ -82,6 +82,8 @@ export async function serveMediaBlobFile(
   for (const pathname of candidates) {
     try {
       const result = await readBlob(pathname, ifNoneMatch)
+      if (!result) continue
+
       if (result.statusCode === 304) {
         return new Response(null, {
           headers: {
@@ -92,15 +94,17 @@ export async function serveMediaBlobFile(
         })
       }
 
-      if (result.statusCode !== 200 || !result.stream) {
+      if (result.statusCode !== 200 || result.stream == null) {
         continue
       }
+
+      const contentType = result.blob.contentType ?? 'application/octet-stream'
 
       return new Response(result.stream, {
         headers: {
           'Cache-Control': CACHE_CONTROL,
           'Content-Disposition': result.blob.contentDisposition,
-          'Content-Type': result.blob.contentType,
+          'Content-Type': contentType,
           ETag: result.blob.etag,
         },
         status: 200,
